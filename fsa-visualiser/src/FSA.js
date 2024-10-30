@@ -1,48 +1,32 @@
 import { useState } from "react";
 
-function printMachine (machine) {
-  let string = "";
-  machine.forEach(element => {
-    string += element.name + ",";
-  });
-  return string;
-}
-
-const machineArray = [];
-// For add state, push a new state object
-// const state = {
-//   name: 'start',
-//   transitions: [['input', 'start2']],
-//   accept: false
-// };
-// const state2 = {
-//   name: 'start2',
-//   transitions: [['input', 'start']],
-//   accept: true
-// };
-
+/**
+ * Stores and maintains the FSA, handling all operations.
+ * @returns 
+ */
 export const FSA = () => {
-  const [machine, setMachine] = useState(machineArray);
+  const [machine, setMachine] = useState([]);
 
-  // machine.push({
-  //   name: 'start',
-  //   transitions: [['input', 'start2']],
-  //   accept: false
-  // })
+  let string = "";
+  for (let index = 0; index < machine.length; index++) {
+    string += machine[index].name + ",";
+    console.log(machine[index].name);
+  }
 
-  function addState(){
-    machineArray.push({
-      name: 'start' + machineArray.length,
-      transitions: [['input', 'start2']],
-      accept: false
-    });
-    console.log(machine);
-    return machineArray;
+  function addState() {
+    return [
+      ...machine, // Spread operator, spreads contents of 'machine' into new array.
+      {
+        name: 'start' + machine.length,
+        transitions: [['input', 'start2']],
+        accept: false
+      }];
   }
 
   return (<div>
-    {printMachine(machine)} <br></br>
-    <button onClick={() => setMachine(addState())}></button></div>);
+    <p>{string}</p> <br></br>
+    <button onClick={() => setMachine(addState)}>Add State</button>
+  </div>);
 
 }
 
