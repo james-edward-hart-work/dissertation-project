@@ -4,11 +4,10 @@
     border: solid 1px black;
 }
 
-.circle {
-    height: 25px;
-    width: 25px;
-    background-color: #bbb;
-    border-radius: 50%;
-    display: inline-block;
-    position: relative;
+.stateInput {
+    position: absolute; 
+    outline: none;
+    border-radius: 100%;
+    border-width: 2px;
+    border-color: black;
 }
