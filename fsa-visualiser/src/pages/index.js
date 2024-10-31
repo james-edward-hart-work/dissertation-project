@@ -1,13 +1,14 @@
-import { Toggler } from "@components/Toggler";
 import { FSA } from "@components/FSA";
 import { Viewport } from "@components/Viewport";
+import { useState } from "react";
 
-function App () {
+function App() {
+  const [machine, setMachine] = useState([]);
 
   return (
     <div className="App">
-      <FSA/>
-      <Viewport/>
+      <Viewport machine={machine} setMachine={setMachine} />
+      <FSA machine={machine} setMachine={setMachine} />
     </div>
   );
 };
