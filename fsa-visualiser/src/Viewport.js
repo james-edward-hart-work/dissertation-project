@@ -1,7 +1,7 @@
 import styles from "./styles/Viewport.module.css"
 import useMouse from "@react-hook/mouse-position" // https://www.npmjs.com/package/@react-hook/mouse-position
 import { useEffect, useRef, useState } from "react"
-import { addState } from "./FSA"
+import { addState, updateStateName } from "./FSA"
 import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-draggable
 
 const circleRadius = 50;
@@ -34,15 +34,21 @@ export const Viewport = ({ machine, setMachine }) => {
     });
 
     if (!flag) {
+
+      setMachine(addState("Unnamed"));
+
       setCircleArray(
         [...circleArray,
-        <Draggable key={circleArray.length} defaultPosition={{ x: mouse.x - circleRadius, y: mouse.y - circleRadius }}>
+        <Draggable key={machine.total} defaultPosition={{ x: mouse.x - circleRadius, y: mouse.y - circleRadius }}>
           <div>
-            <input className={styles.stateInput} type="text" defaultValue={"Unnamed"} onChange={(e) => setMachine(addState(machine, e.target.value))}
+            <input className={styles.stateInput} type="text" defaultValue={"Unnamed"} onChange={(e) => setMachine(updateStateName(machine.total, e.target.value))}
               style={{ height: circleRadius * 1.5, width: circleRadius * 1.5, textAlign: "center" }} />
           </div>
         </Draggable>
         ])
+
+        //console.log(machine);
+        
 
       setCoordArray(
         [...coordArray,

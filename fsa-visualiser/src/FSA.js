@@ -1,30 +1,53 @@
+import { totalmem } from "os";
 
-export function addState(machine, name) {
-  return [
-    ...machine, // Spread operator, spreads contents of 'machine' into new array.
+let machine;
+
+export function addState(name) {
+  machine.total++;
+
+  return {
+    total: machine.total,
+    states: [...machine.states, // Spread operator, spreads contents of 'machine' into new array.
     {
+      id: machine.total,
       name: name,
       transitions: [['input', 'start2']],
       accept: false
-    }];
+    }]
+  }
+}
+
+export function updateStateName(id, name) {  
+
+  return {
+    total: machine.total,
+    states: machine.states.map(state => state.id == id ? {
+      id: state.id,
+      name: name,
+      transitions: state.transitions,
+      accept: state.accept
+    } : state)
+  };
 }
 
 /**
  * Stores and maintains the FSA, handling all operations.
  * @returns 
  */
-export const FSA = ({machine, setMachine}) => {
+export const FSA = ({ machineObj, setMachine }) => {
+
+  machine = machineObj;
 
   function printMachine() {
     let states = [];
-    for (let index = 0; index < machine.length; index++)       
-      states.push(<p key={index}>{machine[index].name + ", [" + machine[index].transitions + "], " + machine[index].accept}</p>);
+    for (let index = 0; index < machine.states.length; index++)
+      states.push(<p key={index}>{machine.states[index].name + ", [" + machine.states[index].transitions + "], " + machine.states[index].accept}</p>);
     return <div>{states}</div>;
   }
-  
+
   return (<div>
     {printMachine()} <br></br>
-    <button onClick={() => setMachine(addState)}>Add State</button>
+    <button onClick={() => setMachine(addState(machine, "Unnamed"))}>Add State</button>
   </div>);
 
 }
