@@ -1,71 +1,76 @@
 import styles from "./styles/Viewport.module.css"
 import useMouse from "@react-hook/mouse-position" // https://www.npmjs.com/package/@react-hook/mouse-position
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { addState, updateStateName } from "./FSA"
 import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-draggable
 
-const circleRadius = 50;
+const CIRCLE_RADIUS = 75;
+const height = 70;
+const width = 70;
 
 /**
  * Maintains the viewport containing the FSA diagram.
  */
 export const Viewport = ({ machine, setMachine }) => {
-  const [clickLock, setClickLock] = useState(true);
-  const [circleArray, setCircleArray] = useState([]);
-  const [coordArray, setCoordArray] = useState([]);
-
+  const [circleArray, setCircleArray] = useState([]); // State array containing the JSX of every circle
+  const [currentPositions, setCurrentPositions] = useState([]); // State array of all circle's current positions
+  
   // Mouse tracking copied from: https://www.npmjs.com/package/@react-hook/mouse-position
   const ref = useRef(null)
   const mouse = useMouse(ref, {})
   // End of copied code.
 
-  // User Click on Viewport
-  if (mouse.isDown && clickLock) {
-    setClickLock(false);
-    // Make a check that if the mouse coordinates are on a circle already in array, do not proceed
-
-    // Change so array is of CURRENT CORRDINATES
-    let flag = false;
-    coordArray.forEach(element => {
-      if ((mouse.x > element[0] - 50) && (mouse.x < element[0] + 50)
-        && (mouse.y > element[1] - 50) && (mouse.y < element[1] + 50)) {
-        flag = true;
-      }
-    });
-
-    if (!flag) {
-
-      setMachine(addState("Unnamed"));
-
-      setCircleArray(
-        [...circleArray,
-        <Draggable key={machine.total} defaultPosition={{ x: mouse.x - circleRadius, y: mouse.y - circleRadius }}>
-          <div>
-            <input className={styles.stateInput} type="text" defaultValue={"Unnamed"} onChange={(e) => setMachine(updateStateName(machine.total, e.target.value))}
-              style={{ height: circleRadius * 1.5, width: circleRadius * 1.5, textAlign: "center" }} />
-          </div>
-        </Draggable>
-        ])
-
-        //console.log(machine);
-        
-
-      setCoordArray(
-        [...coordArray,
-        [mouse.x, mouse.y]
-        ]
-      )
-    }
-
-    setClickLock(!clickLock);
+  function updatePosition(id, newX, newY) {
+    setCurrentPositions(currentPos =>
+      currentPos.map(circle =>
+        circle.id === id
+          ? { ...circle, x: newX, y: newY }
+          : circle
+      ))
   }
 
-  // Locks clicking so one click = one state made
-  useEffect(() => {
-    setClickLock(!mouse.isDown)
-  }, [clickLock, setClickLock, mouse.isDown]);
+  function addCircle() {
 
-  return <div className={styles.Viewport} ref={ref}>
+    const isOverlapping = currentPositions.some(element => {
+      if (Math.abs(mouse.x - element.x) < CIRCLE_RADIUS && Math.abs(mouse.y - element.y) < CIRCLE_RADIUS) {
+        return true;
+      }
+      return false;
+    });
+
+    if (isOverlapping) {
+      return; // Do not add a circle if mouse is over another
+    }
+
+    setMachine(addState("Unnamed"));
+
+    const id = machine.total;
+    let circleX = mouse.x - CIRCLE_RADIUS / 2;
+    let circleY = mouse.y - CIRCLE_RADIUS / 2;
+
+    setCircleArray(
+      [...circleArray,
+      <Draggable bounds="parent" key={id} defaultPosition={{ x: circleX, y: circleY }} onDrag={(data) => updatePosition(id, data.x, data.y)}>
+
+
+
+          <input className={styles.stateInput} type="text" defaultValue={"Unnamed"}
+            onChange={(e) => setMachine(updateStateName(id, e.target.value))}
+            style={{ height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center" }} />
+
+      
+      </Draggable >
+      ])
+
+    // Use 'array' instead of currentPositions due to possible asynchronicity, 'array' = latest state
+    setCurrentPositions(array => [...array, { id: id, x: circleX, y: circleY }])
+    console.log(currentPositions);
+  }
+
+
+  return <div className={styles.Viewport}
+    style={{ height: height + "svh", width: width + "svw" }}
+    ref={ref} onClick={() => addCircle()}>
     {circleArray}
   </div>
 }

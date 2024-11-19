@@ -1,5 +1,3 @@
-import { totalmem } from "os";
-
 let machine;
 
 export function addState(name) {
@@ -47,7 +45,6 @@ export const FSA = ({ machineObj, setMachine }) => {
 
   return (<div>
     {printMachine()} <br></br>
-    <button onClick={() => setMachine(addState(machine, "Unnamed"))}>Add State</button>
   </div>);
 
 }
