@@ -1,5 +1,6 @@
-import { FSA } from "@components/FSA";
-import { Viewport } from "@components/Viewport";
+'use client'
+import { FSA } from "./components/FSA";
+import { Viewport } from "./components/Viewport";
 import { useState } from "react";
 
 const machineConfig = {

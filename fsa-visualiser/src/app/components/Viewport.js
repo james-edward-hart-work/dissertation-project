@@ -1,4 +1,4 @@
-import styles from "./styles/Viewport.module.css"
+import styles from "../../styles/Viewport.module.css"
 import useMouse from "@react-hook/mouse-position" // https://www.npmjs.com/package/@react-hook/mouse-position
 import { useRef, useState } from "react"
 import { addState, updateStateName } from "./FSA"
