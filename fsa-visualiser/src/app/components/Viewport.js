@@ -1,8 +1,10 @@
-import styles from "../../styles/Viewport.module.css"
-import useMouse from "@react-hook/mouse-position" // https://www.npmjs.com/package/@react-hook/mouse-position
+import styles from '../../styles/Viewport.module.css'
+import useMouse from '@react-hook/mouse-position' // https://www.npmjs.com/package/@react-hook/mouse-position
 import { useRef, useState } from "react"
 import { addState, updateStateName } from "./FSA"
 import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-draggable
+import React from 'react';
+
 
 const CIRCLE_RADIUS = 75;
 const height = 70;

@@ -1,4 +1,5 @@
 let machine;
+import React from 'react';
 
 export function addState(name) {
   machine.total++;
