@@ -1,41 +1,57 @@
-let machine;
 import React from 'react';
+let machine; // Globally stores the finite state nmachine for application to perform operations on.
 
+/**
+ * Adds a state to the finite state machine
+ * @param name of new state
+ * @returns a new finite state machine with 
+ * the new stated added onto the list of states
+ */
 export function addState(name) {
   machine.total++;
 
   return {
     total: machine.total,
-    states: [...machine.states, // Spread operator, spreads contents of 'machine' into new array.
+    states: [...machine.states, // Retrieves current value of the list of states.
     {
-      id: machine.total,
+      id: machine.total, // Id always unique as total only ever increments
       name: name,
-      transitions: [['input', 'start2']],
-      accept: false
+      transitions: [['input', 'start2']], // Default transitions (to be changed later)
+      accept: false // Default accept state, may be changed later
     }]
   }
 }
 
-export function updateStateName(id, name) {  
+/**
+ * Updates the name of a specific state
+ * @param id of state
+ * @param name for state to be changed to
+ * @returns the updated state machine
+ */
+export function updateStateName(id, name) {
 
   return {
     total: machine.total,
-    states: machine.states.map(state => state.id == id ? {
-      id: state.id,
-      name: name,
-      transitions: state.transitions,
-      accept: state.accept
-    } : state)
+    states: machine.states.map( // Return new array with conditional statement applied to each entry
+      state => state.id == id ? { // If state matches Id, return updated state.
+        id: state.id,
+        name: name,
+        transitions: state.transitions,
+        accept: state.accept
+      }
+        : state
+    ) // If id does not match, return current entry in array.
   };
 }
 
 /**
  * Stores and maintains the FSA, handling all operations.
- * @returns 
+ * @returns a description of the machine
  */
 export const FSA = ({ machineObj, setMachine }) => {
 
-  machine = machineObj;
+  machine = machineObj; 
+  // Sets the default machine given from the application as the global machine for the class
 
   function printMachine() {
     let states = [];
