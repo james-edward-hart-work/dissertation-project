@@ -65,7 +65,7 @@ export const Viewport = ({ machine, setMachine }) => {
 
     setCircleArray(
       [...circleArray,
-      <Draggable bounds="parent" key={id} defaultPosition={{ x: circleX, y: circleY }} onDrag={(data) => updatePosition(id, data.x, data.y)}>
+      <Draggable bounds="parent" key={id} defaultPosition={{ x: circleX, y: circleY }} onDrag={(data) => updatePosition(id, data.x, data.y)} data-testid="stateCircle">
         <input className={styles.stateInput} type="text" defaultValue={"Unnamed"}
           onChange={(e) => setMachine(updateStateName(id, e.target.value))}
           style={{ height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center" }} />

@@ -9,6 +9,11 @@ jest.mock('@react-hook/mouse-position', () => ({
   default: jest.fn(() => ({})), // Return a mock hook implementation
 }));
 
+// Tests: 
+// Click - add circle (data-testid=stateCircle)
+// Click on circle does not add circle 
+// Drag moves circle to correct position
+// Name Change for states
  
 describe('Page', () => {
   test('renders a heading', () => {
