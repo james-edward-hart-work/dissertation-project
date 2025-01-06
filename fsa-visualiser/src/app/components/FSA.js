@@ -22,6 +22,16 @@ export function addState(name) {
   }
 }
 
+export function deleteState(id) {
+  // Do not decrement machine total as this tracks 
+  // the total number of states ever added.
+  
+  return {
+    total: machine.total,
+    states: machine.states.filter(element => element.id != id)
+  }
+}
+
 /**
  * Updates the name of a specific state
  * @param id of state
@@ -50,13 +60,13 @@ export function updateStateName(id, name) {
  */
 export const FSA = ({ machineObj, setMachine }) => {
 
-  machine = machineObj; 
+  machine = machineObj;
   // Sets the default machine given from the application as the global machine for the class
 
   function printMachine() {
     let states = [];
     for (let index = 0; index < machine.states.length; index++)
-      states.push(<p key={index}>{machine.states[index].name + ", [" + machine.states[index].transitions + "], " + machine.states[index].accept}</p>);
+      states.push(<p key={index}>{machine.states[index].id + ": " + machine.states[index].name + ", [" + machine.states[index].transitions + "], " + machine.states[index].accept}</p>);
     return <div>{states}</div>;
   }
 

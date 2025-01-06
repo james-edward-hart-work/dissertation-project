@@ -1,13 +1,13 @@
 import styles from "../../styles/Viewport.module.css"
 import useMouse from "@react-hook/mouse-position" // https://www.npmjs.com/package/@react-hook/mouse-position
 import { useRef, useState } from "react"
-import { addState, updateStateName } from "./FSA"
+import { addState, updateStateName, deleteState } from "./FSA"
 import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-draggable
 
-const CIRCLE_RADIUS = 75; 
+const CIRCLE_RADIUS = 75;
 // Viewport dimension relative to screen size (svh/svw)
 const height = 70;
-const width = 70; 
+const width = 70;
 
 /**
  * Function component for the Viewport containing the FSA diagram
@@ -40,18 +40,20 @@ export const Viewport = ({ machine, setMachine }) => {
       ))
   }
 
-  function addCircle() {
+  function getCircleOverlap() {
     // Check if the mouse is currently clicking on another state cirlce
-    const isOverlapping = currentPositions.some(element => {
+    for (let i = 0; i < currentPositions.length; i++) {
       // If mouse position is within range of the circle + its radius
-      if (Math.abs(mouse.x - element.x) < CIRCLE_RADIUS && Math.abs(mouse.y - element.y) < CIRCLE_RADIUS) {
-        return true;
+      if (Math.abs(mouse.x - currentPositions[i].x) < CIRCLE_RADIUS && Math.abs(mouse.y - currentPositions[i].y) < CIRCLE_RADIUS) {
+        return currentPositions[i].id;
       }
-      return false;
-    });
+    }
+    return -1; // Mouse is not overlapping with a state circle.
+  }
 
+  function addCircle() {
     // If it is overlapping a state circle, do not add a new one.
-    if (isOverlapping) {
+    if (getCircleOverlap() != -1) {      
       return; // Do not add a circle if mouse is over another
     }
 
@@ -60,13 +62,13 @@ export const Viewport = ({ machine, setMachine }) => {
     const id = machine.total; // Id is unique as total only ever increments
     // Circle is generated with its top right corner where mouse is.
     // Set circle's coordinates to move half up and to the left so centre is aligned with mouse position.
-    let circleX = mouse.x - CIRCLE_RADIUS / 2; 
+    let circleX = mouse.x - CIRCLE_RADIUS / 2;
     let circleY = mouse.y - CIRCLE_RADIUS / 2;
 
     setCircleArray(
       [...circleArray,
       <Draggable bounds="parent" key={id} defaultPosition={{ x: circleX, y: circleY }} onDrag={(data) => updatePosition(id, data.x, data.y)} data-testid="stateCircle">
-        <input className={styles.stateInput} type="text" defaultValue={"Unnamed"}
+        <input className={styles.stateInput} type="text" defaultValue={id}
           onChange={(e) => setMachine(updateStateName(id, e.target.value))}
           style={{ height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center" }} />
       </Draggable >
@@ -76,9 +78,31 @@ export const Viewport = ({ machine, setMachine }) => {
     setCurrentPositions(array => [...array, { id: id, x: circleX, y: circleY }])
   }
 
+  // Arbitrarily Choose Control+Click to delete
+  function deleteCircle() {
+    let circleId = getCircleOverlap();
+    if (circleId == -1) {      
+      return; // Do not add a circle if mouse is over another
+    }
+    setMachine(deleteState(circleId));
+
+    setCircleArray(circleArray.filter(circle => circle.key != circleId))
+
+    setCurrentPositions(currentPositions.filter(element => element.id != circleId))
+    console.log(currentPositions);
+  }
+
+  function handleClick(event) {
+    if (event.shiftKey) {
+      deleteCircle();
+    } else {
+      addCircle();
+    }
+  }
+
   return <div className={styles.Viewport}
     style={{ height: height + "svh", width: width + "svw" }}
-    ref={ref} onClick={() => addCircle()}>
+    ref={ref} onClick={(event) => handleClick(event)}>
     {circleArray}
   </div>
 }
