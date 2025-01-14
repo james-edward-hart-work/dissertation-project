@@ -47,14 +47,17 @@ class FSA {
    */
   updateStateName(id, name) {
 
-    this.states = this.states.map( // Return new array with conditional statement applied to each entry
-      state => state.id == id ? { // If state matches Id, return updated state.
-        id: state.id,
-        name: name,
-        transitions: state.transitions,
-        accept: state.accept
-      } : state
-    ); // If id does not match, return current entry in array.
+    // Update name of state with matching id in state array.
+    for (let index = 0; index < this.states.length; index++) {
+      const state = this.states[index];
+      if (state.id == id) { // If state matches Id, return updated state.
+        this.states[index] = {
+          id: id,
+          name: name,
+          transitions: state.transitions,
+          accept: state.accept}
+      }
+    }
 
     return this;
   }
@@ -63,8 +66,8 @@ class FSA {
    * Resets FSA to default values.
    */
   reset() {
-    total = 0;
-    states = 0;
+    this.total = 0;
+    this.states = [];
   }
 }
 

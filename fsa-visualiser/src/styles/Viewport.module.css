@@ -1,5 +1,8 @@
 .Viewport {
     border: solid 1px black;
+    position: fixed;
+    width: 70svw;
+    height: 70svh;
 }
 
 .stateInput {

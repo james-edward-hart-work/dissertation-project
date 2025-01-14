@@ -9,9 +9,8 @@ function App() {
   // Creates a state for the machine, which may be updated during runtime
   
   return ( // The JSX for the application
-    <div className="App">
+    <div className="App" data-testid="App" style={ {width: "100svw", height: "100svh"}}>
       <Viewport machine={machine} setMachine={setMachine} />
-      <button />
     </div>
   );
 };
