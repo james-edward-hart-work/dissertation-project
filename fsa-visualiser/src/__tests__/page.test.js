@@ -36,14 +36,14 @@ describe('Page', () => {
     test('Clicking inside viewport adds a state', async () => {
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { clientX: 100, clientY: 100 } });
-      expect(screen.getByRole('textbox').value).toBe('0');
 
       const stateCircle = screen.getByTestId("stateCircle");
       expect(stateCircle).toBeInTheDocument();
+      expect(stateCircle.value).toBe('State 0');
 
       expect(getCoords(stateCircle.style.transform)[0]).toEqual(100 - CIRCLE_RADIUS / 2);
       expect(getCoords(stateCircle.style.transform)[1]).toEqual(100 - CIRCLE_RADIUS / 2);
-      expect(screen.getByRole('textbox').value).toBe('0');
+      expect(stateCircle.value).toBe('State 0');
     })
 
     test('Clicking outside viewport does not add a state', async () => {
@@ -51,7 +51,6 @@ describe('Page', () => {
       await user.pointer({ keys: '[MouseLeft]', target: app, coords: { clientX: 0, clientY: 0 } });
       await user.pointer({ keys: '[MouseLeft]', target: app, coords: { clientX: 100, clientY: 100 } });
       await user.pointer({ keys: '[MouseLeft]', target: app, coords: { clientX: 1000, clientY: 1000 } });
-      expect(screen.queryByRole('textbox')).toBeNull();
       expect(screen.queryByTestId("stateCircle")).toBeNull();
     })
 

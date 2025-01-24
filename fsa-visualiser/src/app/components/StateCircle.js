@@ -16,8 +16,9 @@ export const StateCircle = ({ machine, setMachine, id, circleX, circleY, CIRCLE_
             data-testid={"stateCircle"}
             ref={ref}
             className={styles.stateInput}
-            type="text" defaultValue={id}
-            onChange={(e) => setMachine(machine.updateStateName(id, e.target.value))}
+            type="text"
+            defaultValue={"State " + id}
+            onChange={(e) => {setMachine(machine.updateStateName(id, e.target.value))}}
             style={{ height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center" }} />
     </Draggable >
 }

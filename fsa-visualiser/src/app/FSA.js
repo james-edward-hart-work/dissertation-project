@@ -17,11 +17,11 @@ class FSA {
   addState(name) {
     this.states = [...this.states, // Retrieves current value of the list of states.
     {
-      id: this.total , // Id always unique as total only ever increments
+      id: this.total, // Id always unique as total only ever increments
       name: name,
-      transitions: [['input', 'nextState']], // Input word for transition, destination state
+      transitions: [], // Input word for transition, destination state
       accept: false // Boolean for whether this is an accept state
-    }];    
+    }];
     this.total++; // Increase total number of states created.
     return this;
   }
@@ -34,7 +34,7 @@ class FSA {
   deleteState(id) {
     // Do not decrement machine total as this tracks 
     // the total number of states ever added.
-    this.states = this.states.filter(element => element.id != id); 
+    this.states = this.states.filter(element => element.id != id);
     // Retreive all states which do not have the specified id value.
     return this;
   }
@@ -55,7 +55,8 @@ class FSA {
           id: id,
           name: name,
           transitions: state.transitions,
-          accept: state.accept}
+          accept: state.accept
+        }
       }
     }
 

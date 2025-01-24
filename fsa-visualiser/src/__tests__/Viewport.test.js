@@ -8,55 +8,59 @@ import { CIRCLE_RADIUS } from '../app/components/Viewport';
 import { getCoords } from './page.test';
 
 let defaultMachine = new FSA();
-const defaultSetter = jest.fn();
+const machineSetter = jest.fn();
+const arraySetter = jest.fn();
+const positionsSetter = jest.fn();
 let user;
 
 describe('Viewport', () => {
 
   beforeEach(() => user = userEvent.setup());
-  afterEach(() => defaultMachine = new FSA());
+  afterEach(() => {
+    defaultMachine = new FSA();
+  });
   describe('States', () => {
 
     test('Initial render has no states', () => {
-      render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
       expect(screen.queryByTestId("stateCircle")).toBeNull()
     })
 
     test('Click successfully creates a new state in FSA and viewport', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
       expect(defaultMachine.total).toEqual(0);
 
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
 
       expect(defaultMachine.total).toEqual(1);
-      expect(defaultMachine.states).toEqual([{ id: 0, name: "Unnamed", transitions: [['input', 'nextState']], accept: false }]);
+      expect(defaultMachine.states).toEqual([{ id: 0, name: "State 0", transitions: [], accept: false }]);
 
       const stateCircle = screen.getByTestId("stateCircle");
       expect(stateCircle).toBeInTheDocument();
 
       expect(getCoords(stateCircle.style.transform)[0]).toEqual(100 - CIRCLE_RADIUS / 2);
       expect(getCoords(stateCircle.style.transform)[1]).toEqual(100 - CIRCLE_RADIUS / 2);
-      expect(screen.getByRole('textbox').value).toBe('0');
+      expect(screen.getByTestId('stateCircle').value).toBe('State 0');
     })
 
     test('Click on a state circle does not add a new state', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
 
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       expect(defaultMachine.total).toEqual(1);
-      expect(defaultMachine.states).toEqual([{ id: 0, name: "Unnamed", transitions: [['input', 'nextState']], accept: false }]);
+      expect(defaultMachine.states).toEqual([{ id: 0, name: "State 0", transitions: [], accept: false }]);
 
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       expect(defaultMachine.total).toEqual(1);
-      expect(defaultMachine.states).toEqual([{ id: 0, name: "Unnamed", transitions: [['input', 'nextState']], accept: false }]);
-      const stateCircle = screen.getAllByRole("textbox");
+      expect(defaultMachine.states).toEqual([{ id: 0, name: "State 0", transitions: [], accept: false }]);
+      const stateCircle = screen.getAllByTestId("stateCircle");
       expect(stateCircle.length).toEqual(1);
     })
 
     test('New states can be added after the first one', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
       expect(defaultMachine.total).toEqual(0);
 
       const viewport = screen.getByTestId("Viewport");
@@ -64,31 +68,31 @@ describe('Viewport', () => {
 
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       expect(defaultMachine.total).toEqual(1);
-      expect(defaultMachine.states).toEqual([{ id: 0, name: "Unnamed", transitions: [['input', 'nextState']], accept: false }]);
+      expect(defaultMachine.states).toEqual([{ id: 0, name: "State 0", transitions: [], accept: false }]);
 
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 200, y: 50 } });
       expect(defaultMachine.total).toEqual(2);
       expect(defaultMachine.states).toEqual([
-        { id: 0, name: "Unnamed", transitions: [['input', 'nextState']], accept: false },
-        { id: 1, name: "Unnamed", transitions: [['input', 'nextState']], accept: false }]);
+        { id: 0, name: "State 0", transitions: [], accept: false },
+        { id: 1, name: "State 1", transitions: [], accept: false }]);
 
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 400, y: 1 } });
       expect(defaultMachine.total).toEqual(3);
       expect(defaultMachine.states).toEqual([
-        { id: 0, name: "Unnamed", transitions: [['input', 'nextState']], accept: false },
-        { id: 1, name: "Unnamed", transitions: [['input', 'nextState']], accept: false },
-        { id: 2, name: "Unnamed", transitions: [['input', 'nextState']], accept: false }]);
+        { id: 0, name: "State 0", transitions: [], accept: false },
+        { id: 1, name: "State 1", transitions: [], accept: false },
+        { id: 2, name: "State 2", transitions: [], accept: false }]);
 
-      const stateCircle = screen.getAllByRole("textbox");
+      const stateCircle = screen.getAllByTestId("stateCircle");
       expect(stateCircle.length).toEqual(3);
       expect(defaultMachine.addState).toHaveBeenCalledTimes(3); // Ensure addState is called for each pointer event
     })
 
     test('State names can be changed by typing within their circle', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
-      const stateCircle = screen.getByRole("textbox");
+      const stateCircle = screen.getByTestId("stateCircle");
 
       fireEvent.change(stateCircle, { target: { value: 'start_state' } })
 
@@ -97,7 +101,7 @@ describe('Viewport', () => {
     })
 
     test('Alt+Click deletes the correct state from machine and viewport', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
 
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
@@ -120,7 +124,7 @@ describe('Viewport', () => {
     })
 
     test('A new state may be added in the coordinates of a recently deleted state', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       expect(defaultMachine.states.length).toEqual(1);
@@ -135,7 +139,7 @@ describe('Viewport', () => {
     })
 
     test('Machine and viewport are unaffected if Alt+Click on blank space', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
       await user.keyboard('{Alt>}');
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
@@ -150,10 +154,10 @@ describe('Viewport', () => {
   describe('State Movement', () => {
 
     test('Click + Drag on state moves state to correct coordinates', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
-      const stateCircle = screen.getByRole("textbox");
+      const stateCircle = screen.getByTestId("stateCircle");
 
       expect(getCoords(stateCircle.style.transform)[0]).toEqual(100 - CIRCLE_RADIUS / 2);
       expect(getCoords(stateCircle.style.transform)[1]).toEqual(100 - CIRCLE_RADIUS / 2);
@@ -170,10 +174,10 @@ describe('Viewport', () => {
     })
 
     test('New state may be added in the coordinates of a dragged deleted state', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
-      const stateCircle = screen.getByRole("textbox");
+      const stateCircle = screen.getByTestId("stateCircle");
       expect(defaultMachine.states.length).toEqual(1);
 
       await user.pointer([
@@ -194,7 +198,7 @@ describe('Viewport', () => {
     })
 
     test('INCOMPLETE - Click + Drag on state does not move other state', async () => {
-      // render(<Viewport machine={defaultMachine} setMachine={defaultSetter} />)
+      // render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
       // const viewport = screen.getByTestId("Viewport");
       // await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 0, y: 0 } });
       // //await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 400 } });
