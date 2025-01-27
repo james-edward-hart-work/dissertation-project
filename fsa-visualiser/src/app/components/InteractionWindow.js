@@ -1,12 +1,6 @@
 import { useState } from "react";
 import styles from "../../styles/InteractionWindow.module.css"
 
-// Add drop down for exporting - SVG, PNG, Latex Code (popup + copy button), video of input - DONE
-// Add play and stop button (check online), next to input - DONE
-// Add green/red light for valid fsa or not
-// Add list of click controls - DONE
-// Include list of all states - DONE
-
 // Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu
 const Dropdown = ({ label, value, options, onChange }) => {
     return (
@@ -14,12 +8,13 @@ const Dropdown = ({ label, value, options, onChange }) => {
             {label}
             <select value={value} onChange={onChange}>
                 {options.map((option) => (
-                    <option value={option.value}>{option.label}</option>
+                    <option value={option.value} key={option.label}>{option.label}</option>
                 ))}
             </select>
         </label>
     );
 };
+// End of taken code.
 
 function exportDropDown(type) {
     console.log(type);
@@ -87,21 +82,36 @@ function printMachine(machine) {
     </div>;
 }
 
-
 export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleArray, currentPositions, setCurrentPositions }) => {
 
-    const [hidePrint, setHidePrint] = useState(true);
-    const [hideControls, setControlsPrint] = useState(true);
-    const [showPlay, setShowPlay] = useState(true);
-    const [exportType, setExportType] = useState('None');
+    const [hidePrint, setHidePrint] = useState(true); // Tracks if table of states is hidden or not
+    const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
+    const [showPlay, setShowPlay] = useState(true); // Tracks if play or stop button is shown
+    const [exportType, setExportType] = useState('None'); // Stores the type of desired export
+    const [validFSA, setValidFSA] = useState(true); // Tracks whether the current FSA is valid or not
+    let lightColour = "green";
+    if (validFSA == false) {
+        lightColour = "red";
+    }
 
     return <div className={styles.InteractionWindow}>
-        <button>Organise FSA Layout</button>
+
+        {/* Word Input */}
+        <div className={styles.InputDiv}>
+            <input className={styles.WordInput} placeholder="Enter an input word..."></input>
+            {showPlay
+                ? <span className={styles.PlayButton} onClick={() => setShowPlay(false)}>&#9655;</span>
+                : <span className={styles.StopButton} onClick={() => setShowPlay(true)}>&#9723;</span>
+            }
+            <span className={styles.ValidLight} style={{ backgroundColor: lightColour }}></span>
+        </div>
+        <br></br>
+
+        <button className={styles.OrganiseButton}> Organise FSA Layout</button>
         <br></br>
         <br></br>
 
-
-        {/* Export */}
+        {/* Export Drop Down */}
         {/* Following code adapted from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu */}
         <div>
             <Dropdown
@@ -121,27 +131,15 @@ export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleA
         <br></br>
         <br></br>
 
-
-        {/* Word Input */}
-        <input className={styles.WordInput} placeholder="Enter an input word..."></input>
-        {showPlay
-            ? <span style={{ fontSize: "150%", marginLeft: "2%", marginBottom: "-20%" }}
-                onClick={() => setShowPlay(false)}>&#9655;</span>
-            : <span style={{ fontSize: "200%", marginTop: "2%", marginBottom: "2%" }}
-                onClick={() => setShowPlay(true)}>&#9723;</span>
-        }
-        <br></br>
-        <br></br>
-
-
         {/* List of States */}
         {hidePrint
-            ? <button onClick={() => setHidePrint(false)}>View States</button>
+            ? <button className={styles.StatesButton} onClick={() => setHidePrint(false)}>View States</button>
             : <div>
-                <button onClick={() => setHidePrint(true)}>Hide States</button>
+                <button className={styles.StatesButton} onClick={() => setHidePrint(true)}>Hide States</button>
                 {printMachine(machine)}
             </div>
         }
+        <br></br>
         <br></br>
 
         {/* Controls */}

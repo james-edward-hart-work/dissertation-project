@@ -13,7 +13,6 @@ export function getCoords(string) {
 }
 
 let defaultMachine = new FSA();
-const defaultSetter = jest.fn();
 let user;
 
 describe('Page', () => {
