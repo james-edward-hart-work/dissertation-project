@@ -16,36 +16,38 @@ const Dropdown = ({ label, value, options, onChange }) => {
 };
 // End of taken code.
 
-function exportDropDown(type) {
-    console.log(type);
+export function exportDropDown(type) {
+    alert('Exported: ' + type);
 }
 
 function printControls() {
-    return <table className={styles.Controls}>
-        <tr>
-            <td>Click (On Blank Space)</td>
-            <td>Creates a new state</td>
-        </tr>
-        <tr>
-            <td>Drag</td>
-            <td>Drags state to new posititon</td>
-        </tr>
-        <tr>
-            <td>Shift + Click</td>
-            <td>Creates transition from selected state</td>
-        </tr>
-        <tr>
-            <td>Alt + Click</td>
-            <td>Deletes state</td>
-        </tr>
-        <tr>
-            <td>Double Click</td>
-            <td>Toggles accept state</td>
-        </tr>
-        <tr>
-            <td>Triple Click</td>
-            <td>Makes selected state the start state</td>
-        </tr>
+    return <table className={styles.Controls} data-testid="Controls" >
+        <tbody>
+            <tr>
+                <td>Click (On Blank Space)</td>
+                <td>Creates a new state</td>
+            </tr>
+            <tr>
+                <td>Drag</td>
+                <td>Drags state to new posititon</td>
+            </tr>
+            <tr>
+                <td>Shift + Click</td>
+                <td>Creates transition from selected state</td>
+            </tr>
+            <tr>
+                <td>Alt + Click</td>
+                <td>Deletes state</td>
+            </tr>
+            <tr>
+                <td>Double Click</td>
+                <td>Toggles accept state</td>
+            </tr>
+            <tr>
+                <td>Triple Click</td>
+                <td>Makes selected state the start state</td>
+            </tr>
+        </tbody>
     </table>
 }
 
@@ -55,30 +57,31 @@ function printMachine(machine) {
     }
 
     let states = [
-        <tr>
+        <tr key={'header'}>
             <th>Name</th>
             <th>Transitions</th>
             <th style={{ width: "20%" }}>Accept?</th>
         </tr>
     ];
-    machine.states.forEach((element) => {
+    
+    machine.states.forEach((element, index) => {
 
         let transitions = [];
         for (let index = 0; index < element.transitions.length; index++) {
-            transitions.push(<p>{"[" + element.transitions[index][0] + " => " + element.transitions[index][1] + "]"}</p>)
+            transitions.push(<p key={element.name + "," + index}>{"[" + element.transitions[index][0] + " => " + element.transitions[index][1] + "]"}</p>)
         }
 
         states.push(
-            <tr>
+            <tr key={index}>
                 <td>{element.name}</td>
                 <td>{transitions}</td>
                 <td>{"" + element.accept}</td>
             </tr>
         );
     });
-    return <div className={styles.States}>
+    return <div className={styles.States} data-testid="StatesList">
         <h3>States:</h3>
-        <table>{states}</table>
+        <table><tbody>{states}</tbody></table>
     </div>;
 }
 
@@ -88,32 +91,31 @@ export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleA
     const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
     const [showPlay, setShowPlay] = useState(true); // Tracks if play or stop button is shown
     const [exportType, setExportType] = useState('None'); // Stores the type of desired export
-    const [validFSA, setValidFSA] = useState(true); // Tracks whether the current FSA is valid or not
-    let lightColour = "green";
-    if (validFSA == false) {
-        lightColour = "red";
-    }
 
-    return <div className={styles.InteractionWindow}>
+    return <div className={styles.InteractionWindow} data-testid="InteractionWindow">
 
         {/* Word Input */}
-        <div className={styles.InputDiv}>
-            <input className={styles.WordInput} placeholder="Enter an input word..."></input>
+        <div className={styles.InputDiv} data-testid="InputDiv">
+            <input className={styles.WordInput} data-testid="WordInput" placeholder="Enter an input word..."></input>
             {showPlay
-                ? <span className={styles.PlayButton} onClick={() => setShowPlay(false)}>&#9655;</span>
-                : <span className={styles.StopButton} onClick={() => setShowPlay(true)}>&#9723;</span>
+                ? <span className={styles.PlayButton} data-testid="PlayButton" onClick={() => setShowPlay(false)}>&#9655;</span>
+                : <span className={styles.StopButton} data-testid="StopButton" onClick={() => setShowPlay(true)}>&#9723;</span>
             }
-            <span className={styles.ValidLight} style={{ backgroundColor: lightColour }}></span>
+
+            {machine.isValid()
+                ? <span className={styles.ValidLight} data-testid="ValidLight" style={{ backgroundColor: "green" }}></span>
+                : <span className={styles.ValidLight} data-testid="ValidLight" style={{ backgroundColor: "red" }}></span>
+            }
         </div>
         <br></br>
 
-        <button className={styles.OrganiseButton}> Organise FSA Layout</button>
+        <button className={styles.OrganiseButton} data-testid="OrganiseButton" > Organise FSA Layout</button>
         <br></br>
         <br></br>
 
         {/* Export Drop Down */}
         {/* Following code adapted from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu */}
-        <div>
+        <div data-testid="Dropdown">
             <Dropdown
                 label="Select method of exporting your FSA: "
                 options={[
@@ -127,15 +129,15 @@ export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleA
             />
         </div>
         {/* End of adapted code */}
-        <button onClick={() => exportDropDown(exportType)}>Export</button>
+        <button onClick={() => exportDropDown(exportType)} data-testid="ExportButton">Export</button>
         <br></br>
         <br></br>
 
         {/* List of States */}
         {hidePrint
-            ? <button className={styles.StatesButton} onClick={() => setHidePrint(false)}>View States</button>
+            ? <button className={styles.StatesButton} onClick={() => setHidePrint(false)} data-testid="StatesButton" >View States</button>
             : <div>
-                <button className={styles.StatesButton} onClick={() => setHidePrint(true)}>Hide States</button>
+                <button className={styles.StatesButton} onClick={() => setHidePrint(true)} data-testid="StatesButton" >Hide States</button>
                 {printMachine(machine)}
             </div>
         }
@@ -144,9 +146,9 @@ export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleA
 
         {/* Controls */}
         {hideControls
-            ? <button onClick={() => setControlsPrint(false)}>View Controls</button>
+            ? <button onClick={() => setControlsPrint(false)} data-testid="ControlsButton" >View Controls</button>
             : <div>
-                <button onClick={() => setControlsPrint(true)}>Hide Controls</button>
+                <button onClick={() => setControlsPrint(true)} data-testid="ControlsButton" >Hide Controls</button>
                 {printControls()}
             </div>
         }

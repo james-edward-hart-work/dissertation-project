@@ -59,8 +59,12 @@ class FSA {
         }
       }
     }
-
     return this;
+  }
+
+  // To be filled out later
+  isValid() {
+    return (this.states.length > 1);
   }
 
   /**

@@ -29,6 +29,11 @@ describe('Page', () => {
       const viewport = screen.getByTestId("Viewport")
       expect(viewport).toBeInTheDocument()
     })
+
+    test('Interaction Window', () => {
+      const viewport = screen.getByTestId("InteractionWindow")
+      expect(viewport).toBeInTheDocument()
+    })
   })
   describe('Viewport', () => {
 
