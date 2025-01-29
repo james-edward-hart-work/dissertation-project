@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom'
 import FSA from '../app/FSA';
 import { InteractionWindow } from '../app/components/InteractionWindow';
-import * as InteractionWindowModule from '../app/components/InteractionWindow';
 import { userEvent } from '@testing-library/user-event'
 import { render, screen } from '@testing-library/react'
 
@@ -12,7 +11,6 @@ let currentPositions = [];
 const setMachine = jest.fn();
 const setCircleArray = jest.fn();
 const setCurrentPositions = jest.fn();
-
 let testMachine = new FSA();
 testMachine.states = [{ id: 0, name: "Start_State", transitions: [["a", 1], ["b", 0]], accept: false },
 { id: 1, name: "State1", transitions: [["a", 0], ["b", 1]], accept: true }];
@@ -48,6 +46,7 @@ describe('InteractionWindow', () => {
             const viewport = screen.getByTestId("ValidLight")
             const style = window.getComputedStyle(viewport);
             expect(style.backgroundColor).toBe("red")
+            expect(defaultMachine.isValid()).toBeFalsy();
         })
         test('Green Light - Valid FSA', () => {
             defaultMachine.addState("StartState");
@@ -56,6 +55,7 @@ describe('InteractionWindow', () => {
             const viewport = screen.getByTestId("ValidLight")
             const style = window.getComputedStyle(viewport);
             expect(style.backgroundColor).toBe("green")
+            expect(defaultMachine.isValid()).toBeTruthy();
         })
         test('Toggling Controls', async () => {
             render(<InteractionWindow machine={defaultMachine} setMachine={setMachine} circleArray={circleArray} setCircleArray={setCircleArray} currentPositions={currentPositions} setCurrentPositions={setCurrentPositions} />)
@@ -96,10 +96,30 @@ describe('InteractionWindow', () => {
             expect(global.alert).toHaveBeenCalledWith('Exported: None')
         })
 
-    })
+        test.each([
+            ['PNG'],
+            ['SVG'],
+            ['LaTeX'],
+            ['Video'],
+        ])('Export Type: %s', async (type) => {
+            global.alert = jest.fn();
+            render(<InteractionWindow machine={defaultMachine} setMachine={setMachine} circleArray={circleArray} setCircleArray={setCircleArray} currentPositions={currentPositions} setCurrentPositions={setCurrentPositions} />)
+            // Test taken from: https://cathalmacdonnacha.com/how-to-test-a-select-element-with-react-testing-library
+            userEvent.selectOptions(
+                screen.getByTestId('Select'),
+                screen.getByRole('option', { name: type }),
+            )
+            // End of copied code.
+            await user.click(screen.getByRole('button', { name: /Export/i }));
+            expect(global.alert).toHaveBeenCalledWith('Exported: ' + type)
+        });
 
-    describe('Function Calls', () => {
-        
-
+        test('Play/Stop Button Toggles Them', async () => {
+            render(<InteractionWindow machine={defaultMachine} setMachine={setMachine} circleArray={circleArray} setCircleArray={setCircleArray} currentPositions={currentPositions} setCurrentPositions={setCurrentPositions} />)
+            await user.click(screen.getByTestId('PlayButton'));
+            expect(screen.getByTestId('StopButton')).toBeInTheDocument();
+            await user.click(screen.getByTestId('StopButton'));
+            expect(screen.getByTestId('PlayButton')).toBeInTheDocument();
+        })
     })
 })

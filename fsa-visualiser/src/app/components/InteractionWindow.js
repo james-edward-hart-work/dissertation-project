@@ -6,7 +6,7 @@ const Dropdown = ({ label, value, options, onChange }) => {
     return (
         <label>
             {label}
-            <select value={value} onChange={onChange}>
+            <select value={value} onChange={onChange} data-testid={'Select'}>
                 {options.map((option) => (
                     <option value={option.value} key={option.label}>{option.label}</option>
                 ))}
@@ -16,10 +16,18 @@ const Dropdown = ({ label, value, options, onChange }) => {
 };
 // End of taken code.
 
-export function exportDropDown(type) {
-    alert('Exported: ' + type);
+/**
+ * Handles exporting of FSA (to be filled out later)
+ * @param {*} type of export
+ */
+function exportDropDown(type) {
+    alert('Exported: ' + type); // Placeholder for code
 }
 
+/**
+ * Prints table of controls onto window
+ * @returns JSX for Controls Table
+ */
 function printControls() {
     return <table className={styles.Controls} data-testid="Controls" >
         <tbody>
@@ -51,11 +59,18 @@ function printControls() {
     </table>
 }
 
+/**
+ * Prints a table of the FSA's states including it's name, transitions and whether it is an accept state.
+ * @param {*} machine to be printed
+ * @returns JSX for states table
+ */
 function printMachine(machine) {
+    // Empty Machine
     if (machine.states.length == 0) {
         return <h3 className={styles.States}>No States Added.</h3>;
     }
 
+    // Table Headers
     let states = [
         <tr key={'header'}>
             <th>Name</th>
@@ -64,6 +79,7 @@ function printMachine(machine) {
         </tr>
     ];
     
+    // Fills table for each state
     machine.states.forEach((element, index) => {
 
         let transitions = [];
@@ -85,6 +101,17 @@ function printMachine(machine) {
     </div>;
 }
 
+/**
+ * Function component for the Interaction Window on the right of the application.
+ * Designed to aid FSA development and allow for exporting the FSA.
+ * @param machine Application's FSA
+ * @param setMachine Setter for the FSA
+ * @param circleArray Array of state circles
+ * @param setCircleArray Setter for circleArray
+ * @param currentPositions Array of all state circle positions
+ * @param setCurrentPositions Setter for currentPositions
+ * @returns JSX for Interaction Window
+ */
 export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleArray, currentPositions, setCurrentPositions }) => {
 
     const [hidePrint, setHidePrint] = useState(true); // Tracks if table of states is hidden or not
@@ -121,7 +148,7 @@ export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleA
                 options={[
                     { label: 'PNG', value: 'PNG' },
                     { label: 'SVG', value: 'SVG' },
-                    { label: 'LaTex', value: 'LaTex' },
+                    { label: 'LaTeX', value: 'LaTeX' },
                     { label: 'Video', value: 'Video' }
                 ]}
                 value={exportType}

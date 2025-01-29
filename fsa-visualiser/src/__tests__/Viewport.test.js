@@ -8,6 +8,8 @@ import { CIRCLE_RADIUS } from '../app/components/Viewport';
 import { getCoords } from './page.test';
 
 let defaultMachine = new FSA();
+let circleArray = [];
+let currentPositions = [];
 const machineSetter = jest.fn();
 const arraySetter = jest.fn();
 const positionsSetter = jest.fn();
@@ -22,12 +24,12 @@ describe('Viewport', () => {
   describe('States', () => {
 
     test('Initial render has no states', () => {
-      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
       expect(screen.queryByTestId("stateCircle")).toBeNull()
     })
 
     test('Click successfully creates a new state in FSA and viewport', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
       expect(defaultMachine.total).toEqual(0);
 
       const viewport = screen.getByTestId("Viewport");
@@ -45,7 +47,7 @@ describe('Viewport', () => {
     })
 
     test('Click on a state circle does not add a new state', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
 
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
@@ -60,7 +62,7 @@ describe('Viewport', () => {
     })
 
     test('New states can be added after the first one', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
       expect(defaultMachine.total).toEqual(0);
 
       const viewport = screen.getByTestId("Viewport");
@@ -89,7 +91,7 @@ describe('Viewport', () => {
     })
 
     test('State names can be changed by typing within their circle', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
       const stateCircle = screen.getByTestId("stateCircle");
@@ -101,7 +103,7 @@ describe('Viewport', () => {
     })
 
     test('Alt+Click deletes the correct state from machine and viewport', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
 
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
@@ -124,7 +126,7 @@ describe('Viewport', () => {
     })
 
     test('A new state may be added in the coordinates of a recently deleted state', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       expect(defaultMachine.states.length).toEqual(1);
@@ -139,7 +141,7 @@ describe('Viewport', () => {
     })
 
     test('Machine and viewport are unaffected if Alt+Click on blank space', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
       await user.keyboard('{Alt>}');
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
@@ -154,7 +156,7 @@ describe('Viewport', () => {
   describe('State Movement', () => {
 
     test('Click + Drag on state moves state to correct coordinates', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       const stateCircle = screen.getByTestId("stateCircle");
@@ -174,7 +176,7 @@ describe('Viewport', () => {
     })
 
     test('New state may be added in the coordinates of a dragged deleted state', async () => {
-      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={[]} setCircleArray={arraySetter} currentPositions={[]} setCurrentPositions={positionsSetter}/>)
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       const stateCircle = screen.getByTestId("stateCircle");
@@ -198,27 +200,23 @@ describe('Viewport', () => {
     })
 
     test('INCOMPLETE - Click + Drag on state does not move other state', async () => {
-      // render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
-      // const viewport = screen.getByTestId("Viewport");
-      // await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 0, y: 0 } });
-      // //await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 400 } });
-      // //await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 1000, y: 1000 } });
-      // const stateCircle = screen.getAllByTestId("stateCircle");
+      render(<Viewport machine={defaultMachine} setMachine={machineSetter} circleArray={circleArray} setCircleArray={arraySetter} currentPositions={currentPositions} setCurrentPositions={positionsSetter}/>)
+      const viewport = screen.getByTestId("Viewport");
+      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 0, y: 0 } });
+      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      const stateCircle = screen.getAllByTestId("stateCircle");
+      const state2Coords = getCoords(stateCircle[1].style.transform);
 
-      // await user.pointer([
-      //   { keys: '[MouseLeft>]', target: stateCircle[0] }, 
-      //   { target: viewport, coords: { clientX: 400, clientY: 400 } },
-      //   { keys: '[/MouseLeft]' } 
-      // ]);
+      await user.pointer([
+        { keys: '[MouseLeft>]', target: stateCircle[0] }, 
+        { target: viewport, coords: { clientX: 400, clientY: 400 } },
+        { keys: '[/MouseLeft]' } 
+      ]);
 
-      // console.log(getCoords(stateCircle[0].style.transform));
-      // //console.log(getCoords(stateCircle[1].style.transform));
-
-      // expect(getCoords(stateCircle[0].style.transform)[0]).toEqual(200 - CIRCLE_RADIUS / 2);
-      // expect(getCoords(stateCircle[0].style.transform)[1]).toEqual(200 - CIRCLE_RADIUS / 2);
-      // expect(getCoords(stateCircle[1].style.transform)[0]).toEqual(200);
-      // expect(getCoords(stateCircle[1].style.transform)[1]).toEqual(200);
-      // expect(defaultMachine.states.length).toEqual(2);
+      expect(getCoords(stateCircle[0].style.transform)[0]).toEqual(300 - CIRCLE_RADIUS / 2);
+      expect(getCoords(stateCircle[0].style.transform)[1]).toEqual(300 - CIRCLE_RADIUS / 2);
+      expect(getCoords(stateCircle[1].style.transform)).toEqual(state2Coords);
+      expect(defaultMachine.states.length).toEqual(2);
     })
   })
 

@@ -8,8 +8,12 @@ const HEIGHT = 95;
 
 /**
  * Function component for the Viewport containing the FSA diagram
- * @param machine FSA object
- * @param setMachine Function to update FSA object
+ * @param machine Application's FSA
+ * @param setMachine Setter for the FSA
+ * @param circleArray Array of state circles
+ * @param setCircleArray Setter for circleArray
+ * @param currentPositions Array of all state circle positions
+ * @param setCurrentPositions Setter for currentPositions
  * @returns JSX for the Viewport
  */
 export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, currentPositions, setCurrentPositions }) => {
