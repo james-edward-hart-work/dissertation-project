@@ -83,17 +83,17 @@ describe('InteractionWindow', () => {
         test('Toggling List of States - States Added', async () => {
             render(<InteractionWindow machine={testMachine} setMachine={setMachine} circleArray={circleArray} setCircleArray={setCircleArray} currentPositions={currentPositions} setCurrentPositions={setCurrentPositions} />)
             await user.click(screen.getByRole('button', { name: /View States/i }));
-            expect(screen.getByText("[a => 1]")).toBeInTheDocument();
-            expect(screen.getByText("[b => 0]")).toBeInTheDocument();
-            expect(screen.getByText("[a => 0]")).toBeInTheDocument();
-            expect(screen.getByText("[b => 1]")).toBeInTheDocument();
+            expect(screen.getByText("[a => State1]")).toBeInTheDocument();
+            expect(screen.getByText("[b => Start_State]")).toBeInTheDocument();
+            expect(screen.getByText("[a => Start_State]")).toBeInTheDocument();
+            expect(screen.getByText("[b => State1]")).toBeInTheDocument();
         })
 
-        test('Export Button shows alert - None', async () => {
+        test('Export Button shows alert - Default', async () => {
             global.alert = jest.fn();
             render(<InteractionWindow machine={defaultMachine} setMachine={setMachine} circleArray={circleArray} setCircleArray={setCircleArray} currentPositions={currentPositions} setCurrentPositions={setCurrentPositions} />)
             await user.click(screen.getByRole('button', { name: /Export/i }));
-            expect(global.alert).toHaveBeenCalledWith('Exported: None')
+            expect(global.alert).toHaveBeenCalledWith('Exported: PNG')
         })
 
         test.each([

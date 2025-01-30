@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "../../styles/InteractionWindow.module.css"
 
 // Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu
@@ -52,7 +52,7 @@ function printControls() {
                 <td>Toggles accept state</td>
             </tr>
             <tr>
-                <td>Triple Click</td>
+                <td>Shift + Double Click</td>
                 <td>Makes selected state the start state</td>
             </tr>
         </tbody>
@@ -78,25 +78,26 @@ function printMachine(machine) {
             <th style={{ width: "20%" }}>Accept?</th>
         </tr>
     ];
-    
+
     // Fills table for each state
     machine.states.forEach((element, index) => {
 
         let transitions = [];
         for (let index = 0; index < element.transitions.length; index++) {
-            transitions.push(<p key={element.name + "," + index}>{"[" + element.transitions[index][0] + " => " + element.transitions[index][1] + "]"}</p>)
+            const destName = machine.states.find(state => state.id === element.transitions[index][1]).name;
+            transitions.push(<p key={element.name + "," + index}>{"[" + element.transitions[index][0] + " => " + destName + "]"}</p>)
         }
 
         states.push(
             <tr key={index}>
-                <td>{element.name}</td>
+                <td>{(element.id == machine.startStateId) ? <b>{element.name}</b> : <p>{element.name}</p>}</td>
                 <td>{transitions}</td>
                 <td>{"" + element.accept}</td>
             </tr>
         );
     });
     return <div className={styles.States} data-testid="StatesList">
-        <h3>States:</h3>
+        <h3>Machine Description:</h3>
         <table><tbody>{states}</tbody></table>
     </div>;
 }
@@ -117,7 +118,7 @@ export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleA
     const [hidePrint, setHidePrint] = useState(true); // Tracks if table of states is hidden or not
     const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
     const [showPlay, setShowPlay] = useState(true); // Tracks if play or stop button is shown
-    const [exportType, setExportType] = useState('None'); // Stores the type of desired export
+    const [exportType, setExportType] = useState('PNG'); // Stores the type of desired export
 
     return <div className={styles.InteractionWindow} data-testid="InteractionWindow">
 

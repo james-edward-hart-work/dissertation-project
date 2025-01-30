@@ -4,10 +4,10 @@
 }
 
 .stateInput {
-    position: absolute; 
-    outline: none;
+    position: absolute;
+    outline: 5px;
     border-radius: 100%;
-    border-width: 2px;
+    border-width: 1.5px;
     border-color: black;
     margin-top: 1%;
     margin-left: 1%;

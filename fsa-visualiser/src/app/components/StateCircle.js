@@ -1,5 +1,5 @@
 import styles from "../../styles/Viewport.module.css"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-draggable
 
 /**
@@ -13,8 +13,18 @@ import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-
  * @param updatePosition function to update circle's position
  * @returns JSX for a state circle
  */
-export const StateCircle = ({ machine, setMachine, id, circleX, circleY, CIRCLE_RADIUS, updatePosition }) => {
-    const ref = useRef(id)
+export const StateCircle = ({ machine, setMachine, id, circleX, circleY, CIRCLE_RADIUS, updatePosition, getTransitionRef }) => {
+    const [isAccept, setIsAccept] = useState(false);
+    const ref = getTransitionRef(id);
+
+    function handleDoubleClick(event) {
+        if (event.shiftKey) {
+            setMachine(machine.setStartState(id));
+        } else {
+            setIsAccept(!isAccept);
+            machine.toggleAccept(id);
+        }
+    }
 
     // Places circular text input inside a draggable div.
     return <Draggable
@@ -23,13 +33,24 @@ export const StateCircle = ({ machine, setMachine, id, circleX, circleY, CIRCLE_
         key={id}
         defaultPosition={{ x: circleX, y: circleY }}
         onDrag={(data) => updatePosition(id, data.x, data.y)} >
-        <input
+        {isAccept ? <input
             data-testid={"stateCircle"}
             ref={ref}
             className={styles.stateInput}
             type="text"
             defaultValue={"State " + id}
-            onChange={(e) => {setMachine(machine.updateStateName(id, e.target.value))}}
-            style={{ height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center" }} />
+            onChange={(e) => { setMachine(machine.updateStateName(id, e.target.value)) }}
+            style={{ height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "1.5px solid black", outlineOffset: "-10px" }}
+            onDoubleClick={(e) => handleDoubleClick(e)} />
+            : <input
+                data-testid={"stateCircle"}
+                ref={ref}
+                className={styles.stateInput}
+                type="text"
+                defaultValue={"State " + id}
+                onChange={(e) => { setMachine(machine.updateStateName(id, e.target.value)) }}
+                style={{ height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "none" }}
+                onDoubleClick={(e) => handleDoubleClick(e)} />}
+
     </Draggable >
 }

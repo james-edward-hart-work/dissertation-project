@@ -7,7 +7,10 @@ class FSA {
   constructor() {
     this.total = 0; // Tracks the total number of states ever created, not the current number of states
     this.states = []; // Array of state objects
+    this.startStateId = -1; // Id of the start state, -1 for none
   }
+
+  // STATES //
 
   /**
    * Adds a state to the finite state machine.
@@ -46,19 +49,64 @@ class FSA {
    * @returns the updated state machine
    */
   updateStateName(id, name) {
-
     // Update name of state with matching id in state array.
-    for (let index = 0; index < this.states.length; index++) {
-      const state = this.states[index];
-      if (state.id == id) { // If state matches Id, return updated state.
-        this.states[index] = {
-          id: id,
-          name: name,
-          transitions: state.transitions,
-          accept: state.accept
-        }
-      }
+    const index = this.states.findIndex(state => state.id === id);
+    this.states[index] = {
+      id: id,
+      name: name,
+      transitions: this.states[index].transitions,
+      accept: this.states[index].accept
     }
+    return this;
+  }
+
+  toggleAccept(id) {    
+    // Update accept of state with matching id in state array.
+    const index = this.states.findIndex(state => state.id === id);
+    this.states[index] = {
+      id: id,
+      name: this.states[index].name,
+      transitions: this.states[index].transitions,
+      accept: !this.states[index].accept
+    }
+    return this;
+  }
+
+  // TRANSITIONS //
+
+  addTransition(fromStateId, toStateId, input) {
+    const index = this.states.findIndex(state => state.id === fromStateId);
+    // Find index of the 'from' state
+
+    // Add input and id of destination state to array of transitions.
+    this.states[index].transitions =
+      [...this.states[index].transitions, // Retrieves current value of the list of transitions.
+      [input, toStateId]
+      ];
+    return this;
+  }
+
+  deleteTransition(fromStateId, toStateId) {
+    const index = this.states.findIndex(state => state.id === fromStateId);
+
+    this.states[index].transitions = this.states[index].transitions
+      .filter(element => element[1] != toStateId);
+
+    // Removes all transitions which point toward the destination state.
+    return this;
+  }
+
+  changeTransitionInput(fromStateId, toStateId, newInput) {
+    const stateIndex = this.states.findIndex(state => state.id === fromStateId); // Get from state index
+    const transitionIndex = this.states[index].transitions.findIndex(transition => transition[1] === toStateId);
+    // Get the index of the transition pointing towards the specified destination stateId
+
+    this.states[stateIndex].transitions[transitionIndex][0] = newInput;
+    return this;
+  }
+
+  setStartState(stateId) {
+    this.startStateId = stateId;
     return this;
   }
 
@@ -73,6 +121,7 @@ class FSA {
   reset() {
     this.total = 0;
     this.states = [];
+    this.startStateId = -1;
   }
 }
 

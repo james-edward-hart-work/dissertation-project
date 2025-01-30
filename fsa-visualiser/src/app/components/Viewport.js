@@ -1,6 +1,8 @@
 import styles from "../../styles/Viewport.module.css"
 import { useEffect, useRef, useState } from "react"
 import { StateCircle } from "./StateCircle";
+import { LinePath } from 'svg-dom-arrows';
+
 
 export const CIRCLE_RADIUS = 85;
 const WIDTH = 72;
@@ -19,7 +21,21 @@ const HEIGHT = 95;
 export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, currentPositions, setCurrentPositions }) => {
   const [localCircles, setLocalCircles] = useState([]); // State array containing the JSX of every circle
   const [localPositions, setLocalPositions] = useState([]); // State array of all circles' current positions
+  const [originStateId, setOriginStateId] = useState(-1);
+  const [destinationStateId, setDestinationStateId] = useState(-1);
   const ref = useRef(null)
+  const start = useRef();
+  const end = useRef();
+
+  function getTransitionRef(id) {
+    if (id == originStateId) {
+      return start;
+    } else if (id == destinationStateId) {
+      return end;
+    } else {
+      return useRef(id);
+    }
+  }
 
   /**
    * Updates the position of a state circle upon being dragged.
@@ -82,8 +98,9 @@ export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, cur
         circleX={circleX}
         circleY={circleY}
         CIRCLE_RADIUS={CIRCLE_RADIUS}
-        updatePosition={updatePosition} 
-        />
+        updatePosition={updatePosition}
+        getTransitionRef={getTransitionRef}
+      />
       ])
 
     setCircleArray(localCircles);
@@ -111,6 +128,26 @@ export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, cur
     setCurrentPositions(localPositions);
   }
 
+  function startTransition(x, y) {
+    // Do nothing if did not click on a state circle.
+    let circleId = getCircleOverlap(x, y);
+    if (circleId == -1) {
+      return;
+    }
+    setOriginStateId(circleId);
+  }
+
+  function connectTransition(x, y) {
+    // Do nothing if did not click on a state circle.
+    let destStateId = getCircleOverlap(x, y);
+    if (destStateId == -1) {
+      setOriginStateId(-1);
+      return;
+    }
+    setMachine(machine.addTransition(originStateId, destStateId, 'A'))
+    setOriginStateId(-1);
+  }
+
   /**
    * Handles all click events in Viewport.
    */
@@ -119,10 +156,16 @@ export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, cur
     const x = event.clientX; // Take off left margin
     const y = event.clientY; // Take off top margin
 
-    if (event.altKey) {
+    if (event.altKey) { // Delete
       deleteCircle(x, y);
+    } else if (event.shiftKey) { // Create Transition
+      startTransition(x, y);
     } else {
-      addCircle(x, y);
+      if (originStateId !== -1) { // Select Destination State
+        connectTransition(x, y)
+      } else {
+        addCircle(x, y); // Add State
+      }
     }
   }
 

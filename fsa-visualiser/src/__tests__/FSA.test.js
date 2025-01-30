@@ -66,4 +66,16 @@ describe('FSA', () => {
     expect(machine.total).toEqual(0); 
     expect(machine.states).toEqual([]);
   })
+
+  test('Updating Start State', () => {
+
+    machine.addState("State0");
+    machine.addState("State1");
+
+    expect(machine.total).toEqual(2);
+    expect(machine.states).toEqual([
+      { id: 0, name: "State0", transitions: [], accept: false },
+      { id: 1, name: "State1", transitions: [], accept: false }
+    ]);
+  })
 })
