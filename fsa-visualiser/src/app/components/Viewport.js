@@ -1,6 +1,7 @@
 import styles from "../../styles/Viewport.module.css"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { StateCircle } from "./StateCircle";
+import FSA from "../FSA";
 import { TransitionArrow } from "./TransitionArrow";
 
 export const CIRCLE_RADIUS = 85;
@@ -17,6 +18,7 @@ export const Viewport = ({ machine, setMachine }) => {
   const [circleArray, setCircleArray] = useState([]); // State array containing the JSX of every circle
   const [transitionArray, setTransitionArray] = useState([]); // Holds
   const [originStateId, setOriginStateId] = useState(-1);
+  const [isDragging, setIsDragging] = useState(false);
   const ref = useRef(null);
 
   /**
@@ -25,7 +27,14 @@ export const Viewport = ({ machine, setMachine }) => {
   function addCircle(x, y) {
 
     const id = machine.total; // Id is unique as total only ever increments.
-    setMachine(machine.addState("State " + id)); // Adds state to machine.
+
+    // Must create a new FSA object for 'machine' as object reference will be different,
+    // Triggering a re-render for all components with 'machine'
+    setMachine((machine) => {
+      const newMachine = new FSA(machine);
+      newMachine.addState("State " + id);
+      return newMachine;
+    });
 
     // Realigns state circle's coordinates so mouse is in the centre.
     let circleX = x - CIRCLE_RADIUS / 2;
@@ -42,6 +51,7 @@ export const Viewport = ({ machine, setMachine }) => {
         circleX={circleX}
         circleY={circleY}
         CIRCLE_RADIUS={CIRCLE_RADIUS}
+        setIsDragging={setIsDragging}
       />
       ])
   }
@@ -51,19 +61,27 @@ export const Viewport = ({ machine, setMachine }) => {
    */
   function deleteCircle(circleId) {
     // Delete state from FSA and circle from diagram.
-    setMachine(machine.deleteState(circleId));
+    setMachine((machine) => {
+      const newMachine = new FSA(machine);
+      newMachine.deleteState(circleId);
+      return newMachine;
+    });
     setCircleArray(array => array.filter(circle => circle.key != circleId))
-    setCurrentPositions(array => array.filter(element => element.id != circleId))
   }
 
   function connectTransition(destStateId) {
+    setMachine((machine) => {
+      const newMachine = new FSA(machine);
+      newMachine.addTransition(originStateId, destStateId, 'A');
+      return newMachine;
+    });
 
-    setMachine(machine.addTransition(originStateId, destStateId, 'A'))
     setTransitionArray(array => [...array,
     <TransitionArrow
       key={originStateId + "=>" + destStateId}
       originStateId={originStateId}
       destStateId={destStateId}
+      isDragging={isDragging}
     />]);
     setOriginStateId(-1);
   }

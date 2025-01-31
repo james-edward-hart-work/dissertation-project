@@ -7,7 +7,7 @@ import FSA from '../app/FSA';
 import { CIRCLE_RADIUS } from '../app/components/Viewport';
 import { getCoords } from './page.test';
 
-let defaultMachine = new FSA();
+let defaultMachine = new FSA(0);
 let circleArray = [];
 let currentPositions = [];
 const machineSetter = jest.fn();
@@ -19,7 +19,7 @@ describe('Viewport', () => {
 
   beforeEach(() => user = userEvent.setup());
   afterEach(() => {
-    defaultMachine = new FSA();
+    defaultMachine = new FSA(0);
   });
   describe('States', () => {
 

@@ -1,10 +1,10 @@
 import '@testing-library/jest-dom'
 import FSA from '../app/FSA';
 
-let machine = new FSA();
+let machine = new FSA(0);
 
 describe('FSA', () => {
-  afterEach(() => machine = new FSA());
+  afterEach(() => machine = new FSA(0));
   test('Ensures FSA object constructs correctly', () => {
     expect(machine.total).toEqual(0);
     expect(machine.states).toEqual([]);

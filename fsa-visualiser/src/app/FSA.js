@@ -4,10 +4,17 @@
  */
 class FSA {
   // Default configuration for the application's Finite State Machine
-  constructor() {
-    this.total = 0; // Tracks the total number of states ever created, not the current number of states
-    this.states = []; // Array of state objects
-    this.startStateId = -1; // Id of the start state, -1 for none
+
+  constructor(machine) {
+    if (machine === 0) {
+      this.total = 0; // Tracks the total number of states ever created, not the current number of states
+      this.states = []; // Array of state objects
+      this.startStateId = -1; // Id of the start state, -1 for none
+    } else { // Copy given machine;
+      this.total = machine.total;
+      this.states = [...machine.states.map(state => ({ ...state }))];
+      this.startStateId = machine.startStateId; 
+    }
   }
 
   // STATES //
@@ -60,7 +67,7 @@ class FSA {
     return this;
   }
 
-  toggleAccept(id) {    
+  toggleAccept(id) {
     // Update accept of state with matching id in state array.
     const index = this.states.findIndex(state => state.id === id);
     this.states[index] = {

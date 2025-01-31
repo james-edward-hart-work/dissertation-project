@@ -12,7 +12,7 @@ export function getCoords(string) {
   return [parseFloat(match[1]), parseFloat(match[2])];
 }
 
-let defaultMachine = new FSA();
+let defaultMachine = new FSA(0);
 let user;
 
 describe('Page', () => {
@@ -21,7 +21,7 @@ describe('Page', () => {
     render(<Page />)
     user = userEvent.setup()
   });
-  afterEach(() => defaultMachine = new FSA());
+  afterEach(() => defaultMachine = new FSA(0));
 
   describe('Start Up', () => {
 

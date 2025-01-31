@@ -5,13 +5,13 @@ import { userEvent } from '@testing-library/user-event'
 import { render, screen } from '@testing-library/react'
 
 let user;
-let defaultMachine = new FSA();
+let defaultMachine = new FSA(0);
 let circleArray = [];
 let currentPositions = [];
 const setMachine = jest.fn();
 const setCircleArray = jest.fn();
 const setCurrentPositions = jest.fn();
-let testMachine = new FSA();
+let testMachine = new FSA(0);
 testMachine.states = [{ id: 0, name: "Start_State", transitions: [["a", 1], ["b", 0]], accept: false },
 { id: 1, name: "State1", transitions: [["a", 0], ["b", 1]], accept: true }];
 testMachine.total = 2;
@@ -21,7 +21,7 @@ describe('InteractionWindow', () => {
     beforeEach(() => {
         user = userEvent.setup()
     });
-    afterEach(() => defaultMachine = new FSA());
+    afterEach(() => defaultMachine = new FSA(0));
     describe('Initial Rendering', () => {
         test.each([
             ['InteractionWindow'],

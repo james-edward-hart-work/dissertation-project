@@ -1,5 +1,6 @@
 import styles from "../../styles/Viewport.module.css"
 import { useState, useRef } from "react"
+import FSA from "../FSA";
 import PropTypes from 'prop-types';
 import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-draggable
 
@@ -11,19 +12,26 @@ import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-
  * @param circleX coordinate
  * @param circleY coordinate
  * @param CIRCLE_RADIUS in pixels
- * @param updatePosition function to update circle's position
  * @returns JSX for a state circle
  */
-export const StateCircle = ({ machine, setMachine, id, circleX, circleY, CIRCLE_RADIUS }) => {
+export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS }) => {
     const [isAccept, setIsAccept] = useState(false);
     const ref = useRef(id);
 
     function handleDoubleClick(event) {
         if (event.shiftKey) {
-            setMachine(machine.setStartState(id));
+            setMachine((machine) => {
+                const newMachine = new FSA(machine);
+                newMachine.setStartState(id);
+                return newMachine;
+              });
         } else {
             setIsAccept(!isAccept);
-            machine.toggleAccept(id);
+            setMachine((machine) => {
+                const newMachine = new FSA(machine);
+                newMachine.toggleAccept(id);
+                return newMachine;
+              });
         }
     }
 
@@ -33,26 +41,23 @@ export const StateCircle = ({ machine, setMachine, id, circleX, circleY, CIRCLE_
         bounds="parent"
         key={id}
         defaultPosition={{ x: circleX, y: circleY }} >
-        {isAccept
-            ? <input data-testid={"stateCircle"}
-                ref={ref}
-                id={id}
-                className={styles.stateInput}
-                type="text"
-                defaultValue={"State " + id}
-                onChange={(e) => { setMachine(machine.updateStateName(id, e.target.value)) }}
-                style={{ height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "1.5px solid black", outlineOffset: "-10px" }}
-                onDoubleClick={(e) => handleDoubleClick(e)} />
-            : <input data-testid={"stateCircle"}
-                ref={ref}
-                id={id}
-                className={styles.stateInput}
-                type="text"
-                defaultValue={"State " + id}
-                onChange={(e) => { setMachine(machine.updateStateName(id, e.target.value)) }}
-                style={{ height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "none" }}
-                onDoubleClick={(e) => handleDoubleClick(e)}
-            />}
+        <input data-testid={"stateCircle"}
+            ref={ref}
+            id={id}
+            className={styles.stateInput}
+            type="text"
+            defaultValue={"State " + id}
+            onChange={(e) => { 
+                setMachine((machine) => {
+                const newMachine = new FSA(machine);
+                newMachine.updateStateName(id, e.target.value);
+                return newMachine;
+              }); }}
+
+            style={isAccept
+                ? { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "1.5px solid black", outlineOffset: "-10px" }
+                : { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "none" }}
+            onDoubleClick={(e) => handleDoubleClick(e)} />
 
     </Draggable >
 }
