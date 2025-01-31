@@ -75,6 +75,7 @@ class FSA {
   // TRANSITIONS //
 
   addTransition(fromStateId, toStateId, input) {
+
     const index = this.states.findIndex(state => state.id === fromStateId);
     // Find index of the 'from' state
 

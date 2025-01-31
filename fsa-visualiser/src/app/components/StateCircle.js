@@ -14,7 +14,7 @@ import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-
  * @param updatePosition function to update circle's position
  * @returns JSX for a state circle
  */
-export const StateCircle = ({ machine, setMachine, id, circleX, circleY, CIRCLE_RADIUS, updatePosition }) => {
+export const StateCircle = ({ machine, setMachine, id, circleX, circleY, CIRCLE_RADIUS }) => {
     const [isAccept, setIsAccept] = useState(false);
     const ref = useRef(id);
 
@@ -32,8 +32,7 @@ export const StateCircle = ({ machine, setMachine, id, circleX, circleY, CIRCLE_
         nodeRef={ref}
         bounds="parent"
         key={id}
-        defaultPosition={{ x: circleX, y: circleY }}
-        onDrag={(data) => updatePosition(id, data.x, data.y)} >
+        defaultPosition={{ x: circleX, y: circleY }} >
         {isAccept
             ? <input data-testid={"stateCircle"}
                 ref={ref}
