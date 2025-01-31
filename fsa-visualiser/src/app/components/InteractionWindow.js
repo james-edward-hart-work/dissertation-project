@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "../../styles/InteractionWindow.module.css"
 
 // Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu
@@ -73,7 +73,7 @@ function printMachine(machine) {
     // Table Headers
     let states = [
         <tr key={'header'}>
-            <th>Name</th>
+            <th>State</th>
             <th>Transitions</th>
             <th style={{ width: "20%" }}>Accept?</th>
         </tr>
@@ -98,6 +98,10 @@ function printMachine(machine) {
     });
     return <div className={styles.States} data-testid="StatesList">
         <h3>Machine Description:</h3>
+        {(machine.startStateId != -1) 
+        ? <b>Start State: {machine.states.find(state => state.id === machine.startStateId).name}</b>
+        : <b>No start state selected.</b>
+        }
         <table><tbody>{states}</tbody></table>
     </div>;
 }
@@ -106,14 +110,9 @@ function printMachine(machine) {
  * Function component for the Interaction Window on the right of the application.
  * Designed to aid FSA development and allow for exporting the FSA.
  * @param machine Application's FSA
- * @param setMachine Setter for the FSA
- * @param circleArray Array of state circles
- * @param setCircleArray Setter for circleArray
- * @param currentPositions Array of all state circle positions
- * @param setCurrentPositions Setter for currentPositions
  * @returns JSX for Interaction Window
  */
-export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleArray, currentPositions, setCurrentPositions }) => {
+export const InteractionWindow = ({ machine }) => {
 
     const [hidePrint, setHidePrint] = useState(true); // Tracks if table of states is hidden or not
     const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
@@ -149,6 +148,7 @@ export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleA
                 options={[
                     { label: 'PNG', value: 'PNG' },
                     { label: 'SVG', value: 'SVG' },
+                    { label: 'JSON', value: 'JSON' },
                     { label: 'LaTeX', value: 'LaTeX' },
                     { label: 'Video', value: 'Video' }
                 ]}
@@ -161,16 +161,6 @@ export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleA
         <br></br>
         <br></br>
 
-        {/* List of States */}
-        {hidePrint
-            ? <button className={styles.StatesButton} onClick={() => setHidePrint(false)} data-testid="StatesButton" >View States</button>
-            : <div>
-                <button className={styles.StatesButton} onClick={() => setHidePrint(true)} data-testid="StatesButton" >Hide States</button>
-                {printMachine(machine)}
-            </div>
-        }
-        <br></br>
-        <br></br>
 
         {/* Controls */}
         {hideControls
@@ -180,5 +170,16 @@ export const InteractionWindow = ({ machine, setMachine, circleArray, setCircleA
                 {printControls()}
             </div>
         }
+        <br></br>
+
+        {/* List of States */}
+        {hidePrint
+            ? <button className={styles.StatesButton} onClick={() => setHidePrint(false)} data-testid="StatesButton" >View States</button>
+            : <div>
+                <button className={styles.StatesButton} onClick={() => setHidePrint(true)} data-testid="StatesButton" >Hide States</button>
+                {printMachine(machine)}
+            </div>
+        }        
+        <br></br>
     </div>;
 }

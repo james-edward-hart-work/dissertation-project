@@ -99,6 +99,7 @@ describe('InteractionWindow', () => {
         test.each([
             ['PNG'],
             ['SVG'],
+            ['JSON'],
             ['LaTeX'],
             ['Video'],
         ])('Export Type: %s', async (type) => {

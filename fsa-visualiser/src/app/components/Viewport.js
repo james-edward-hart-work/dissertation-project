@@ -1,8 +1,7 @@
 import styles from "../../styles/Viewport.module.css"
 import { useEffect, useRef, useState } from "react"
 import { StateCircle } from "./StateCircle";
-import { LinePath } from 'svg-dom-arrows';
-
+import { TransitionArrow } from "./TransitionArrow";
 
 export const CIRCLE_RADIUS = 85;
 const WIDTH = 72;
@@ -12,30 +11,14 @@ const HEIGHT = 95;
  * Function component for the Viewport containing the FSA diagram
  * @param machine Application's FSA
  * @param setMachine Setter for the FSA
- * @param circleArray Array of state circles
- * @param setCircleArray Setter for circleArray
- * @param currentPositions Array of all state circle positions
- * @param setCurrentPositions Setter for currentPositions
  * @returns JSX for the Viewport
  */
-export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, currentPositions, setCurrentPositions }) => {
-  const [localCircles, setLocalCircles] = useState([]); // State array containing the JSX of every circle
-  const [localPositions, setLocalPositions] = useState([]); // State array of all circles' current positions
+export const Viewport = ({ machine, setMachine }) => {
+  const [circleArray, setCircleArray] = useState([]); // State array containing the JSX of every circle
+  const [currentPositions, setCurrentPositions] = useState([]); // State array of all circles' current positions
+  const [transitionArray, setTransitionArray] = useState([]); // Holds
   const [originStateId, setOriginStateId] = useState(-1);
-  const [destinationStateId, setDestinationStateId] = useState(-1);
-  const ref = useRef(null)
-  const start = useRef();
-  const end = useRef();
-
-  function getTransitionRef(id) {
-    if (id == originStateId) {
-      return start;
-    } else if (id == destinationStateId) {
-      return end;
-    } else {
-      return useRef(id);
-    }
-  }
+  const ref = useRef(null);
 
   /**
    * Updates the position of a state circle upon being dragged.
@@ -45,14 +28,13 @@ export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, cur
    */
   function updatePosition(id, newX, newY) {
     // Update the entry in currentPositions where the id matches.
-
-    setLocalPositions(currentPos =>
+    setCurrentPositions(currentPos =>
       currentPos.map(circle =>
         circle.id === id
           ? { id: id, x: newX, y: newY }
           : circle
       ))
-    setCurrentPositions(localPositions);
+    console.log(currentPositions);    
   }
 
   /**
@@ -62,10 +44,10 @@ export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, cur
   function getCircleOverlap(x, y) {
 
     // Check if the mouse is currently clicking on another state cirlce
-    for (let i = 0; i < localPositions.length; i++) {
+    for (let i = 0; i < currentPositions.length; i++) {
       // If mouse position is within range of the circle + its radius
-      if (Math.abs(x - localPositions[i].x) < CIRCLE_RADIUS && Math.abs(y - localPositions[i].y) < CIRCLE_RADIUS) {
-        return localPositions[i].id;
+      if (Math.abs(x - currentPositions[i].x) < CIRCLE_RADIUS && Math.abs(y - currentPositions[i].y) < CIRCLE_RADIUS) {
+        return currentPositions[i].id;
       }
     }
     return -1; // Mouse is not hovering over a state circle.
@@ -88,8 +70,8 @@ export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, cur
     let circleY = y - CIRCLE_RADIUS / 2;
 
     // Adds circle to array of all circles.
-    setLocalCircles(
-      [...localCircles,
+    setCircleArray(array =>
+      [...array,
       <StateCircle
         key={id}
         machine={machine}
@@ -99,15 +81,10 @@ export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, cur
         circleY={circleY}
         CIRCLE_RADIUS={CIRCLE_RADIUS}
         updatePosition={updatePosition}
-        getTransitionRef={getTransitionRef}
       />
       ])
-
-    setCircleArray(localCircles);
-
     // Adds state circle's position to array of all circle positions.
-    setLocalPositions(array => [...array, { id: id, x: circleX, y: circleY }])
-    setCurrentPositions(localPositions);
+    setCurrentPositions(array => [...array, { id: id, x: circleX, y: circleY }])
   }
 
   /**
@@ -122,10 +99,8 @@ export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, cur
 
     // Delete state from FSA and circle from diagram.
     setMachine(machine.deleteState(circleId));
-    setLocalCircles(localCircles.filter(circle => circle.key != circleId))
-    setCircleArray(localCircles);
-    setLocalPositions(localPositions.filter(element => element.id != circleId))
-    setCurrentPositions(localPositions);
+    setCircleArray(localCircles.filter(circle => circle.key != circleId))
+    setCurrentPositions(currentPositions.filter(element => element.id != circleId))
   }
 
   function startTransition(x, y) {
@@ -144,7 +119,22 @@ export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, cur
       setOriginStateId(-1);
       return;
     }
+
+    console.log(transitionArray);
+    console.log(originStateId);
+    console.log(destStateId);
+
     setMachine(machine.addTransition(originStateId, destStateId, 'A'))
+    setTransitionArray(array => [...array,
+    <TransitionArrow
+      key={originStateId + "=>" + destStateId}
+      originStateId={originStateId}
+      destStateId={destStateId}
+      currentPositions={localCircles}
+      startPos={currentPositions.find(state => state.id == originStateId)}
+      endPos={currentPositions.find(state => state.id == destStateId)}
+      isDragging={isDragging}
+    />]);
     setOriginStateId(-1);
   }
 
@@ -173,6 +163,7 @@ export const Viewport = ({ machine, setMachine, circleArray, setCircleArray, cur
   return <div className={styles.Viewport} data-testid={"Viewport"}
     style={{ width: WIDTH + "svw", height: HEIGHT + "svh" }}
     ref={ref} onClick={(event) => handleClick(event)} >
-    {localCircles}
+    {circleArray}
+    {transitionArray}
   </div>
 }
