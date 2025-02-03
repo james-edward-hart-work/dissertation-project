@@ -5,7 +5,6 @@ import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
 import { Xwrapper } from "react-xarrows"; //https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
 
-
 export const CIRCLE_RADIUS = 85;
 const WIDTH = 72;
 const HEIGHT = 95;
@@ -18,25 +17,9 @@ const HEIGHT = 95;
  */
 export const Viewport = ({ machine, setMachine }) => {
   const [circleArray, setCircleArray] = useState([]); // State array containing the JSX of every circle
-  const [currentPositions, setCurrentPositions] = useState([]);
   const [transitionArray, setTransitionArray] = useState([]);
   const [originStateId, setOriginStateId] = useState(null);
   const ref = useRef(null);
-
-  /**
-   * Updates the position of a state circle upon being dragged.
-   * @param {String} id of state
-   * @param {int} newX coordinate of circle
-   * @param {int} newY coordinate of circle
-   */
-  function updatePosition(id, newX, newY) {
-    // Update the entry in currentPositions where the id matches.
-    setCurrentPositions((currentPos) => {
-      const newPost = currentPos.map(circle => circle.id === id ? { id: id, x: newX, y: newY } : circle)
-      return newPost;
-    }
-    )
-  }
 
   /**
    * Adds a state circle to the viewport and state to the FSA.
@@ -68,25 +51,28 @@ export const Viewport = ({ machine, setMachine }) => {
       circleX={circleX}
       circleY={circleY}
       CIRCLE_RADIUS={CIRCLE_RADIUS}
-      updatePosition={updatePosition}
-    />
-    ])
-
-    setCurrentPositions(array => [...array, { id: id, x: circleX, y: circleY }])
+    />])
   }
 
   /**
    * Deletes a state circle and state from the FSA
    */
   function deleteCircle(circleId) {
+    const transitionsToDelete = transitionArray.filter(arrow => (!arrow.key.startsWith(circleId) || !arrow.key.endsWith(circleId)));
+    
     // Delete state from FSA and circle from diagram.
     setMachine((machine) => {
       const newMachine = new FSA(machine);
-      newMachine.deleteState(circleId);
+      transitionsToDelete.forEach(element => { // Delete each transition connected to state.
+        const ids = element.key.split("=>");
+        newMachine.deleteTransition(ids[0], ids[1]);
+      });
+      newMachine.deleteState(circleId); // Delete state after all transitions deleted.
+      if (newMachine.startStateId == circleId) { newMachine.setStartState(-1) }
       return newMachine;
     });
     setCircleArray(array => array.filter(circle => circle.key != circleId))
-    setCurrentPositions(array => array.filter(element => element.id != circleId))
+    setTransitionArray(array => array.filter(arrow => (!arrow.key.startsWith(circleId) && !arrow.key.endsWith(circleId))))
   }
 
   function connectTransition(destStateId) {
@@ -99,11 +85,13 @@ export const Viewport = ({ machine, setMachine }) => {
 
     setTransitionArray(array => [...array,
     <TransitionArrow
+      id={originStateId + "=>" + destStateId}
       key={originStateId + "=>" + destStateId}
       originStateId={originStateId}
       destStateId={destStateId}
-      currentPositions={currentPositions}
       input={"A"}
+      setMachine={setMachine}
+      setTransitionArray={setTransitionArray}
     />]);
     setOriginStateId(null);
   }
@@ -115,8 +103,6 @@ export const Viewport = ({ machine, setMachine }) => {
 
     if (event.target.id != "Viewport") {
       const circleId = event.target.id;
-      console.log(circleId);
-      
 
       if (event.altKey) { // Delete
         deleteCircle(circleId);
@@ -127,7 +113,7 @@ export const Viewport = ({ machine, setMachine }) => {
           connectTransition(circleId);
         }
       }
-    } else {
+    } else { // Click on Viewport
       if (originStateId != null) {
         setOriginStateId(null);
       } else {

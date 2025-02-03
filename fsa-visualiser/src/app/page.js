@@ -7,15 +7,7 @@ import { InteractionWindow } from './components/InteractionWindow';
 
 function App() {
   const [machine, setMachine] = useState(new FSA(0));
-  // Creates a state for the machine, which may be updated during runtime
-
-  // function updateMachine(func, {params}) {
-  //   setMachine((machine) => {
-  //     const newMachine = new FSA(machine);
-  //     newMachine.func(params);
-  //     return newMachine;
-  //   })
-  // }
+  // Creates a state for the machine, which may be updated during runtime 
 
   return ( // The JSX for the application
     <div data-testid="App" style={{ height: "100%", width: "100%" }}>

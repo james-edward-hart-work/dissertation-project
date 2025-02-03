@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import styles from "../../styles/InteractionWindow.module.css"
 
 // Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu
@@ -45,7 +45,7 @@ function printControls() {
             </tr>
             <tr>
                 <td>Alt + Click</td>
-                <td>Deletes state</td>
+                <td>Deletes state or transition</td>
             </tr>
             <tr>
                 <td>Double Click</td>

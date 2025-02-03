@@ -43,10 +43,7 @@ export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS, u
         bounds="parent"
         key={id}
         defaultPosition={{ x: circleX, y: circleY }}
-        onDrag={(data) => {
-            updatePosition(id, data.x, data.y)
-            updateXarrow();
-        }}
+        onDrag={updateXarrow}
         onStop={updateXarrow}
     >
         <input data-testid={"stateCircle"}
