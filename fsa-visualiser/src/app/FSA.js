@@ -7,7 +7,7 @@ class FSA {
 
   constructor(machine) {
     if (machine === 0) {
-      this.total = 0; // Tracks the total number of states ever created, not the current number of states
+      this.total = 0 + ""; // Tracks the total number of states ever created, not the current number of states
       this.states = []; // Array of state objects
       this.startStateId = -1; // Id of the start state, -1 for none
     } else { // Copy given machine;
@@ -27,7 +27,7 @@ class FSA {
   addState(name) {
     this.states = [...this.states, // Retrieves current value of the list of states.
     {
-      id: this.total, // Id always unique as total only ever increments
+      id: this.total + "", // Id always unique as total only ever increments
       name: name,
       transitions: [], // Input word for transition, destination state
       accept: false // Boolean for whether this is an accept state
@@ -82,10 +82,9 @@ class FSA {
   // TRANSITIONS //
 
   addTransition(fromStateId, toStateId, input) {
-
     const index = this.states.findIndex(state => state.id === fromStateId);
     // Find index of the 'from' state
-
+    
     // Add input and id of destination state to array of transitions.
     this.states[index].transitions =
       [...this.states[index].transitions, // Retrieves current value of the list of transitions.

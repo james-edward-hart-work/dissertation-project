@@ -2,7 +2,7 @@
 import React from 'react';
 import FSA from './FSA';
 import { Viewport } from './components/Viewport';
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { InteractionWindow } from './components/InteractionWindow';
 
 function App() {

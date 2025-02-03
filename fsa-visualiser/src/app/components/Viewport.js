@@ -1,8 +1,10 @@
-import styles from "../../styles/Viewport.module.css"
-import { useEffect, useRef, useState } from "react"
-import { StateCircle } from "./StateCircle";
 import FSA from "../FSA";
+import { useRef, useState } from "react"
+import styles from "../../styles/Viewport.module.css"
+import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
+import { Xwrapper } from "react-xarrows"; //https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
+
 
 export const CIRCLE_RADIUS = 85;
 const WIDTH = 72;
@@ -16,17 +18,33 @@ const HEIGHT = 95;
  */
 export const Viewport = ({ machine, setMachine }) => {
   const [circleArray, setCircleArray] = useState([]); // State array containing the JSX of every circle
-  const [transitionArray, setTransitionArray] = useState([]); // Holds
-  const [originStateId, setOriginStateId] = useState(-1);
-  const [isDragging, setIsDragging] = useState(false);
+  const [currentPositions, setCurrentPositions] = useState([]);
+  const [transitionArray, setTransitionArray] = useState([]);
+  const [originStateId, setOriginStateId] = useState(null);
   const ref = useRef(null);
+
+  /**
+   * Updates the position of a state circle upon being dragged.
+   * @param {String} id of state
+   * @param {int} newX coordinate of circle
+   * @param {int} newY coordinate of circle
+   */
+  function updatePosition(id, newX, newY) {
+    // Update the entry in currentPositions where the id matches.
+    setCurrentPositions((currentPos) => {
+      const newPost = currentPos.map(circle => circle.id === id ? { id: id, x: newX, y: newY } : circle)
+      return newPost;
+    }
+    )
+  }
 
   /**
    * Adds a state circle to the viewport and state to the FSA.
    */
   function addCircle(x, y) {
 
-    const id = machine.total; // Id is unique as total only ever increments.
+    const id = machine.total + ""; // Id is unique as total only ever increments.
+    // Must be string so transition arrows recognise the id.
 
     // Must create a new FSA object for 'machine' as object reference will be different,
     // Triggering a re-render for all components with 'machine'
@@ -41,19 +59,20 @@ export const Viewport = ({ machine, setMachine }) => {
     let circleY = y - CIRCLE_RADIUS / 2;
 
     // Adds circle to array of all circles.
-    setCircleArray(array =>
-      [...array,
-      <StateCircle
-        key={id}
-        machine={machine}
-        setMachine={setMachine}
-        id={id}
-        circleX={circleX}
-        circleY={circleY}
-        CIRCLE_RADIUS={CIRCLE_RADIUS}
-        setIsDragging={setIsDragging}
-      />
-      ])
+    setCircleArray(array => [...array,
+    <StateCircle
+      key={id}
+      machine={machine}
+      setMachine={setMachine}
+      id={id}
+      circleX={circleX}
+      circleY={circleY}
+      CIRCLE_RADIUS={CIRCLE_RADIUS}
+      updatePosition={updatePosition}
+    />
+    ])
+
+    setCurrentPositions(array => [...array, { id: id, x: circleX, y: circleY }])
   }
 
   /**
@@ -67,9 +86,11 @@ export const Viewport = ({ machine, setMachine }) => {
       return newMachine;
     });
     setCircleArray(array => array.filter(circle => circle.key != circleId))
+    setCurrentPositions(array => array.filter(element => element.id != circleId))
   }
 
   function connectTransition(destStateId) {
+
     setMachine((machine) => {
       const newMachine = new FSA(machine);
       newMachine.addTransition(originStateId, destStateId, 'A');
@@ -81,9 +102,10 @@ export const Viewport = ({ machine, setMachine }) => {
       key={originStateId + "=>" + destStateId}
       originStateId={originStateId}
       destStateId={destStateId}
-      isDragging={isDragging}
+      currentPositions={currentPositions}
+      input={"A"}
     />]);
-    setOriginStateId(-1);
+    setOriginStateId(null);
   }
 
   /**
@@ -92,20 +114,22 @@ export const Viewport = ({ machine, setMachine }) => {
   function handleClick(event) {
 
     if (event.target.id != "Viewport") {
-      const circleId = parseInt(event.target.id);      
+      const circleId = event.target.id;
+      console.log(circleId);
+      
 
       if (event.altKey) { // Delete
         deleteCircle(circleId);
       } else if (event.shiftKey) { // Create Transition
         setOriginStateId(circleId);
       } else {
-        if (originStateId != -1) { // Select Destination State
-          connectTransition(circleId)
+        if (originStateId != null) { // Select Destination State
+          connectTransition(circleId);
         }
       }
     } else {
-      if (originStateId != -1) {
-        setOriginStateId(-1);
+      if (originStateId != null) {
+        setOriginStateId(null);
       } else {
         addCircle(event.clientX, event.clientY); // Add State
       }
@@ -116,7 +140,9 @@ export const Viewport = ({ machine, setMachine }) => {
   return <div className={styles.Viewport} data-testid={"Viewport"} id={"Viewport"}
     style={{ width: WIDTH + "svw", height: HEIGHT + "svh" }}
     ref={ref} onClick={(event) => handleClick(event)}>
-    {circleArray}
-    {transitionArray}
+    <Xwrapper>
+      {circleArray}
+      {transitionArray}
+    </Xwrapper>
   </div>
 }
