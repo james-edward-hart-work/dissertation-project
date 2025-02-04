@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+    experimental: {
+        workerThreads: false,
+        cpus: 4
+    }
+};
 
 export default nextConfig;

@@ -36,6 +36,10 @@ function printControls() {
                 <td>Creates a new state</td>
             </tr>
             <tr>
+                <td>Click (On Transition)</td>
+                <td>Toggles straightness of arrow</td>
+            </tr>
+            <tr>
                 <td>Drag</td>
                 <td>Drags state to new posititon</td>
             </tr>
@@ -52,7 +56,7 @@ function printControls() {
                 <td>Toggles accept state</td>
             </tr>
             <tr>
-                <td>Shift + Double Click</td>
+                <td>Shift + Alt + Click</td>
                 <td>Makes selected state the start state</td>
             </tr>
         </tbody>

@@ -84,7 +84,7 @@ class FSA {
   addTransition(fromStateId, toStateId, input) {
     const index = this.states.findIndex(state => state.id === fromStateId);
     // Find index of the 'from' state
-    
+
     // Add input and id of destination state to array of transitions.
     this.states[index].transitions =
       [...this.states[index].transitions, // Retrieves current value of the list of transitions.
@@ -105,7 +105,7 @@ class FSA {
 
   changeTransitionInput(fromStateId, toStateId, newInput) {
     const stateIndex = this.states.findIndex(state => state.id === fromStateId); // Get from state index
-    const transitionIndex = this.states[index].transitions.findIndex(transition => transition[1] === toStateId);
+    const transitionIndex = this.states[stateIndex].transitions.findIndex(transition => transition[1] === toStateId);
     // Get the index of the transition pointing towards the specified destination stateId
 
     this.states[stateIndex].transitions[transitionIndex][0] = newInput;

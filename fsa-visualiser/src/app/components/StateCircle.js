@@ -20,21 +20,13 @@ export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS, u
     const ref = useRef(id);
     const updateXarrow = useXarrow();
 
-    function handleDoubleClick(event) {
-        if (event.shiftKey) {
-            setMachine((machine) => {
-                const newMachine = new FSA(machine);
-                newMachine.setStartState(id);
-                return newMachine;
-            });
-        } else {
-            setIsAccept(!isAccept);
-            setMachine((machine) => {
-                const newMachine = new FSA(machine);
-                newMachine.toggleAccept(id);
-                return newMachine;
-            });
-        }
+    function handleDoubleClick() {
+        setIsAccept(!isAccept);
+        setMachine((machine) => {
+            const newMachine = new FSA(machine);
+            newMachine.toggleAccept(id);
+            return newMachine;
+        });
     }
 
     // Places circular text input inside a draggable div.
@@ -63,7 +55,7 @@ export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS, u
             style={isAccept
                 ? { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "1.5px solid black", outlineOffset: "-10px" }
                 : { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "none" }}
-            onDoubleClick={(e) => handleDoubleClick(e)} />
+            onDoubleClick={() => handleDoubleClick()} />
 
     </Draggable >
 }

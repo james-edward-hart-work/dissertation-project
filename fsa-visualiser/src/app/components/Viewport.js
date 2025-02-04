@@ -1,9 +1,10 @@
 import FSA from "../FSA";
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import styles from "../../styles/Viewport.module.css"
 import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
 import { Xwrapper } from "react-xarrows"; //https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
+import Xarrow from "react-xarrows";
 
 export const CIRCLE_RADIUS = 85;
 const WIDTH = 72;
@@ -59,7 +60,7 @@ export const Viewport = ({ machine, setMachine }) => {
    */
   function deleteCircle(circleId) {
     const transitionsToDelete = transitionArray.filter(arrow => (!arrow.key.startsWith(circleId) || !arrow.key.endsWith(circleId)));
-    
+
     // Delete state from FSA and circle from diagram.
     setMachine((machine) => {
       const newMachine = new FSA(machine);
@@ -77,40 +78,59 @@ export const Viewport = ({ machine, setMachine }) => {
 
   function connectTransition(destStateId) {
 
-    setMachine((machine) => {
-      const newMachine = new FSA(machine);
-      newMachine.addTransition(originStateId, destStateId, 'A');
-      return newMachine;
-    });
+    if (transitionArray.find(state => state.key == (originStateId + "=>" + destStateId)) == undefined) { // Skip if transition already added
 
-    setTransitionArray(array => [...array,
-    <TransitionArrow
-      id={originStateId + "=>" + destStateId}
-      key={originStateId + "=>" + destStateId}
-      originStateId={originStateId}
-      destStateId={destStateId}
-      input={"A"}
-      setMachine={setMachine}
-      setTransitionArray={setTransitionArray}
-    />]);
+      setMachine((machine) => {
+        const newMachine = new FSA(machine);
+        newMachine.addTransition(originStateId, destStateId, 'A');
+        return newMachine;
+      });
+
+      setTransitionArray(array => [...array,
+      <TransitionArrow
+        id={originStateId + "=>" + destStateId}
+        key={originStateId + "=>" + destStateId}
+        originStateId={originStateId}
+        destStateId={destStateId}
+        machine={machine}
+        setMachine={setMachine}
+        setTransitionArray={setTransitionArray}
+      />]);
+    }
     setOriginStateId(null);
+  }
+
+  function startStateArrow() {
+    if (machine.startStateId != "0") {
+      return
+    }
   }
 
   /**
    * Handles all click events in Viewport.
    */
-  function handleClick(event) {
+  function handleClick(event) {    
 
     if (event.target.id != "Viewport") {
-      const circleId = event.target.id;
+      if (event.target.tagName != "path") {
+        const circleId = event.target.id;
 
-      if (event.altKey) { // Delete
-        deleteCircle(circleId);
-      } else if (event.shiftKey) { // Create Transition
-        setOriginStateId(circleId);
-      } else {
-        if (originStateId != null) { // Select Destination State
-          connectTransition(circleId);
+        if (event.altKey && event.shiftKey) { // Set Start State
+          setMachine((machine) => {
+            const newMachine = new FSA(machine);
+            newMachine.setStartState(circleId);
+            return newMachine;
+          });
+        }
+
+        if (event.altKey && !event.shiftKey) { // Delete
+          deleteCircle(circleId);
+        } else if (event.shiftKey && !event.altKey) { // Create Transition
+          setOriginStateId(circleId);
+        } else {
+          if (originStateId != null) { // Select Destination State
+            connectTransition(circleId);
+          }
         }
       }
     } else { // Click on Viewport
@@ -125,10 +145,24 @@ export const Viewport = ({ machine, setMachine }) => {
   // Renders Viewport.
   return <div className={styles.Viewport} data-testid={"Viewport"} id={"Viewport"}
     style={{ width: WIDTH + "svw", height: HEIGHT + "svh" }}
-    ref={ref} onClick={(event) => handleClick(event)}>
+    ref={ref} onClick={(event) => handleClick(event)} >
     <Xwrapper>
       {circleArray}
       {transitionArray}
+      <Xarrow
+        color="black"
+        key={machine.startStateId}
+        id={machine.startStateId}
+        start={machine.startStateId}
+        end={machine.startStateId}
+        path={"smooth"}
+        _cpx2Offset={-100}
+        strokeWidth={2.5}
+        startAnchor={{ position: "left" }}
+        endAnchor={{ position: "left", offset: { rightness: 100 } }}
+        showXarrow={(machine.startStateId == "-1") ? false : true}
+      //arrowHead={ {style: {transform: "rotateY(180deg)"} }}
+      />
     </Xwrapper>
   </div>
 }
