@@ -1,5 +1,5 @@
 import FSA from "../FSA";
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import styles from "../../styles/Viewport.module.css"
 import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
@@ -58,8 +58,8 @@ export const Viewport = ({ machine, setMachine }) => {
   /**
    * Deletes a state circle and state from the FSA
    */
-  function deleteCircle(circleId) {
-    const transitionsToDelete = transitionArray.filter(arrow => (!arrow.key.startsWith(circleId) || !arrow.key.endsWith(circleId)));
+  function deleteCircle(circleId) {    
+    const transitionsToDelete = transitionArray.filter(arrow => (arrow.key.startsWith(circleId) || arrow.key.endsWith(circleId)));    
 
     // Delete state from FSA and circle from diagram.
     setMachine((machine) => {
@@ -98,12 +98,6 @@ export const Viewport = ({ machine, setMachine }) => {
       />]);
     }
     setOriginStateId(null);
-  }
-
-  function startStateArrow() {
-    if (machine.startStateId != "0") {
-      return
-    }
   }
 
   /**
@@ -161,7 +155,6 @@ export const Viewport = ({ machine, setMachine }) => {
         startAnchor={{ position: "left" }}
         endAnchor={{ position: "left", offset: { rightness: 100 } }}
         showXarrow={(machine.startStateId == "-1") ? false : true}
-      //arrowHead={ {style: {transform: "rotateY(180deg)"} }}
       />
     </Xwrapper>
   </div>

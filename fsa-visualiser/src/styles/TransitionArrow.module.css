@@ -1,3 +1,8 @@
 .transitionInput {
-    
+    z-index: 0;
+    background: 0;
+    text-align: center;
+    border: none;
+    margin-bottom: 30%;
+    width: fit-content;
 }

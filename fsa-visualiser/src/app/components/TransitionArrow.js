@@ -4,11 +4,9 @@ import PropTypes from 'prop-types';
 import Xarrow from "react-xarrows"; //https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
 import styles from "../../styles/TransitionArrow.module.css"
 
-export const TransitionArrow = ({ originStateId, destStateId, input, machine, setMachine, setTransitionArray }) => {
+export const TransitionArrow = ({ originStateId, destStateId, machine, setMachine, setTransitionArray }) => {
 
     const [isStraight, setIsStraight] = useState(false);
-    const label = machine.states.find(state => state.id === originStateId)
-    //.transitions.find(transition => transition[1] == destStateId);
 
     function handleClick(event) {
         if (event.altKey) {
@@ -24,20 +22,7 @@ export const TransitionArrow = ({ originStateId, destStateId, input, machine, se
         }
     }
 
-    return <div style={{ overflow: "visible" }} >
-        <input data-testid={"transitionInput"}
-            type="text"
-            className={styles.transitionInput}
-            defaultValue={"A"}
-            onChange={(e) => {
-                setMachine((machine) => {
-                    const newMachine = new FSA(machine);
-                    newMachine.changeTransitionInput(originStateId, destStateId, e.target.value);
-                    return newMachine;
-                });
-            }}
-        />
-
+    return <div>
         {(originStateId == destStateId) ?
             <Xarrow // Self-pointing transitions
                 color="black"
@@ -45,6 +30,7 @@ export const TransitionArrow = ({ originStateId, destStateId, input, machine, se
                 id={originStateId + "=>" + destStateId}
                 start={originStateId}
                 end={destStateId}
+                passProps={{ onClick: (e) => handleClick(e) }}
                 path={"smooth"}
                 _cpx1Offset={-50}
                 _cpy1Offset={-100}
@@ -53,22 +39,42 @@ export const TransitionArrow = ({ originStateId, destStateId, input, machine, se
                 strokeWidth={2.5}
                 startAnchor={{ position: "top" }}
                 endAnchor={{ position: "left", offset: { rightness: 100 } }}
-                label={<div style={{ fontSize: "1.3em", fontFamily: "fantasy", fontStyle: "italic" }}>{input}</div>}
-                passProps={{ onClick: (e) => handleClick(e) }}
-            /> 
-            : 
+                labels= {{ middle: <input data-testid={"transitionInput"}
+                        type="text"
+                        className={styles.transitionInput}
+                        defaultValue={"A"}
+                        onChange={(e) => {
+                            setMachine((machine) => {
+                                const newMachine = new FSA(machine);
+                                newMachine.changeTransitionInput(originStateId, destStateId, e.target.value);
+                                return newMachine;
+                            })
+                        }} />}}
+                arrowHead={{ style: { transform: "rotateY(180deg)" } }}
+            />
+            :
             <Xarrow // Regular transitions
                 color="black"
                 key={originStateId + "=>" + destStateId}
                 id={originStateId + "=>" + destStateId}
                 start={originStateId}
                 end={destStateId}
+                passProps={{ onClick: (e) => handleClick(e) }}
                 path={isStraight ? "straight" : "smooth"}
                 curveness={0.2}
                 strokeWidth={2.5}
-                passProps={{ onClick: (e) => handleClick(e) }}
-                label="label"
                 _extendSVGcanvas={30}
+                labels= {{ middle: <input data-testid={"transitionInput"}
+                        type="text"
+                        className={styles.transitionInput}
+                        defaultValue={"A"}
+                        onChange={(e) => {
+                            setMachine((machine) => {
+                                const newMachine = new FSA(machine);
+                                newMachine.changeTransitionInput(originStateId, destStateId, e.target.value);
+                                return newMachine;
+                            })
+                        }} />}}
             // Put input inside label prop
             />
         }

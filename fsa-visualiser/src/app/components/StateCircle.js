@@ -15,7 +15,7 @@ import { useXarrow } from "react-xarrows";
  * @param CIRCLE_RADIUS in pixels
  * @returns JSX for a state circle
  */
-export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS, updatePosition }) => {
+export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS }) => {
     const [isAccept, setIsAccept] = useState(false);
     const ref = useRef(id);
     const updateXarrow = useXarrow();
@@ -51,7 +51,6 @@ export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS, u
                     return newMachine;
                 });
             }}
-
             style={isAccept
                 ? { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "1.5px solid black", outlineOffset: "-10px" }
                 : { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "none" }}

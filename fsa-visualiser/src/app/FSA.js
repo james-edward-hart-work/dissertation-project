@@ -103,7 +103,7 @@ class FSA {
     return this;
   }
 
-  changeTransitionInput(fromStateId, toStateId, newInput) {
+  changeTransitionInput(fromStateId, toStateId, newInput) {    
     const stateIndex = this.states.findIndex(state => state.id === fromStateId); // Get from state index
     const transitionIndex = this.states[stateIndex].transitions.findIndex(transition => transition[1] === toStateId);
     // Get the index of the transition pointing towards the specified destination stateId

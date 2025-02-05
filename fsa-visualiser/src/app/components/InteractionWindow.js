@@ -32,31 +32,31 @@ function printControls() {
     return <table className={styles.Controls} data-testid="Controls" >
         <tbody>
             <tr>
-                <td>Click (On Blank Space)</td>
+                <td>Click (Blank Space)</td>
                 <td>Creates a new state</td>
             </tr>
             <tr>
-                <td>Click (On Transition)</td>
+                <td>Click (Transition)</td>
                 <td>Toggles straightness of arrow</td>
             </tr>
             <tr>
-                <td>Drag</td>
+                <td>Drag (State)</td>
                 <td>Drags state to new posititon</td>
             </tr>
             <tr>
-                <td>Shift + Click</td>
-                <td>Creates transition from selected state</td>
+                <td>Shift + Click (State)</td>
+                <td>Creates transition from selected state, then click on the destination state</td>
             </tr>
             <tr>
-                <td>Alt + Click</td>
+                <td>Alt + Click (State/Transition)</td>
                 <td>Deletes state or transition</td>
             </tr>
             <tr>
-                <td>Double Click</td>
+                <td>Double Click (State)</td>
                 <td>Toggles accept state</td>
             </tr>
             <tr>
-                <td>Shift + Alt + Click</td>
+                <td>Shift + Alt + Click (State)</td>
                 <td>Makes selected state the start state</td>
             </tr>
         </tbody>
@@ -103,8 +103,8 @@ function printMachine(machine) {
     return <div className={styles.States} data-testid="StatesList">
         <h3>Machine Description:</h3>
         {(machine.startStateId != -1) 
-        ? <b>Start State: {machine.states.find(state => state.id === machine.startStateId).name}</b>
-        : <b>No start state selected.</b>
+        ? <b style={{marginLeft: "2%"}}>Start State: {machine.states.find(state => state.id === machine.startStateId).name}</b>
+        : <b style={{marginLeft: "2%"}}>No start state selected.</b>
         }
         <table><tbody>{states}</tbody></table>
     </div>;
