@@ -7,11 +7,11 @@ class FSA {
 
   constructor(machine) {
     if (machine === 0) {
-      this.total = 0 + ""; // Tracks the total number of states ever created, not the current number of states
+      this.total = 0; // Tracks the total number of states ever created, not the current number of states
       this.states = []; // Array of state objects
       this.startStateId = "-1"; // Id of the start state, -1 for none
     } else { // Copy given machine;
-      this.total = machine.total + "";
+      this.total = machine.total;
       this.states = [...machine.states.map(state => ({ ...state }))];
       this.startStateId = machine.startStateId + "";
     }
@@ -82,22 +82,21 @@ class FSA {
   // TRANSITIONS //
 
   addTransition(fromStateId, toStateId, input) {
-    const index = this.states.findIndex(state => state.id === fromStateId);
-    // Find index of the 'from' state
+      const index = this.states.findIndex(state => state.id === fromStateId);
+      // Find index of the 'from' state
 
-    // Add input and id of destination state to array of transitions.
-    this.states[index].transitions =
-      [...this.states[index].transitions, // Retrieves current value of the list of transitions.
-      [input, toStateId]
-      ];
+      // Add input and id of destination state to array of transitions.
+      this.states[index].transitions =
+        [...this.states[index].transitions, // Retrieves current value of the list of transitions.
+        [input, toStateId]
+        ];
     return this;
   }
 
   deleteTransition(fromStateId, toStateId) {
     const index = this.states.findIndex(state => state.id === fromStateId);
 
-    this.states[index].transitions = this.states[index].transitions
-      .filter(element => element[1] != toStateId);
+    this.states[index].transitions = this.states[index].transitions.filter(element => element[1] != toStateId);
 
     // Removes all transitions which point toward the destination state.
     return this;
@@ -118,43 +117,96 @@ class FSA {
   }
 
   // To be filled out later
-  isValid() {
-    return (this.states.length > 1);
+  status() {
+    if (this.startStateId == "-1" || this.states.filter(state => state.accept == true).length == 0) {
+      return "Invalid";
+    }
+
+    // Gathers all input characters from start state.
+    const startState = this.states.find(state => state.id === this.startStateId);
+    let startStateInputs = [];
+    startState.transitions.forEach(transition => {
+      let letters = transition[0].trim().split(",");
+      letters.forEach(letter => {
+        if (letter == "") {
+          return;
+        }
+        if (startStateInputs.includes(letter)) {
+          return "Nondeterministic";
+        }
+        startStateInputs.push(letter);
+      });
+    });
+
+    if (startStateInputs.length == 0 && startState.accept == false) {
+      return "Invalid";
+    }
+
+    console.log(startStateInputs);
+    
+
+    // 
+    for (let i = 0; i < this.states.length; i++) { // State
+      let state = this.states[i];
+      let stateInputs = [];
+
+      for (let j = 0; j < state.transitions.length; j++) { // Transition
+        let letters = state.transitions[j][0].trim().split(",");
+
+        for (let k = 0; k < letters.length; k++) { // Letters
+          let letter = letters[k];
+
+          // Ensures state has no duplicate inputs or empty words
+          if (stateInputs.includes(letter) || letter == "ε") {
+            return "Nondeterministic";
+          }
+          stateInputs.push(letter);
+        }
+      }
+
+      // Checks that the state is not missing any input values.
+      for (let l = 0; l < startStateInputs.length; l++) {
+        if (stateInputs.filter(input => input == startStateInputs[l]).length !== 1) {
+          return "Nondeterministic";
+        }
+      }
+    }
+
+    return "Deterministic";
   }
 
   runInput(inputWord) {
 
-    if (this.startStateId == "-1") {
-      alert("Please select a start state by using: Alt + Shift + Click on any state.");
+    if (this.status() == "Invalid") {
+      alert("Machine is not valid, please ensure it has:\n - A start state, selected using Alt + Shift + Click\n At least one accept state, toggled using double click.")
       return;
     }
 
-    if (inputWord.length == 0) {
-      alert("Please type an input word.");
-      return;
-    }
-
-    if (this.states.filter(state => state.accept == true).length == 0) {
-      alert("No accept states created.");
-      return;
-    }
-
-    const letters = inputWord.split("");    
+    const letters = inputWord.split("");
     let currentState = this.states.find(state => state.id === this.startStateId);
     let outputPath = inputWord + ". \nPath: " + currentState.name;
-
-    // Set current state to start state.
 
     // Move to final state.
     letters.forEach(letter => {
       outputPath += " => "
-      const nextStateEntry = currentState.transitions.find(transition => transition[0] === letter);
+      let nextStateEntry = undefined;
 
-      if (nextStateEntry == undefined) { 
+      const allTransitions = currentState.transitions.filter(transition => transition[0] == letter);
+      allTransitions.forEach(transition => {
+        const inputs = transition[0].trim().split(",");
+        if (inputs.includes("\e")) {
+
+        }
+        if (inputs.includes(letter)) {
+          nextStateEntry = transition;
+        }
+      });
+
+      if (nextStateEntry == undefined) {
         outputPath += "undefined";
         return;
-       }
-      
+      }
+
       currentState = this.states.find(state => state.id === nextStateEntry[1]);
       outputPath += currentState.name;
     })
@@ -172,7 +224,7 @@ class FSA {
   reset() {
     this.total = 0;
     this.states = [];
-    this.startStateId = -1;
+    this.startStateId = "-1";
   }
 }
 

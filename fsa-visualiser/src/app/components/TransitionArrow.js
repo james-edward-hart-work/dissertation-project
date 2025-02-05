@@ -4,17 +4,18 @@ import PropTypes from 'prop-types';
 import Xarrow from "react-xarrows"; //https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
 import styles from "../../styles/TransitionArrow.module.css"
 
-export const TransitionArrow = ({ originStateId, destStateId, machine, setMachine, setTransitionArray }) => {
+export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTransitionArray }) => {
 
     const [isStraight, setIsStraight] = useState(false);
 
     function handleClick(event) {
         if (event.altKey) {
-            setMachine((machine) => {
+            setMachine((machine) => {                
                 const newMachine = new FSA(machine);
                 newMachine.deleteTransition(originStateId, destStateId);
                 return newMachine;
             });
+
             setTransitionArray(array => array.filter(arrow => (arrow.key != (originStateId + "=>" + destStateId))))
 
         } else {

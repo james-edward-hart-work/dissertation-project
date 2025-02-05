@@ -153,13 +153,13 @@ export const InteractionWindow = ({ machine }) => {
         <br></br>
         <br></br>
 
-
         {/* Controls */}
         {hideControls
             ? <button onClick={() => setControlsPrint(false)} data-testid="ControlsButton" >View Controls</button>
             : <div>
                 <button onClick={() => setControlsPrint(true)} data-testid="ControlsButton" >Hide Controls</button>
                 {printControls()}
+                <p style={{ marginTop: "1%", marginLeft: "2%"}}>Empty Word Symbol: ε </p>
             </div>
         }
         <br></br>

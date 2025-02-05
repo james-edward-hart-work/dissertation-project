@@ -5,7 +5,8 @@ export const InputBar = ({ machine }) => {
     const [showPlay, setShowPlay] = useState(true); // Tracks if play or stop button is shown
     const [inputWord, setInputWord] = useState("");
 
-    return <div className={styles.InputDiv} data-testid="InputDiv">
+    return <div>
+    <div className={styles.InputDiv} data-testid="InputDiv">
         <input className={styles.WordInput}
             data-testid="WordInput"
             placeholder="Enter an input word..."
@@ -20,9 +21,11 @@ export const InputBar = ({ machine }) => {
             : <span className={styles.StopButton} data-testid="StopButton" onClick={() => setShowPlay(true)}>&#9723;</span>
         }
 
-        {machine.isValid()
+        {machine.status() != "Invalid"
             ? <span className={styles.ValidLight} data-testid="ValidLight" style={{ backgroundColor: "green" }}></span>
             : <span className={styles.ValidLight} data-testid="ValidLight" style={{ backgroundColor: "red" }}></span>
         }
+    </div>
+    <p>{machine.status()}</p>
     </div>
 }

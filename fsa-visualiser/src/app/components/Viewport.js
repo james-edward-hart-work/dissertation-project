@@ -66,7 +66,7 @@ export const Viewport = ({ machine, setMachine }) => {
       const newMachine = new FSA(machine);
       transitionsToDelete.forEach(element => { // Delete each transition connected to state.
         const ids = element.key.split("=>");
-        newMachine.deleteTransition(ids[0], ids[1]);
+        newMachine.deleteTransition(ids[0], ids[1]);        
       });
       newMachine.deleteState(circleId); // Delete state after all transitions deleted.
       if (newMachine.startStateId == circleId) { newMachine.setStartState(-1) }
@@ -106,7 +106,7 @@ export const Viewport = ({ machine, setMachine }) => {
   function handleClick(event) {    
 
     if (event.target.id != "Viewport") {
-      if (event.target.tagName != "path") {
+      if (machine.states.find(state => state.id == event.target.id) != undefined) {
         const circleId = event.target.id;
 
         if (event.altKey && event.shiftKey) { // Set Start State
