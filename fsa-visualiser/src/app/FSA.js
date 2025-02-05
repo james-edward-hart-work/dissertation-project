@@ -13,7 +13,7 @@ class FSA {
     } else { // Copy given machine;
       this.total = machine.total + "";
       this.states = [...machine.states.map(state => ({ ...state }))];
-      this.startStateId = machine.startStateId + ""; 
+      this.startStateId = machine.startStateId + "";
     }
   }
 
@@ -103,7 +103,7 @@ class FSA {
     return this;
   }
 
-  changeTransitionInput(fromStateId, toStateId, newInput) {    
+  changeTransitionInput(fromStateId, toStateId, newInput) {
     const stateIndex = this.states.findIndex(state => state.id === fromStateId); // Get from state index
     const transitionIndex = this.states[stateIndex].transitions.findIndex(transition => transition[1] === toStateId);
     // Get the index of the transition pointing towards the specified destination stateId
@@ -120,6 +120,50 @@ class FSA {
   // To be filled out later
   isValid() {
     return (this.states.length > 1);
+  }
+
+  runInput(inputWord) {
+
+    if (this.startStateId == "-1") {
+      alert("Please select a start state by using: Alt + Shift + Click on any state.");
+      return;
+    }
+
+    if (inputWord.length == 0) {
+      alert("Please type an input word.");
+      return;
+    }
+
+    if (this.states.filter(state => state.accept == true).length == 0) {
+      alert("No accept states created.");
+      return;
+    }
+
+    const letters = inputWord.split("");    
+    let currentState = this.states.find(state => state.id === this.startStateId);
+    let outputPath = inputWord + ". \nPath: " + currentState.name;
+
+    // Set current state to start state.
+
+    // Move to final state.
+    letters.forEach(letter => {
+      outputPath += " => "
+      const nextStateEntry = currentState.transitions.find(transition => transition[0] === letter);
+
+      if (nextStateEntry == undefined) { 
+        outputPath += "undefined";
+        return;
+       }
+      
+      currentState = this.states.find(state => state.id === nextStateEntry[1]);
+      outputPath += currentState.name;
+    })
+
+    if (currentState.accept && !outputPath.endsWith("undefined")) {
+      alert("The machine accepts: " + outputPath);
+    } else {
+      alert("The machine rejects: " + outputPath);
+    }
   }
 
   /**

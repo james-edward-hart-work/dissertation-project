@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "../../styles/InteractionWindow.module.css"
+import { InputBar } from "./InputBar";
 
 // Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu
 const Dropdown = ({ label, value, options, onChange }) => {
@@ -120,24 +121,11 @@ export const InteractionWindow = ({ machine }) => {
 
     const [hidePrint, setHidePrint] = useState(true); // Tracks if table of states is hidden or not
     const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
-    const [showPlay, setShowPlay] = useState(true); // Tracks if play or stop button is shown
     const [exportType, setExportType] = useState('PNG'); // Stores the type of desired export
 
     return <div className={styles.InteractionWindow} data-testid="InteractionWindow">
 
-        {/* Word Input */}
-        <div className={styles.InputDiv} data-testid="InputDiv">
-            <input className={styles.WordInput} data-testid="WordInput" placeholder="Enter an input word..."></input>
-            {showPlay
-                ? <span className={styles.PlayButton} data-testid="PlayButton" onClick={() => setShowPlay(false)}>&#9655;</span>
-                : <span className={styles.StopButton} data-testid="StopButton" onClick={() => setShowPlay(true)}>&#9723;</span>
-            }
-
-            {machine.isValid()
-                ? <span className={styles.ValidLight} data-testid="ValidLight" style={{ backgroundColor: "green" }}></span>
-                : <span className={styles.ValidLight} data-testid="ValidLight" style={{ backgroundColor: "red" }}></span>
-            }
-        </div>
+        <InputBar machine={machine} />
         <br></br>
 
         <button className={styles.OrganiseButton} data-testid="OrganiseButton" > Organise FSA Layout</button>
