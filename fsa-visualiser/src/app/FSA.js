@@ -1,3 +1,5 @@
+import { input } from "@testing-library/user-event/dist/cjs/event/input.js";
+
 /**
  * Class for creating Finite State Automata Objects
  * Contains all logical manipulation of the application's FSA
@@ -180,6 +182,19 @@ class FSA {
     }
 
     const letters = inputWord.split("");
+
+    // Check that word is valid.
+    let valid = true;
+    letters.forEach(letter => {
+      if (!this.inputAlphabet().includes(letter)) {
+        valid = false;
+      }
+    });
+    if (!valid) {
+      alert("Invalid word");
+      return;
+    }
+
     let currentState = this.states.find(state => state.id === this.startStateId);
     let outputPath = inputWord + ". \nPath: " + currentState.name;
 
@@ -223,14 +238,14 @@ class FSA {
       let isValid = false;
       let branchStore = [[0, this.startStateId]]; // Array of branches to explore
       // [letterInded, destinationStateId]
-      
+
       // Stores the fromState, toState and index of letter in word
       // If not more transitions, go through this list, end when this ends.
       // Pop branch each time exploring.
 
       while (branchStore.length > 0) { // Every loop = branch
         console.log(branchStore);
-        
+
         const branch = branchStore.pop();
         currentState = this.states.find(state => state.id == branch[1]);
         let letterIndex = branch[0]; // Tracks index of current letter starting at branch
@@ -238,17 +253,19 @@ class FSA {
           console.log("Word read fully");
           if (currentState.accept) { // Final state is an accept state.
             console.log("Accept");
-            
+
             isValid = true;
             break;
           }
-        } else { // Not at final letter of input word.
-          while (letterIndex != inputWord.length){
+        } else { 
+          // Change depth-first search to breathe-first
+          // Not at final letter of input word.
+          while (letterIndex != inputWord.length) {
             console.log("Branch: ", currentState.name, inputWord[letterIndex]);
-            
+
             const possibleTransitions = currentState.transitions.filter(transition => (transition[0] == inputWord[letterIndex] || transition[0] == "ε"));
             console.log(possibleTransitions);
-            
+
             if (possibleTransitions.length == 0) { // Branch ends before all letters are read.
               console.log("undef");
               break; // End current branch.
@@ -268,10 +285,10 @@ class FSA {
             }
             console.log(currentState);
             console.log(letterIndex);
-          
-          } 
+
+          }
           console.log(currentState.name);
-          
+
           // Letter is not the final letter
           if (currentState.accept) { // Final state is an accept state in this branch
             isValid = true;
@@ -286,6 +303,29 @@ class FSA {
         alert("The machine rejects: " + inputWord);
       }
     }
+  }
+
+  inputAlphabet() {
+    // Deterministic - count all inputs for start state
+    let inputs = [];
+    if (this.status() == "Deterministic") {
+      let startState = this.states.find(state => state.id === this.startStateId);
+      startState.transitions.forEach(element => {
+        if (!inputs.includes(element[0])) {
+          inputs.push(element[0]);
+        }
+      });
+    } else if (this.status() == "Nondeterministic") {
+      this.states.forEach(state => {
+        state.transitions.forEach(element => {
+          if (!inputs.includes(element[0])) {
+            inputs.push(element[0]);
+          }
+        });
+      });
+
+    }
+    return inputs;
   }
 
   /**

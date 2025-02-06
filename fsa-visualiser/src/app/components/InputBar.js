@@ -1,6 +1,14 @@
 import { useState } from "react";
 import styles from "../../styles/InputBar.module.css"
 
+function showAlphabet(inputs) {
+    let string = "";
+    inputs.forEach(element => {
+        string += element +","
+    });
+    return string;
+}
+
 export const InputBar = ({ machine }) => {
     const [showPlay, setShowPlay] = useState(true); // Tracks if play or stop button is shown
     const [inputWord, setInputWord] = useState("");
@@ -27,5 +35,6 @@ export const InputBar = ({ machine }) => {
         }
     </div>
     <p>{machine.status()}</p>
+    <p>Input Alphabet: {showAlphabet(machine.inputAlphabet())}</p>
     </div>
 }
