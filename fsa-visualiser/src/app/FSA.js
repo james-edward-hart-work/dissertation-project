@@ -82,14 +82,14 @@ class FSA {
   // TRANSITIONS //
 
   addTransition(fromStateId, toStateId, input) {
-      const index = this.states.findIndex(state => state.id === fromStateId);
-      // Find index of the 'from' state
+    const index = this.states.findIndex(state => state.id === fromStateId);
+    // Find index of the 'from' state
 
-      // Add input and id of destination state to array of transitions.
-      this.states[index].transitions =
-        [...this.states[index].transitions, // Retrieves current value of the list of transitions.
-        [input, toStateId]
-        ];
+    // Add input and id of destination state to array of transitions.
+    this.states[index].transitions =
+      [...this.states[index].transitions, // Retrieves current value of the list of transitions.
+      [input, toStateId]
+      ];
     return this;
   }
 
@@ -142,9 +142,6 @@ class FSA {
       return "Invalid";
     }
 
-    console.log(startStateInputs);
-    
-
     // 
     for (let i = 0; i < this.states.length; i++) { // State
       let state = this.states[i];
@@ -186,35 +183,108 @@ class FSA {
     let currentState = this.states.find(state => state.id === this.startStateId);
     let outputPath = inputWord + ". \nPath: " + currentState.name;
 
-    // Move to final state.
-    letters.forEach(letter => {
-      outputPath += " => "
-      let nextStateEntry = undefined;
+    if (this.status() == "Deterministic") { // Follows letters
+      // Move to final state.
+      letters.forEach(letter => {
+        outputPath += " => "
+        let nextStateEntry = undefined;
 
-      const allTransitions = currentState.transitions.filter(transition => transition[0] == letter);
-      allTransitions.forEach(transition => {
-        const inputs = transition[0].trim().split(",");
-        if (inputs.includes("\e")) {
+        const allTransitions = currentState.transitions.filter(transition => transition[0] == letter);
+        allTransitions.forEach(transition => {
+          const inputs = transition[0].trim().split(",");
+          if (inputs.includes(letter)) {
+            nextStateEntry = transition;
+          }
+        });
 
+        if (nextStateEntry == undefined) {
+          outputPath += "undefined";
+          return;
         }
-        if (inputs.includes(letter)) {
-          nextStateEntry = transition;
-        }
-      });
 
-      if (nextStateEntry == undefined) {
-        outputPath += "undefined";
-        return;
+        currentState = this.states.find(state => state.id === nextStateEntry[1]);
+        outputPath += currentState.name;
+      })
+
+      if (currentState.accept && !outputPath.endsWith("undefined")) {
+        alert("The machine accepts: " + outputPath);
+      } else {
+        alert("The machine rejects: " + outputPath);
+      }
+    } else { // Nondeterministic - Depth-first Search
+
+      // Same but:
+      // - need to track choices and jump back when failing to most recent 'choice'
+      // - empty words count as 'choices' but do not remove a letter
+
+      // Ends when solution is found or call back stack is empty
+      // ^ only for i loops
+
+      let isValid = false;
+      let branchStore = [[0, this.startStateId]]; // Array of branches to explore
+      // [letterInded, destinationStateId]
+      
+      // Stores the fromState, toState and index of letter in word
+      // If not more transitions, go through this list, end when this ends.
+      // Pop branch each time exploring.
+
+      while (branchStore.length > 0) { // Every loop = branch
+        console.log(branchStore);
+        
+        const branch = branchStore.pop();
+        currentState = this.states.find(state => state.id == branch[1]);
+        let letterIndex = branch[0]; // Tracks index of current letter starting at branch
+        if (letterIndex == inputWord.length) { // Branch is at end of word
+          console.log("Word read fully");
+          if (currentState.accept) { // Final state is an accept state.
+            console.log("Accept");
+            
+            isValid = true;
+            break;
+          }
+        } else { // Not at final letter of input word.
+          while (letterIndex != inputWord.length){
+            console.log("Branch: ", currentState.name, inputWord[letterIndex]);
+            
+            const possibleTransitions = currentState.transitions.filter(transition => (transition[0] == inputWord[letterIndex] || transition[0] == "ε"));
+            console.log(possibleTransitions);
+            
+            if (possibleTransitions.length == 0) { // Branch ends before all letters are read.
+              console.log("undef");
+              break; // End current branch.
+            }
+            if (possibleTransitions.length > 1) { // If more than one choice can be made.
+              for (let index = 1; index < possibleTransitions.length; index++) {
+                if (possibleTransitions[0] == "ε") {
+                  branchStore.push([letterIndex, possibleTransitions[index][1]]); // Letter at next state is the same.
+                }
+                branchStore.push([letterIndex + 1, possibleTransitions[index][1]]); // Letter at next state is different.
+                // Add all possible branches to stack.
+              }
+            }
+            currentState = this.states.find(state => state.id == possibleTransitions[0][1]); // Get next state
+            if (possibleTransitions[0][0] != "ε") { // Increment letter index if not the empty word
+              letterIndex++;
+            }
+            console.log(currentState);
+            console.log(letterIndex);
+          
+          } 
+          console.log(currentState.name);
+          
+          // Letter is not the final letter
+          if (currentState.accept) { // Final state is an accept state in this branch
+            isValid = true;
+            break;
+          }
+        }
       }
 
-      currentState = this.states.find(state => state.id === nextStateEntry[1]);
-      outputPath += currentState.name;
-    })
-
-    if (currentState.accept && !outputPath.endsWith("undefined")) {
-      alert("The machine accepts: " + outputPath);
-    } else {
-      alert("The machine rejects: " + outputPath);
+      if (isValid) {
+        alert("The machine accepts: " + inputWord);
+      } else {
+        alert("The machine rejects: " + inputWord);
+      }
     }
   }
 
