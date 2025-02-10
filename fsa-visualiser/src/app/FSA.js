@@ -176,6 +176,7 @@ class FSA {
 
   runInput(inputWord) {
 
+    // Checks if word is valid against input alphabet.
     if (this.status() == "Invalid") {
       alert("Machine is not valid, please ensure it has:\n - A start state, selected using Alt + Shift + Click\n At least one accept state, toggled using double click.")
       return;
@@ -195,10 +196,12 @@ class FSA {
       return;
     }
 
+    // Checks if word is accepted by the machine.
     let currentState = this.states.find(state => state.id === this.startStateId);
     let outputPath = inputWord + ". \nPath: " + currentState.name;
+    valid = false;
 
-    if (this.status() == "Deterministic") { // Follows letters
+    if (this.status() == "Deterministic") { // Follows letter to trace path
       // Move to final state.
       letters.forEach(letter => {
         outputPath += " => "
@@ -226,83 +229,50 @@ class FSA {
       } else {
         alert("The machine rejects: " + outputPath);
       }
-    } else { // Nondeterministic - Depth-first Search
 
-      // Same but:
-      // - need to track choices and jump back when failing to most recent 'choice'
-      // - empty words count as 'choices' but do not remove a letter
+    } else { // Nondeterministic - Breathe-first Search
 
-      // Ends when solution is found or call back stack is empty
-      // ^ only for i loops
-
-      let isValid = false;
-      let branchStore = [[0, this.startStateId]]; // Array of branches to explore
+      const startState = this.states.find(state => state.id === this.startStateId);
+      let nodeStore = [[0, startState]]; // Array of states to visit
       // [letterInded, destinationStateId]
 
-      // Stores the fromState, toState and index of letter in word
-      // If not more transitions, go through this list, end when this ends.
-      // Pop branch each time exploring.
-
-      while (branchStore.length > 0) { // Every loop = branch
-        console.log(branchStore);
-
-        const branch = branchStore.pop();
-        currentState = this.states.find(state => state.id == branch[1]);
-        let letterIndex = branch[0]; // Tracks index of current letter starting at branch
-        if (letterIndex == inputWord.length) { // Branch is at end of word
-          console.log("Word read fully");
-          if (currentState.accept) { // Final state is an accept state.
-            console.log("Accept");
-
-            isValid = true;
+      do {
+        let node = nodeStore.shift();        
+        let letterIndex = node[0];
+        let currentState = node[1];
+        if (letterIndex == letters.length) { // Index will be the length of the word after final letter is ticked
+          if (currentState.accept) {
+            valid = true;
             break;
           }
-        } else { 
-          // Change depth-first search to breathe-first
-          // Not at final letter of input word.
-          while (letterIndex != inputWord.length) {
-            console.log("Branch: ", currentState.name, inputWord[letterIndex]);
+        } else { // Not the final state
 
-            const possibleTransitions = currentState.transitions.filter(transition => (transition[0] == inputWord[letterIndex] || transition[0] == "ε"));
-            console.log(possibleTransitions);
-
-            if (possibleTransitions.length == 0) { // Branch ends before all letters are read.
-              console.log("undef");
-              break; // End current branch.
-            }
-            if (possibleTransitions.length > 1) { // If more than one choice can be made.
-              for (let index = 1; index < possibleTransitions.length; index++) {
-                if (possibleTransitions[0] == "ε") {
-                  branchStore.push([letterIndex, possibleTransitions[index][1]]); // Letter at next state is the same.
-                }
-                branchStore.push([letterIndex + 1, possibleTransitions[index][1]]); // Letter at next state is different.
-                // Add all possible branches to stack.
-              }
-            }
-            currentState = this.states.find(state => state.id == possibleTransitions[0][1]); // Get next state
-            if (possibleTransitions[0][0] != "ε") { // Increment letter index if not the empty word
-              letterIndex++;
-            }
-            console.log(currentState);
-            console.log(letterIndex);
-
+          // Add all valid child states to queue.
+          const childStates = currentState.transitions.filter(transition => transition[0] == inputWord[node[0]]);
+          const emptyWordStates = currentState.transitions.filter(transition => transition[0] == "ε");
+          if (childStates != undefined) {
+            childStates.forEach(transition => {
+              let state = this.states.find(state => state.id === transition[1])
+              nodeStore.push([letterIndex + 1, state]) // Increment letter index
+            });
           }
-          console.log(currentState.name);
-
-          // Letter is not the final letter
-          if (currentState.accept) { // Final state is an accept state in this branch
-            isValid = true;
-            break;
+          if (emptyWordStates != undefined) {
+            emptyWordStates.forEach(transition => {
+              let state = this.states.find(state => state.id === transition[1])
+              nodeStore.push([letterIndex, state]) // Same letter
+            });
           }
         }
-      }
+      } while (nodeStore.length > 0)
 
-      if (isValid) {
+      if (valid) {
         alert("The machine accepts: " + inputWord);
       } else {
         alert("The machine rejects: " + inputWord);
       }
     }
+
+    return valid;
   }
 
   inputAlphabet() {
@@ -318,7 +288,7 @@ class FSA {
     } else if (this.status() == "Nondeterministic") {
       this.states.forEach(state => {
         state.transitions.forEach(element => {
-          if (!inputs.includes(element[0])) {
+          if (!inputs.includes(element[0]) && element[0] != "ε") {
             inputs.push(element[0]);
           }
         });
