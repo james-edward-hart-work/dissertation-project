@@ -3,7 +3,7 @@ import { useState, useRef } from "react"
 import FSA from "../FSA";
 import PropTypes from 'prop-types';
 import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-draggable
-import { useXarrow } from "react-xarrows";
+import { useXarrow } from "react-xarrows"; // https://www.npmjs.com/package/react-xarrows/v/1.7.0 
 
 /**
  * Function component for a state circle in the viewport.
@@ -41,6 +41,7 @@ export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS })
         <input data-testid={"stateCircle"}
             ref={ref}
             id={id}
+            key={id}
             className={styles.stateInput}
             type="text"
             defaultValue={"State " + id}

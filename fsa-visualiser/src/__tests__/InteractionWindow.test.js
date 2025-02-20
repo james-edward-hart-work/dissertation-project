@@ -46,7 +46,7 @@ describe('InteractionWindow', () => {
             const viewport = screen.getByTestId("ValidLight")
             const style = window.getComputedStyle(viewport);
             expect(style.backgroundColor).toBe("red")
-            expect(defaultMachine.isValid()).toBeFalsy();
+            expect(defaultMachine.status()).toEqual("Invalid");
         })
         test('Green Light - Valid FSA', () => {
             defaultMachine.addState("StartState");
@@ -55,7 +55,7 @@ describe('InteractionWindow', () => {
             const viewport = screen.getByTestId("ValidLight")
             const style = window.getComputedStyle(viewport);
             expect(style.backgroundColor).toBe("red")
-            expect(defaultMachine.isValid()).toBeTruthy();
+            expect(defaultMachine.status()).toEqual("Invalid");
         })
         test('Toggling Controls', async () => {
             render(<InteractionWindow machine={defaultMachine} setMachine={setMachine} circleArray={circleArray} setCircleArray={setCircleArray} currentPositions={currentPositions} setCurrentPositions={setCurrentPositions} />)

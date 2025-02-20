@@ -16,8 +16,8 @@ describe('FSA', () => {
 
     expect(machine.total).toEqual(2);
     expect(machine.states).toEqual([
-      { id: 0, name: "State0", transitions: [], accept: false },
-      { id: 1, name: "State1", transitions: [], accept: false }
+      { id: "0", name: "State0", transitions: [], accept: false },
+      { id: "1", name: "State1", transitions: [], accept: false }
     ]);
   })
   test('State Name Update Functions ', () => {
@@ -25,14 +25,14 @@ describe('FSA', () => {
     machine.addState("State1");
     machine.addState("State2");
 
-    machine.updateStateName(0, "NewName");
-    machine.updateStateName(2, "NewName2");
+    machine.updateStateName("0", "NewName");
+    machine.updateStateName("2", "NewName2");
 
     expect(machine.total).toEqual(3);
     expect(machine.states).toEqual([
-      { id: 0, name: "NewName", transitions: [], accept: false },
-      { id: 1, name: "State1", transitions: [], accept: false },
-      { id: 2, name: "NewName2", transitions: [], accept: false }
+      { id: "0", name: "NewName", transitions: [], accept: false },
+      { id: "1", name: "State1", transitions: [], accept: false },
+      { id: "2", name: "NewName2", transitions: [], accept: false }
     ]);
   })
   test('Deleting 2 States from Machine', () => {
@@ -43,8 +43,8 @@ describe('FSA', () => {
 
     machine.deleteState(1);
     expect(machine.states).toEqual([
-      { id: 0, name: "State0", transitions: [], accept: false },
-      { id: 2, name: "State2", transitions: [], accept: false }
+      { id: "0", name: "State0", transitions: [], accept: false },
+      { id: "2", name: "State2", transitions: [], accept: false }
     ]);
     expect(machine.total).toEqual(3); 
     expect(machine.states.length).toEqual(2); 
@@ -57,9 +57,9 @@ describe('FSA', () => {
     machine.addState("State2");
     expect(machine.total).toEqual(3); 
     expect(machine.states).toEqual([
-      { id: 0, name: "State0", transitions: [], accept: false },
-      { id: 1, name: "State1", transitions: [], accept: false },
-      { id: 2, name: "State2", transitions: [], accept: false }
+      { id: "0", name: "State0", transitions: [], accept: false },
+      { id: "1", name: "State1", transitions: [], accept: false },
+      { id: "2", name: "State2", transitions: [], accept: false }
     ]);
 
     machine.reset();
@@ -74,8 +74,8 @@ describe('FSA', () => {
 
     expect(machine.total).toEqual(2);
     expect(machine.states).toEqual([
-      { id: 0, name: "State0", transitions: [], accept: false },
-      { id: 1, name: "State1", transitions: [], accept: false }
+      { id: "0", name: "State0", transitions: [], accept: false },
+      { id: "1", name: "State1", transitions: [], accept: false }
     ]);
   })
 })

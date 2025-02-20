@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FSA from "../FSA";
 import PropTypes from 'prop-types';
-import Xarrow from "react-xarrows"; //https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
+import Xarrow from "react-xarrows"; // https://www.npmjs.com/package/react-xarrows/v/1.7.0
 import styles from "../../styles/TransitionArrow.module.css"
 
 export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTransitionArray }) => {

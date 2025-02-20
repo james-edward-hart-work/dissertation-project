@@ -3,7 +3,9 @@ import { useRef, useState } from "react"
 import styles from "../../styles/Viewport.module.css"
 import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
-import { Xwrapper } from "react-xarrows"; //https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
+
+// https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
+import { Xwrapper } from "react-xarrows"; 
 import Xarrow from "react-xarrows";
 
 export const CIRCLE_RADIUS = 85;
@@ -19,6 +21,7 @@ const HEIGHT = 95;
 export const Viewport = ({ machine, setMachine }) => {
   const [circleArray, setCircleArray] = useState([]); // State array containing the JSX of every circle
   const [transitionArray, setTransitionArray] = useState([]);
+  const [startArrow, setStartArrow] = useState();
   const [originStateId, setOriginStateId] = useState(null);
   const ref = useRef(null);
 
@@ -32,11 +35,9 @@ export const Viewport = ({ machine, setMachine }) => {
 
     // Must create a new FSA object for 'machine' as object reference will be different,
     // Triggering a re-render for all components with 'machine'
-    setMachine((machine) => {
-      const newMachine = new FSA(machine);
-      newMachine.addState("State " + id);
-      return newMachine;
-    });
+    const newMachine = new FSA(machine);
+    newMachine.addState("State " + id);
+    setMachine(newMachine);
 
     // Realigns state circle's coordinates so mouse is in the centre.
     let circleX = x - CIRCLE_RADIUS / 2;
@@ -58,15 +59,15 @@ export const Viewport = ({ machine, setMachine }) => {
   /**
    * Deletes a state circle and state from the FSA
    */
-  function deleteCircle(circleId) {    
-    const transitionsToDelete = transitionArray.filter(arrow => (arrow.key.startsWith(circleId) || arrow.key.endsWith(circleId)));    
+  function deleteCircle(circleId) {
+    const transitionsToDelete = transitionArray.filter(arrow => (arrow.key.startsWith(circleId) || arrow.key.endsWith(circleId)));
 
     // Delete state from FSA and circle from diagram.
     setMachine((machine) => {
       const newMachine = new FSA(machine);
       transitionsToDelete.forEach(element => { // Delete each transition connected to state.
         const ids = element.key.split("=>");
-        newMachine.deleteTransition(ids[0], ids[1]);        
+        newMachine.deleteTransition(ids[0], ids[1]);
       });
       newMachine.deleteState(circleId); // Delete state after all transitions deleted.
       if (newMachine.startStateId == circleId) { newMachine.setStartState(-1) }
@@ -103,7 +104,7 @@ export const Viewport = ({ machine, setMachine }) => {
   /**
    * Handles all click events in Viewport.
    */
-  function handleClick(event) {    
+  function handleClick(event) {
 
     if (event.target.id != "Viewport") {
       if (machine.states.find(state => state.id == event.target.id) != undefined) {
@@ -114,7 +115,19 @@ export const Viewport = ({ machine, setMachine }) => {
             const newMachine = new FSA(machine);
             newMachine.setStartState(circleId);
             return newMachine;
-          });
+          })
+          setStartArrow(<Xarrow
+            color="black"
+            key={"start"}
+            id={"start"}
+            start={circleId}
+            end={circleId}
+            path={"smooth"}
+            _cpx2Offset={-100}
+            strokeWidth={2.5}
+            startAnchor="left"
+            endAnchor={{ position: "left", offset: { rightness: 100 } }}
+          />);
         }
 
         if (event.altKey && !event.shiftKey) { // Delete
@@ -143,19 +156,7 @@ export const Viewport = ({ machine, setMachine }) => {
     <Xwrapper>
       {circleArray}
       {transitionArray}
-      <Xarrow
-        color="black"
-        key={machine.startStateId}
-        id={machine.startStateId}
-        start={machine.startStateId}
-        end={machine.startStateId}
-        path={"smooth"}
-        _cpx2Offset={-100}
-        strokeWidth={2.5}
-        startAnchor={{ position: "left" }}
-        endAnchor={{ position: "left", offset: { rightness: 100 } }}
-        showXarrow={(machine.startStateId == "-1") ? false : true}
-      />
+      {startArrow}
     </Xwrapper>
   </div>
 }
