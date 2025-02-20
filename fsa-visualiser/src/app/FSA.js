@@ -1,4 +1,5 @@
 import { input } from "@testing-library/user-event/dist/cjs/event/input.js";
+import { transcode } from "buffer";
 
 /**
  * Class for creating Finite State Automata Objects
@@ -140,11 +141,6 @@ class FSA {
       });
     });
 
-    if (startStateInputs.length == 0 && startState.accept == false) {
-      return "Invalid";
-    }
-
-    // 
     for (let i = 0; i < this.states.length; i++) { // State
       let state = this.states[i];
       let stateInputs = [];
@@ -198,7 +194,7 @@ class FSA {
 
     // Checks if word is accepted by the machine.
     let currentState = this.states.find(state => state.id === this.startStateId);
-    let outputPath = inputWord + ". \nPath: " + currentState.name;
+    let outputPath = inputWord + ". Path: " + currentState.name;
     valid = false;
 
     if (this.status() == "Deterministic") { // Follows letter to trace path
@@ -215,11 +211,6 @@ class FSA {
           }
         });
 
-        if (nextStateEntry == undefined) {
-          outputPath += "undefined";
-          return;
-        }
-
         currentState = this.states.find(state => state.id === nextStateEntry[1]);
         outputPath += currentState.name;
       })
@@ -234,22 +225,30 @@ class FSA {
 
       const startState = this.states.find(state => state.id === this.startStateId);
       let nodeStore = [[0, startState]]; // Array of states to visit
-      // [letterInded, destinationStateId]
 
       do {
-        let node = nodeStore.shift();        
+        let node = nodeStore.shift();
         let letterIndex = node[0];
         let currentState = node[1];
         if (letterIndex == letters.length) { // Index will be the length of the word after final letter is ticked
           if (currentState.accept) {
             valid = true;
             break;
+          } else {
+            const emptyWordStates = currentState.transitions.filter(transition => transition[0] == "ε");
+            emptyWordStates.forEach(transition => {
+              if (transition[1] != currentState.id) {
+                let state = this.states.find(state => state.id === transition[1])
+                nodeStore.push([letterIndex, state]) // Same letter      
+              }
+            });
           }
         } else { // Not the final state
 
           // Add all valid child states to queue.
           const childStates = currentState.transitions.filter(transition => transition[0] == inputWord[node[0]]);
           const emptyWordStates = currentState.transitions.filter(transition => transition[0] == "ε");
+
           if (childStates != undefined) {
             childStates.forEach(transition => {
               let state = this.states.find(state => state.id === transition[1])
@@ -258,8 +257,10 @@ class FSA {
           }
           if (emptyWordStates != undefined) {
             emptyWordStates.forEach(transition => {
-              let state = this.states.find(state => state.id === transition[1])
-              nodeStore.push([letterIndex, state]) // Same letter
+              if (transition[1] != currentState.id) {
+                let state = this.states.find(state => state.id === transition[1])
+                nodeStore.push([letterIndex, state]) // Same letter     
+              }
             });
           }
         }

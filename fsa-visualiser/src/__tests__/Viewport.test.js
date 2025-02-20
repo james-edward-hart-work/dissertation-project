@@ -8,24 +8,16 @@ import { getCoords } from './page.test';
 import { waitFor } from '@testing-library/react';
 import { useState } from 'react';
 
-//const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state
-
-// const machineSetter = jest.fn((newMachine) => {
-//   setMachine(new FSA(newMachine)); // ✅ Triggers a re-render
-// });
 let user;
 
 describe('Viewport', () => {
 
   beforeEach(() => user = userEvent.setup());
-  afterEach(() => {
-    //machineSetter(new FSA(0));
-  });
   describe('States', () => {
 
     test('Initial render has no states', () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0)); 
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         expect(screen.queryByTestId("stateCircle")).toBeNull()
       };
@@ -33,7 +25,7 @@ describe('Viewport', () => {
 
     test('Click successfully creates a new state in FSA and viewport', async () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0));
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         expect(defaultMachine.total).toEqual(0);
 
@@ -52,7 +44,7 @@ describe('Viewport', () => {
 
     test('Click on a state circle does not add a new state', async () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0)); 
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         const viewport = screen.getByTestId("Viewport");
 
@@ -70,7 +62,7 @@ describe('Viewport', () => {
 
     test('New states can be added after the first one', async () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0)); 
 
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         expect(defaultMachine.total).toEqual(0);
@@ -101,7 +93,7 @@ describe('Viewport', () => {
 
     test('State names can be changed by typing within their circle', async () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0)); 
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         const viewport = screen.getByTestId("Viewport");
         await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
@@ -116,7 +108,7 @@ describe('Viewport', () => {
 
     test('Alt+Click deletes the correct state from machine and viewport', async () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0)); 
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         const viewport = screen.getByTestId("Viewport");
 
@@ -142,7 +134,7 @@ describe('Viewport', () => {
 
     test('A new state may be added in the coordinates of a recently deleted state', async () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0)); 
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         const viewport = screen.getByTestId("Viewport");
         await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
@@ -160,7 +152,7 @@ describe('Viewport', () => {
 
     test('Machine and viewport are unaffected if Alt+Click on blank space', async () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0)); 
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         const viewport = screen.getByTestId("Viewport");
         await user.keyboard('{Alt>}');
@@ -171,14 +163,13 @@ describe('Viewport', () => {
         expect(screen.queryByTestId("stateCircle")).toBeNull()
       };
     })
-
   })
 
   describe('State Movement', () => {
 
     test('Click + Drag on state moves state to correct coordinates', async () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0)); 
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         const viewport = screen.getByTestId("Viewport");
         await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
@@ -201,7 +192,7 @@ describe('Viewport', () => {
 
     test('New state may be added in the coordinates of a dragged deleted state', async () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0)); 
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         const viewport = screen.getByTestId("Viewport");
         await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
@@ -228,7 +219,7 @@ describe('Viewport', () => {
 
     test('INCOMPLETE - Click + Drag on state does not move other state', async () => {
       const Wrapper = async () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0)); // ✅ Use state in a component
+        const [defaultMachine, machineSetter] = useState(new FSA(0)); 
         render(<Viewport machine={defaultMachine} setMachine={machineSetter} />)
         const viewport = screen.getByTestId("Viewport");
         await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 0, y: 0 } });
