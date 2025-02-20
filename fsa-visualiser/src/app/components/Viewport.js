@@ -144,7 +144,9 @@ export const Viewport = ({ machine, setMachine }) => {
       if (originStateId != null) {
         setOriginStateId(null);
       } else {
-        addCircle(event.clientX, event.clientY); // Add State
+        if (!event.altKey && !event.shiftKey) {
+          addCircle(event.clientX, event.clientY); // Add State
+        }
       }
     }
   }
