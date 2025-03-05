@@ -3,6 +3,7 @@ import FSA from "../FSA";
 import PropTypes from 'prop-types';
 import Xarrow from "react-xarrows"; // https://www.npmjs.com/package/react-xarrows/v/1.7.0
 import styles from "../../styles/TransitionArrow.module.css"
+import { CIRCLE_RADIUS } from "./Viewport";
 
 export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTransitionArray }) => {
 
@@ -22,7 +23,7 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
         }
     }
 
-    return <div>
+    return <div data-testid={"transitionArrow"} onClick={(e) => handleClick(e)}>
         {(originStateId == destStateId) ?
             <Xarrow // Self-pointing transitions
                 color="black"
@@ -30,15 +31,14 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                 id={originStateId + "=>" + destStateId}
                 start={originStateId}
                 end={destStateId}
-                passProps={{ onClick: (e) => handleClick(e) }}
                 path={"smooth"}
                 _cpx1Offset={-50}
                 _cpy1Offset={-100}
                 _cpx2Offset={-100}
                 _cpy2Offset={-30}
                 strokeWidth={2.5}
-                startAnchor={{ position: "top" }}
-                endAnchor={{ position: "left", offset: { rightness: 100 } }}
+                startAnchor="top"
+                endAnchor={{ position: "left", offset: { x: -10, y: 0 } }}
                 labels={{
                     middle: <input data-testid={"transitionInput"}
                         type="text"
@@ -61,7 +61,6 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                 id={originStateId + "=>" + destStateId}
                 start={originStateId}
                 end={destStateId}
-                passProps={{ onClick: (e) => handleClick(e) }}
                 path={isStraight ? "straight" : "smooth"}
                 curveness={0.2}
                 strokeWidth={2.5}

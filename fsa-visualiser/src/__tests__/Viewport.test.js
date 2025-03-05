@@ -319,19 +319,19 @@ describe('Viewport', () => {
       SVGElement.prototype.getTotalLength = () => 100;
 
       // Jest incorrectly marks startAnchor and endAnchor as invalid props to Xarrow
-      // This spy0n reconfigures console.error to ignore those warnings
-      jest.spyOn(console, 'error').mockImplementation((...args) => {
+      // // This spy0n reconfigures console.error to ignore those warnings
+      // jest.spyOn(console, 'error').mockImplementation((...args) => {
 
-        const message = args.join(''); // Convert error message arguments to a string
+      //   const message = args.join(''); // Convert error message arguments to a string
 
-        if (message.includes('Invalid prop `endAnchor` supplied to `Xarrow`')) {
-          return;
-        }
-        if (message.includes('Invalid prop `startAnchor` supplied to `Xarrow`')) {
-          return;
-        }
-        console.error(message); // Log all other messages
-      });
+      //   if (message.includes('Invalid prop `endAnchor` supplied to `Xarrow`')) {
+      //     return;
+      //   }
+      //   if (message.includes('Invalid prop `startAnchor` supplied to `Xarrow`')) {
+      //     return;
+      //   }
+      //   console.error(message); // Log all other messages
+      // });
     });
 
     test('Add transition between two states', async () => {
@@ -355,7 +355,7 @@ describe('Viewport', () => {
       await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
 
-      expect(screen.getAllByTestId("transitionInput").length).toEqual(1);
+      expect(screen.getAllByTestId("transitionArrow").length).toEqual(1);
       expect(ref.current.states[0].transitions[0]).toEqual(["A", "1"]);
     })
 
@@ -381,7 +381,7 @@ describe('Viewport', () => {
 
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle });
 
-      expect(screen.getAllByTestId("transitionInput").length).toEqual(1);
+      expect(screen.getAllByTestId("transitionArrow").length).toEqual(1);
       expect(ref.current.states[0].transitions[0]).toEqual(["A", "0"]);
     })
 
@@ -426,7 +426,6 @@ describe('Viewport', () => {
     })
 
     test('Delete transition between the same state', async () => {
-
       const ref = { current: null }; // Stores reference to machine in mock viewport.
 
       const Wrapper = () => {
@@ -447,8 +446,8 @@ describe('Viewport', () => {
 
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle });
 
-      expect(screen.getAllByTestId("transitionInput").length).toEqual(1);
-      const transition = screen.getByTestId("transitionInput");
+      expect(screen.getAllByTestId("transitionArrow").length).toEqual(1);
+      const transition = screen.getByTestId("transitionArrow");
 
       await user.keyboard('{Alt>}');
       await user.pointer({ keys: '[MouseLeft]', target: transition });
@@ -478,7 +477,7 @@ describe('Viewport', () => {
       await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
 
-      const transition = screen.getByTestId("transitionInput");
+      const transition = screen.getByTestId("transitionArrow");
 
       await user.keyboard('{Alt>}');
       await user.pointer({ keys: '[MouseLeft]', target: transition });
@@ -635,21 +634,6 @@ describe('Viewport', () => {
 
     beforeAll(() => {
       SVGElement.prototype.getTotalLength = () => 100;
-
-      // Jest incorrectly marks startAnchor and endAnchor as invalid props to Xarrow
-      // This spy0n reconfigures console.error to ignore those warnings
-      jest.spyOn(console, 'error').mockImplementation((...args) => {
-
-        const message = args.join(''); // Convert error message arguments to a string
-
-        if (message.includes('Invalid prop `endAnchor` supplied to `Xarrow`')) {
-          return;
-        }
-        if (message.includes('Invalid prop `startAnchor` supplied to `Xarrow`')) {
-          return;
-        }
-        console.error(message); // Log all other messages
-      });
     });
     test('Assign start state', async () => {
       const ref = { current: null }; // Stores reference to machine in mock viewport.
