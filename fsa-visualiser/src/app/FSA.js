@@ -1,9 +1,6 @@
-import { input } from "@testing-library/user-event/dist/cjs/event/input.js";
-import { transcode } from "buffer";
-
 /**
  * Class for creating Finite State Automata Objects
- * Contains all logical manipulation of the application's FSA
+ * Contains all logical manipulation of the application's FSA (Finite State Automaton)
  */
 class FSA {
   // Default configuration for the application's Finite State Machine
@@ -70,6 +67,11 @@ class FSA {
     return this;
   }
 
+  /**
+   * Toggles whether the given state is an accept state
+   * @param id of state
+   * @returns the updated state machine
+   */
   toggleAccept(id) {
     // Update accept of state with matching id in state array.
     const index = this.states.findIndex(state => state.id === id);
@@ -84,9 +86,16 @@ class FSA {
 
   // TRANSITIONS //
 
+  /**
+   * Adds a transition to the machine
+   * @param fromStateId Id of origin state
+   * @param toStateId Id of destination state
+   * @param input Letter for transition
+   * @returns the updated state machine
+   */
   addTransition(fromStateId, toStateId, input) {
     const index = this.states.findIndex(state => state.id === fromStateId);
-    // Find index of the 'from' state
+    // Find index of the origin state
 
     // Add input and id of destination state to array of transitions.
     this.states[index].transitions =
@@ -96,6 +105,12 @@ class FSA {
     return this;
   }
 
+  /**
+   * Deletes a transition from the machine
+   * @param fromStateId Id of origin state
+   * @param toStateId Id of destination state
+   * @returns the updated state machine
+   */
   deleteTransition(fromStateId, toStateId) {
     const index = this.states.findIndex(state => state.id === fromStateId);
 
@@ -105,6 +120,13 @@ class FSA {
     return this;
   }
 
+  /**
+   * Changes the input letter for a transition
+   * @param fromStateId Id of origin state
+   * @param toStateId Id of destination state
+   * @param newInput New letter for transition
+   * @returns the updated state machine
+   */
   changeTransitionInput(fromStateId, toStateId, newInput) {
     const stateIndex = this.states.findIndex(state => state.id === fromStateId); // Get from state index
     const transitionIndex = this.states[stateIndex].transitions.findIndex(transition => transition[1] === toStateId);
@@ -114,18 +136,27 @@ class FSA {
     return this;
   }
 
+  /**
+   * Sets the given state as the start state
+   * @param stateId Id of state
+   * @returns 
+   */
   setStartState(stateId) {
     this.startStateId = stateId;
     return this;
   }
 
-  // To be filled out later
+  /**
+   * Calculates whether the machine is deterministic, nondeterministic or invalid
+   * @returns a string stating the machine's type
+   */
   status() {
+    // Invalid if machine has no start state or accept state
     if (this.startStateId == "-1" || this.states.filter(state => state.accept == true).length == 0) {
       return "Invalid";
     }
 
-    // Gathers all input characters from start state.
+    // Gathers all input characters from start state's transitions.
     const startState = this.states.find(state => state.id === this.startStateId);
     let startStateInputs = [];
     startState.transitions.forEach(transition => {
@@ -141,6 +172,7 @@ class FSA {
       });
     });
 
+    // Checks that each state contains a transition for each transition letter
     for (let i = 0; i < this.states.length; i++) { // State
       let state = this.states[i];
       let stateInputs = [];
@@ -151,7 +183,8 @@ class FSA {
         for (let k = 0; k < letters.length; k++) { // Letters
           let letter = letters[k];
 
-          // Ensures state has no duplicate inputs or empty words
+          // Nondeterministic if a state contains two transitions for the same letter
+          // Or if it contains the empty word
           if (stateInputs.includes(letter) || letter == "ε") {
             return "Nondeterministic";
           }
@@ -159,7 +192,7 @@ class FSA {
         }
       }
 
-      // Checks that the state is not missing any input values.
+      // Nondeterminisitc if an input letter is missing from transitions.
       for (let l = 0; l < startStateInputs.length; l++) {
         if (stateInputs.filter(input => input == startStateInputs[l]).length !== 1) {
           return "Nondeterministic";
@@ -170,6 +203,11 @@ class FSA {
     return "Deterministic";
   }
 
+  /**
+   * Runs an input word on the machine
+   * @param inputWord Input word
+   * @returns a boolean stating whether the word is accepted or not
+   */
   runInput(inputWord) {
 
     // Checks if word is valid against input alphabet.
@@ -195,9 +233,9 @@ class FSA {
     // Checks if word is accepted by the machine.
     let currentState = this.states.find(state => state.id === this.startStateId);
     let outputPath = inputWord + ". Path: " + currentState.name;
-    valid = false;
+    let isAccepted = false;
 
-    if (this.status() == "Deterministic") { // Follows letter to trace path
+    if (this.status() == "Deterministic") { // Follows input word's letters to trace path
       // Move to final state.
       letters.forEach(letter => {
         outputPath += " => "
@@ -207,7 +245,7 @@ class FSA {
         allTransitions.forEach(transition => {
           const inputs = transition[0].trim().split(",");
           if (inputs.includes(letter)) {
-            nextStateEntry = transition;
+            nextStateEntry = transition; // Gets final state of input word
           }
         });
 
@@ -221,10 +259,11 @@ class FSA {
         alert("The machine rejects: " + outputPath);
       }
 
-    } else { // Nondeterministic - Breathe-first Search
+    } else { // Nondeterministic - Breathe-first Search of branching state transitions
 
       const startState = this.states.find(state => state.id === this.startStateId);
-      let nodeStore = [[0, startState]]; // Array of states to visit
+      let nodeStore = [[0, startState]]; // Array of nodes to visit (added upon indetifying a branch)
+      // Nodes = [Index of letter, state]
 
       do {
         let node = nodeStore.shift();
@@ -232,9 +271,10 @@ class FSA {
         let currentState = node[1];
         if (letterIndex == letters.length) { // Index will be the length of the word after final letter is ticked
           if (currentState.accept) {
-            valid = true;
-            break;
+            isAccepted = true;
+            break; // Stop if found.
           } else {
+            // If word is finished, check for transitions using empty word and navigate
             const emptyWordStates = currentState.transitions.filter(transition => transition[0] == "ε");
             emptyWordStates.forEach(transition => {
               if (transition[1] != currentState.id) {
@@ -243,12 +283,14 @@ class FSA {
               }
             });
           }
-        } else { // Not the final state
+        } else { // If not at the end of a word - navigate branch
 
           // Add all valid child states to queue.
           const childStates = currentState.transitions.filter(transition => transition[0] == inputWord[node[0]]);
           const emptyWordStates = currentState.transitions.filter(transition => transition[0] == "ε");
 
+          // Push valid child states as a new node
+          // Valid = has next letter in word or the empty word
           if (childStates != undefined) {
             childStates.forEach(transition => {
               let state = this.states.find(state => state.id === transition[1])
@@ -264,29 +306,32 @@ class FSA {
             });
           }
         }
-      } while (nodeStore.length > 0)
+      } while (nodeStore.length > 0) // Keep traversing if there are nodes left
 
-      if (valid) {
+      if (isAccepted) {
         alert("The machine accepts: " + inputWord);
       } else {
         alert("The machine rejects: " + inputWord);
       }
     }
 
-    return valid;
+    return isAccepted;
   }
 
+  /**
+   * Calcualtes the input alphabet of the machine
+   * @returns An array of all letters in the alphabet
+   */
   inputAlphabet() {
-    // Deterministic - count all inputs for start state
     let inputs = [];
-    if (this.status() == "Deterministic") {
+    if (this.status() == "Deterministic") { // Add all transition letters for start state
       let startState = this.states.find(state => state.id === this.startStateId);
       startState.transitions.forEach(element => {
         if (!inputs.includes(element[0])) {
           inputs.push(element[0]);
         }
       });
-    } else if (this.status() == "Nondeterministic") {
+    } else if (this.status() == "Nondeterministic") { // Add all unique transition letters across FSA
       this.states.forEach(state => {
         state.transitions.forEach(element => {
           if (!inputs.includes(element[0]) && element[0] != "ε") {

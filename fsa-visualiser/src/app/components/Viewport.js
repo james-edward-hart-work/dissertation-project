@@ -4,7 +4,7 @@ import styles from "../../styles/Viewport.module.css"
 import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
 
-// https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
+// Both imports taken from: https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
 import { Xwrapper } from "react-xarrows";
 import Xarrow from "react-xarrows";
 
@@ -20,9 +20,9 @@ const HEIGHT = 95;
  */
 export const Viewport = ({ machine, setMachine }) => {
   const [circleArray, setCircleArray] = useState([]); // State array containing the JSX of every circle
-  const [transitionArray, setTransitionArray] = useState([]);
-  const [startArrow, setStartArrow] = useState();
-  const [originStateId, setOriginStateId] = useState(null);
+  const [transitionArray, setTransitionArray] = useState([]); // Array containing all transition arrows
+  const [startArrow, setStartArrow] = useState(); // Contains the arrow of the start state
+  const [originStateId, setOriginStateId] = useState(null); // Holds the id of the origin state upon making a new transition
   const ref = useRef(null);
 
   /**
@@ -77,9 +77,14 @@ export const Viewport = ({ machine, setMachine }) => {
     setTransitionArray(array => array.filter(arrow => (!arrow.key.startsWith(circleId) && !arrow.key.endsWith(circleId))))
   }
 
+  /**
+   * Creates a new transition between two states
+   * @param destStateId Id of destination state
+   */
   function connectTransition(destStateId) {
 
-    if (transitionArray.find(state => state.key == (originStateId + "=>" + destStateId)) == undefined) { // Skip if transition already added
+    // If transition has not already been added
+    if (transitionArray.find(state => state.key == (originStateId + "=>" + destStateId)) == undefined) {
 
       setMachine((machine) => {
         const newMachine = new FSA(machine);
@@ -99,7 +104,7 @@ export const Viewport = ({ machine, setMachine }) => {
         data-testid={"transitionArrow"}
       />]);
     }
-    setOriginStateId(null);
+    setOriginStateId(null); // Reset state so no new transitions are made
   }
 
   /**
@@ -108,7 +113,8 @@ export const Viewport = ({ machine, setMachine }) => {
   function handleClick(event) {
 
     if (event.target.id != "Viewport") {
-      // If a circle was clicked
+
+      // If the target is a state
       if (machine.states.find(state => state.id == event.target.id) != undefined) {
         const circleId = event.target.id;
 
@@ -145,7 +151,7 @@ export const Viewport = ({ machine, setMachine }) => {
       }
     } else { // Click on Viewport
       if (originStateId != null) {
-        setOriginStateId(null);
+        setOriginStateId(null); // Cancel transition setting
       } else {
         if (!event.altKey && !event.shiftKey) {
           addCircle(event.clientX, event.clientY); // Add State

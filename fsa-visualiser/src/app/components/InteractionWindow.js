@@ -103,9 +103,9 @@ function printMachine(machine) {
     });
     return <div className={styles.States} data-testid="StatesList">
         <h3>Machine Description:</h3>
-        {(machine.startStateId != -1) 
-        ? <b style={{marginLeft: "2%"}}>Start State: {machine.states.find(state => state.id === machine.startStateId).name}</b>
-        : <b style={{marginLeft: "2%"}}>No start state selected.</b>
+        {(machine.startStateId != -1)
+            ? <b style={{ marginLeft: "2%" }}>Start State: {machine.states.find(state => state.id === machine.startStateId).name}</b>
+            : <b style={{ marginLeft: "2%" }}>No start state selected.</b>
         }
         <table><tbody>{states}</tbody></table>
     </div>;
@@ -159,7 +159,7 @@ export const InteractionWindow = ({ machine }) => {
             : <div>
                 <button onClick={() => setControlsPrint(true)} data-testid="ControlsButton" >Hide Controls</button>
                 {printControls()}
-                <p style={{ marginTop: "1%", marginLeft: "2%"}}>Empty Word Symbol: ε</p>
+                <p style={{ marginTop: "1%", marginLeft: "2%" }}>Empty Word Symbol: ε</p>
             </div>
         }
         <br></br>
@@ -171,7 +171,7 @@ export const InteractionWindow = ({ machine }) => {
                 <button className={styles.StatesButton} onClick={() => setHidePrint(true)} data-testid="StatesButton" >Hide States</button>
                 {printMachine(machine)}
             </div>
-        }        
+        }
         <br></br>
     </div>;
 }

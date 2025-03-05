@@ -18,8 +18,9 @@ import { useXarrow } from "react-xarrows"; // https://www.npmjs.com/package/reac
 export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS }) => {
     const [isAccept, setIsAccept] = useState(false);
     const ref = useRef(id);
-    const updateXarrow = useXarrow();
+    const updateXarrow = useXarrow(); // Function to update connected transition arrows.
 
+    // Toggles a state's accept status.
     function handleDoubleClick() {
         setIsAccept(!isAccept);
         setMachine((machine) => {
@@ -52,6 +53,7 @@ export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS })
                     return newMachine;
                 });
             }}
+            // Adds an internal ring if the state is an accept state
             style={isAccept
                 ? { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "1.5px solid black", outlineOffset: "-10px" }
                 : { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "none" }}
