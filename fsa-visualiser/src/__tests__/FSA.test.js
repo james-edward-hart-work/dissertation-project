@@ -236,7 +236,6 @@ describe('FSA', () => {
       expect(global.alert).toHaveBeenCalledWith("The machine rejects: ab. Path: Start_State => State1 => Start_State")
     })
 
-
     test('Run Input - Invalid', () => {
       let newMachine = new FSA(0)
       newMachine.runInput("a")

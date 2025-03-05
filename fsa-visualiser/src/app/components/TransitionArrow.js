@@ -9,17 +9,16 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
     const [isStraight, setIsStraight] = useState(false);
 
     function handleClick(event) {
-        if (event.altKey) {
-            setMachine((machine) => {                
+        if (event.altKey) { // Delete transition
+            setMachine((machine) => {
                 const newMachine = new FSA(machine);
                 newMachine.deleteTransition(originStateId, destStateId);
                 return newMachine;
             });
 
             setTransitionArray(array => array.filter(arrow => (arrow.key != (originStateId + "=>" + destStateId))))
-
         } else {
-            setIsStraight(!isStraight)
+            setIsStraight(!isStraight) // Toggle straightness of arrow
         }
     }
 
@@ -40,7 +39,8 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                 strokeWidth={2.5}
                 startAnchor={{ position: "top" }}
                 endAnchor={{ position: "left", offset: { rightness: 100 } }}
-                labels= {{ middle: <input data-testid={"transitionInput"}
+                labels={{
+                    middle: <input data-testid={"transitionInput"}
                         type="text"
                         className={styles.transitionInput}
                         defaultValue={"A"}
@@ -50,7 +50,8 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                                 newMachine.changeTransitionInput(originStateId, destStateId, e.target.value);
                                 return newMachine;
                             })
-                        }} />}}
+                        }} />
+                }}
                 arrowHead={{ style: { transform: "rotateY(180deg)" } }}
             />
             :
@@ -65,7 +66,8 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                 curveness={0.2}
                 strokeWidth={2.5}
                 _extendSVGcanvas={30}
-                labels= {{ middle: <input data-testid={"transitionInput"}
+                labels={{
+                    middle: <input data-testid={"transitionInput"}
                         type="text"
                         className={styles.transitionInput}
                         defaultValue={"A"}
@@ -75,8 +77,8 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                                 newMachine.changeTransitionInput(originStateId, destStateId, e.target.value);
                                 return newMachine;
                             })
-                        }} />}}
-            // Put input inside label prop
+                        }} />
+                }}
             />
         }
     </div>

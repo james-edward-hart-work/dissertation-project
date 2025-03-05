@@ -5,7 +5,7 @@ import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
 
 // https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
-import { Xwrapper } from "react-xarrows"; 
+import { Xwrapper } from "react-xarrows";
 import Xarrow from "react-xarrows";
 
 export const CIRCLE_RADIUS = 85;
@@ -70,7 +70,7 @@ export const Viewport = ({ machine, setMachine }) => {
         newMachine.deleteTransition(ids[0], ids[1]);
       });
       newMachine.deleteState(circleId); // Delete state after all transitions deleted.
-      if (newMachine.startStateId == circleId) { newMachine.setStartState(-1) }
+      if (newMachine.startStateId == circleId) { newMachine.setStartState("-1"); setStartArrow() }
       return newMachine;
     });
     setCircleArray(array => array.filter(circle => circle.key != circleId))
@@ -96,6 +96,7 @@ export const Viewport = ({ machine, setMachine }) => {
         machine={machine}
         setMachine={setMachine}
         setTransitionArray={setTransitionArray}
+        data-testid={"transitionArrow"}
       />]);
     }
     setOriginStateId(null);
@@ -107,6 +108,7 @@ export const Viewport = ({ machine, setMachine }) => {
   function handleClick(event) {
 
     if (event.target.id != "Viewport") {
+      // If a circle was clicked
       if (machine.states.find(state => state.id == event.target.id) != undefined) {
         const circleId = event.target.id;
 
@@ -116,18 +118,19 @@ export const Viewport = ({ machine, setMachine }) => {
             newMachine.setStartState(circleId);
             return newMachine;
           })
-          setStartArrow(<Xarrow
-            color="black"
-            key={"start"}
-            id={"start"}
-            start={circleId}
-            end={circleId}
-            path={"smooth"}
-            _cpx2Offset={-100}
-            strokeWidth={2.5}
-            startAnchor="left"
-            endAnchor={{ position: "left", offset: { rightness: 100 } }}
-          />);
+          setStartArrow(<div data-testid={"start"}>
+            <Xarrow
+              color="black"
+              key={"start"}
+              id={"start"}
+              start={circleId}
+              end={circleId}
+              path={"smooth"}
+              _cpx2Offset={-100}
+              strokeWidth={2.5}
+              startAnchor="left"
+              endAnchor={{ position: "left", offset: { rightness: 100 } }}
+            /></div>);
         }
 
         if (event.altKey && !event.shiftKey) { // Delete

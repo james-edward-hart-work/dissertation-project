@@ -15,7 +15,7 @@ let testMachine = new FSA({
     startStateId: "0",
     states:
         [{ id: "0", name: "Start_State", transitions: [["a", "1"], ["b", "0"]], accept: false },
-        { id: "1", name: "State1", transitions: [["a", "0"], ["b", "1"]], accept: true }],
+         { id: "1", name: "State1", transitions: [["a", "0"], ["b", "1"]], accept: true }],
     total: 2
 });
 

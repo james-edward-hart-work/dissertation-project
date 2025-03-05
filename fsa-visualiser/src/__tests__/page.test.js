@@ -57,26 +57,5 @@ describe('Page', () => {
       await user.pointer({ keys: '[MouseLeft]', target: app, coords: { clientX: 1000, clientY: 1000 } });
       expect(screen.queryByTestId("stateCircle")).toBeNull();
     })
-
-    test('INCOMPLETE - Cannot drag a state outside of the viewport', async () => {
-      // const viewport = screen.getByTestId("Viewport")
-      // await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
-      // const stateCircle = screen.getByRole("textbox");
-      // const app = screen.getByTestId("App");
-      // viewport.style.width = "200px";
-      // viewport.style.height = "200px";
-
-      // await user.pointer([
-      //   { keys: '[MouseLeft>]', target: stateCircle }, 
-      //   { target: viewport, coords: { x: 3000, y: 3000 } }, // Move by 3000 each way.
-      //   { keys: '[/MouseLeft]' } 
-      // ]);
-
-      // expect(getCoords(stateCircle.style.transform)[0]).toEqual(200);
-      // expect(getCoords(stateCircle.style.transform)[1]).toEqual(200);
-    })
   })
-
-  
-  
 })
