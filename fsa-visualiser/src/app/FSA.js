@@ -242,10 +242,10 @@ class FSA {
         let nextStateEntry = undefined;
 
         const allTransitions = currentState.transitions.filter(transition => transition[0] == letter);
-        allTransitions.forEach(transition => {
+        allTransitions.forEach(transition => { // For each transition
           const inputs = transition[0].trim().split(",");
-          if (inputs.includes(letter)) {
-            nextStateEntry = transition; // Gets final state of input word
+          if (inputs.includes(letter)) { // Does the possible inputs for this transition contain the current letter
+            nextStateEntry = transition; // Updates next state
           }
         });
 
@@ -253,7 +253,7 @@ class FSA {
         outputPath += currentState.name;
       })
 
-      if (currentState.accept && !outputPath.endsWith("undefined")) {
+      if (currentState.accept) {
         alert("The machine accepts: " + outputPath);
       } else {
         alert("The machine rejects: " + outputPath);
