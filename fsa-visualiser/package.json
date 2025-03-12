@@ -12,13 +12,13 @@
     "coverage": "jest --coverage"
   },
   "dependencies": {
+    "html-to-image": "^1.11.13",
     "next": "14.2.13",
     "node": "22.9.0",
     "npm": "10.9.0",
     "react": "18.3.1",
     "react-dom": "18",
     "react-draggable": "^4.4.6",
-    "react-screen-capture": "^1.1.1",
     "react-xarrows": "^2.0.2",
     "testing-library": "0.0.2",
     "ts-jest": "^29.2.5"

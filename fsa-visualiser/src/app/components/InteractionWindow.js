@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from "../../styles/InteractionWindow.module.css"
 import { InputBar } from "./InputBar";
+import * as htmlToImage from 'html-to-image';
 
 // Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu
 const Dropdown = ({ label, value, options, onChange }) => {
@@ -16,14 +17,6 @@ const Dropdown = ({ label, value, options, onChange }) => {
     );
 };
 // End of taken code.
-
-/**
- * Handles exporting of FSA (to be filled out later)
- * @param {*} type of export
- */
-function exportDropDown(type) {
-    alert('Exported: ' + type); // Placeholder for code
-}
 
 /**
  * Prints table of controls onto window
@@ -122,6 +115,40 @@ export const InteractionWindow = ({ machine }) => {
     const [hidePrint, setHidePrint] = useState(true); // Tracks if table of states is hidden or not
     const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
     const [exportType, setExportType] = useState('PNG'); // Stores the type of desired export
+
+
+    const handleSave = (dataUrl,type) => {
+        const downloadLink = document.createElement('a');
+        const fileName = 'MyFSA.' + type;
+
+        downloadLink.href = dataUrl;
+        downloadLink.download = fileName;
+        downloadLink.click();
+    };
+
+    /**
+     * Handles exporting of FSA (to be filled out later)
+     * @param {*} type of export
+     */
+    function exportDropDown(type) {
+        switch (type) {
+            case "PNG":
+                htmlToImage
+                .toPng(document.getElementById('Viewport'))
+                .then((dataUrl) => handleSave(dataUrl,"png"));
+                break;
+            
+            case "SVG":
+                htmlToImage
+                .toSvg(document.getElementById('Viewport'))
+                .then((dataUrl) => handleSave(dataUrl,"svg"));
+                break;
+        
+            default:
+                break;
+        }
+    }
+
 
     return <div className={styles.InteractionWindow} data-testid="InteractionWindow">
 
