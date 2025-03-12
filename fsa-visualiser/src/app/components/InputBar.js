@@ -47,7 +47,7 @@ export const InputBar = ({ machine }) => {
                 : <span className={styles.ValidLight} data-testid="ValidLight" style={{ backgroundColor: "red" }}></span>
             }
         </div>
-        <p>{machine.status()}</p>
+        <b>{"Machine Type: " + machine.status()}</b>
         <p>Input Alphabet: {showAlphabet(machine.inputAlphabet())}</p>
     </div>
 }

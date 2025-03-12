@@ -11,8 +11,8 @@ function App() {
 
   return ( // The JSX for the application
     <div data-testid="App" style={{ height: "100%", width: "100%" }}>
-      <Viewport machine={machine} setMachine={setMachine} />
-      <InteractionWindow machine={machine} />
+        <Viewport machine={machine} setMachine={setMachine} />
+        <InteractionWindow machine={machine} />
     </div>
   );
 };

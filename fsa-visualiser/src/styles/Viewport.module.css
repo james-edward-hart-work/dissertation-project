@@ -1,13 +1,10 @@
-.Viewport {
-    border: solid 1px black;
-    position: fixed;
-}
-
 .stateInput {
     position: absolute;
-    border-radius: 100%;
+    border-radius: 50%;
     border-width: 2px;
+    border-style: solid; 
     border-color: black;
-    margin-top: 1%; 
+    background-color: white;
+    margin-top: 1%;
     margin-left: 1%;
 }

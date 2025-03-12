@@ -1,7 +1,7 @@
 .InteractionWindow {
     width: 25%;
     height: 95%;
-    border: solid 1px #000000;
+    border: solid 1.5px #000000;
     position: fixed;
     overflow: visible;
     margin-left: 73%;

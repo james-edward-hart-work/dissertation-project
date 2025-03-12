@@ -105,6 +105,45 @@ function printMachine(machine) {
 }
 
 /**
+ * Handles exporting of the user's finite state diagram.
+ * @param type of export
+ */
+function exportDropDown(type, machine) {
+
+    const downloadExport = (dataUrl, type) => {
+        const downloadLink = document.createElement('a');
+        const fileName = 'MyFSA.' + type;
+
+        downloadLink.href = dataUrl;
+        downloadLink.download = fileName;
+        downloadLink.click();
+    };
+
+    if (machine.status() == "Invalid") {
+        if (!confirm("WARNING: Your machine is invalid. Click 'OK' to continue exporting or 'cancel' to cancel."))
+        return;
+    }
+
+    switch (type) {
+        // Styles below ensure Viewport is at root when exporting.
+        case "PNG": 
+            htmlToImage
+                .toPng(document.getElementById('Viewport'), { style: {transform: "translate(-0.7%, -1%)"}})
+                .then((dataUrl) => downloadExport(dataUrl, "png")); 
+            break;
+
+        case "SVG":
+            htmlToImage
+                .toSvg(document.getElementById('Viewport'), { style: {transform: "translate(-0.7%, -1%)"}})
+                .then((dataUrl) => downloadExport(dataUrl, "svg"));
+            break;
+
+        default:
+            break;
+    }
+}
+
+/**
  * Function component for the Interaction Window on the right of the application.
  * Designed to aid FSA development and allow for exporting the FSA.
  * @param machine Application's FSA
@@ -116,42 +155,7 @@ export const InteractionWindow = ({ machine }) => {
     const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
     const [exportType, setExportType] = useState('PNG'); // Stores the type of desired export
 
-
-    const handleSave = (dataUrl,type) => {
-        const downloadLink = document.createElement('a');
-        const fileName = 'MyFSA.' + type;
-
-        downloadLink.href = dataUrl;
-        downloadLink.download = fileName;
-        downloadLink.click();
-    };
-
-    /**
-     * Handles exporting of FSA (to be filled out later)
-     * @param {*} type of export
-     */
-    function exportDropDown(type) {
-        switch (type) {
-            case "PNG":
-                htmlToImage
-                .toPng(document.getElementById('Viewport'))
-                .then((dataUrl) => handleSave(dataUrl,"png"));
-                break;
-            
-            case "SVG":
-                htmlToImage
-                .toSvg(document.getElementById('Viewport'))
-                .then((dataUrl) => handleSave(dataUrl,"svg"));
-                break;
-        
-            default:
-                break;
-        }
-    }
-
-
     return <div className={styles.InteractionWindow} data-testid="InteractionWindow">
-
         <InputBar machine={machine} />
         <br></br>
 
@@ -176,7 +180,7 @@ export const InteractionWindow = ({ machine }) => {
             />
         </div>
         {/* End of adapted code */}
-        <button onClick={() => exportDropDown(exportType)} data-testid="ExportButton">Export</button>
+        <button onClick={() => exportDropDown(exportType,machine)} data-testid="ExportButton">Export</button>
         <br></br>
         <br></br>
 

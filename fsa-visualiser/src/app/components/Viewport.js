@@ -1,6 +1,5 @@
 import FSA from "../FSA";
 import { useRef, useState } from "react"
-import styles from "../../styles/Viewport.module.css"
 import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
 
@@ -160,9 +159,15 @@ export const Viewport = ({ machine, setMachine }) => {
     }
   }
 
-  // Renders Viewport.
-  return <div className={styles.Viewport} data-testid={"Viewport"} id={"Viewport"}
-    style={{ width: WIDTH + "svw", height: HEIGHT + "svh" }}
+  // Renders Viewport - styles set here as WIDTH and HEIGHT are set constants.
+  return <div data-testid={"Viewport"} id={"Viewport"}
+    style={{ 
+      width: WIDTH + "svw",
+      height: HEIGHT + "svh",
+      border: "solid 1.5px black", 
+      position: "fixed", 
+      backgroundColor: "white",
+    }}
     ref={ref} onClick={(event) => handleClick(event)} >
     <Xwrapper>
       {circleArray}
