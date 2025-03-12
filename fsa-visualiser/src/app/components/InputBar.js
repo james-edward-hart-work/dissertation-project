@@ -9,9 +9,9 @@ import styles from "../../styles/InputBar.module.css"
 function showAlphabet(inputs) {
     let string = "";
     inputs.forEach(element => {
-        string += element + ","
+        string += element + ", "
     });
-    return string;
+    return string.substring(0,string.length-2);
 }
 
 /**

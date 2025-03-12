@@ -194,7 +194,7 @@ describe('FSA', () => {
     expect(machine.status()).toEqual("Nondeterministic");
 
     machine.addTransition("0", "0", "")
-    expect(machine.status()).toEqual("Nondeterministic");
+    expect(machine.status()).toEqual("Invalid");
 
     let empty = new FSA(0)
     empty.addState("State0")
@@ -239,10 +239,10 @@ describe('FSA', () => {
     test('Run Input - Invalid', () => {
       let newMachine = new FSA(0)
       newMachine.runInput("a")
-      expect(global.alert).toHaveBeenCalledWith("Machine is not valid, please ensure it has:\n - A start state, selected using Alt + Shift + Click\n At least one accept state, toggled using double click.")
+      expect(global.alert).toHaveBeenCalledWith("ERROR: Machine is not valid, please ensure it has:\n - A start state, selected using Alt + Shift + Click\n At least one accept state, toggled using double click.")
 
       validMachine.runInput("c")
-      expect(global.alert).toHaveBeenCalledWith("Invalid word")
+      expect(global.alert).toHaveBeenCalledWith("ERROR: Invalid word, the input word must only consist of characters within the machine's input alphabet:\na,b")
     })
   })
 })

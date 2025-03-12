@@ -27,23 +27,23 @@ beforeEach(() => user = userEvent.setup());
 describe('InputBar', () => {
     test('InputBar Renders Correctly - Nondeterministic', () => {
         render(<InputBar machine={validMachine} />)
-        expect(screen.getByText("Nondeterministic")).toBeInTheDocument();
-        expect(screen.getByText("Input Alphabet: a,b,")).toBeInTheDocument();
+        expect(screen.getByText("Machine Type: Nondeterministic")).toBeInTheDocument();
+        expect(screen.getByText("Input Alphabet: a, b")).toBeInTheDocument();
         const style = window.getComputedStyle(screen.getByTestId("ValidLight"));
         expect(style.backgroundColor).toBe("green")
     })
 
     test('InputBar Renders Correctly - Deterministic', () => {
         render(<InputBar machine={deterministic} />)
-        expect(screen.getByText("Deterministic")).toBeInTheDocument();
-        expect(screen.getByText("Input Alphabet: a,b,")).toBeInTheDocument();
+        expect(screen.getByText("Machine Type: Deterministic")).toBeInTheDocument();
+        expect(screen.getByText("Input Alphabet: a, b")).toBeInTheDocument();
         const style = window.getComputedStyle(screen.getByTestId("ValidLight"));
         expect(style.backgroundColor).toBe("green")
     })
 
     test('InputBar Renders Correctly - Invalid', () => {
         render(<InputBar machine={new FSA(0)} />)
-        expect(screen.getByText("Invalid")).toBeInTheDocument();
+        expect(screen.getByText("Machine Type: Invalid")).toBeInTheDocument();
         expect(screen.getByText("Input Alphabet:")).toBeInTheDocument();
         const style = window.getComputedStyle(screen.getByTestId("ValidLight"));
         expect(style.backgroundColor).toBe("red")

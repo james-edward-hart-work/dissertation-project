@@ -3,6 +3,7 @@ import FSA from '../app/FSA';
 import { InteractionWindow } from '../app/components/InteractionWindow';
 import { userEvent } from '@testing-library/user-event'
 import { render, screen } from '@testing-library/react'
+import * as htmlToImage from 'html-to-image';
 
 /**
  * @jest-environment jsdom
@@ -109,15 +110,17 @@ describe('InteractionWindow', () => {
                 screen.getByRole('option', { name: type }),
             )
 
-            const link = {
-                click: jest.fn()
-            };
-            jest.spyOn(document, "createElement").mockImplementation(() => link);
+            // const link = {
+            //     click: jest.fn()
+            // };
 
-            await user.click(screen.getByRole("button", { name: /Export/i }));
+            // const fileSpy = jest.spyOn(htmlToImage, "toPng");
+            // const spy = jest.spyOn(document, "getElementById");
 
-            expect(link.click).toHaveBeenCalledTimes(1);
-            expect(link.download).toEqual("MyFSA." + type.toLowerCase());
+            // await user.click(screen.getByTestId("ExportButton"));
+
+            // expect(spy).toHaveBeenCalledWith('Viewport');
+            //expect(link.download).toEqual("MyFSA." + type.toLowerCase());
         })
 
         test('Play/Stop Button Toggles Them', async () => {

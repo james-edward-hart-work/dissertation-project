@@ -151,8 +151,22 @@ class FSA {
    * @returns a string stating the machine's type
    */
   status() {
-    // Invalid if machine has no start state or accept state
-    if (this.startStateId == "-1" || this.states.filter(state => state.accept == true).length == 0) {
+    let invalid = false;
+    // Invalid if machine has no start state or accept state or has no alphabet (no empty words)
+    if (this.startStateId == "-1" || this.states.filter(state => state.accept == true).length == 0 || this.inputAlphabet().length == 0) {
+      return "Invalid";
+    }
+
+    // If any transitions do not have an transition word = invalid
+    this.states.forEach(state => {
+      state.transitions.forEach(element => {
+        if (element[0].trim() == "") {
+          invalid = true;
+        }
+      });
+    });
+
+    if (invalid) {
       return "Invalid";
     }
 
@@ -162,9 +176,6 @@ class FSA {
     startState.transitions.forEach(transition => {
       let letters = transition[0].trim().split(",");
       letters.forEach(letter => {
-        if (letter == "") {
-          return;
-        }
         if (startStateInputs.includes(letter)) {
           return "Nondeterministic";
         }
@@ -324,23 +335,15 @@ class FSA {
    */
   inputAlphabet() {
     let inputs = [];
-    if (this.status() == "Deterministic") { // Add all transition letters for start state
-      let startState = this.states.find(state => state.id === this.startStateId);
-      startState.transitions.forEach(element => {
-        if (!inputs.includes(element[0])) {
+
+    // Add all unique transition letter for each state
+    this.states.forEach(state => {
+      state.transitions.forEach(element => {
+        if (!inputs.includes(element[0]) && element[0] != "ε" && element[0].trim() != "") {
           inputs.push(element[0]);
         }
       });
-    } else if (this.status() == "Nondeterministic") { // Add all unique transition letters across FSA
-      this.states.forEach(state => {
-        state.transitions.forEach(element => {
-          if (!inputs.includes(element[0]) && element[0] != "ε") {
-            inputs.push(element[0]);
-          }
-        });
-      });
-
-    }
+    });
     return inputs;
   }
 

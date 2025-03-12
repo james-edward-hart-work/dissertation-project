@@ -121,20 +121,20 @@ function exportDropDown(type, machine) {
 
     if (machine.status() == "Invalid") {
         if (!confirm("WARNING: Your machine is invalid. Click 'OK' to continue exporting or 'cancel' to cancel."))
-        return;
+            return;
     }
 
     switch (type) {
         // Styles below ensure Viewport is at root when exporting.
-        case "PNG": 
+        case "PNG":
             htmlToImage
-                .toPng(document.getElementById('Viewport'), { style: {transform: "translate(-0.7%, -1%)"}})
-                .then((dataUrl) => downloadExport(dataUrl, "png")); 
+                .toPng(document.getElementById('Viewport'), { style: { transform: "translate(-0.7%, -1%)" } })
+                .then((dataUrl) => downloadExport(dataUrl, "png"));
             break;
 
         case "SVG":
             htmlToImage
-                .toSvg(document.getElementById('Viewport'), { style: {transform: "translate(-0.7%, -1%)"}})
+                .toSvg(document.getElementById('Viewport'), { style: { transform: "translate(-0.7%, -1%)" } })
                 .then((dataUrl) => downloadExport(dataUrl, "svg"));
             break;
 
@@ -180,7 +180,7 @@ export const InteractionWindow = ({ machine }) => {
             />
         </div>
         {/* End of adapted code */}
-        <button onClick={() => exportDropDown(exportType,machine)} data-testid="ExportButton">Export</button>
+        <button onClick={() => exportDropDown(exportType, machine)} data-testid="ExportButton">Export</button>
         <br></br>
         <br></br>
 
