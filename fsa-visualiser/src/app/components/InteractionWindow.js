@@ -2,6 +2,7 @@ import { useState } from "react";
 import styles from "../../styles/InteractionWindow.module.css"
 import { InputBar } from "./InputBar";
 import * as htmlToImage from 'html-to-image';
+import Popup from 'reactjs-popup';
 
 // Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu
 const Dropdown = ({ label, value, options, onChange }) => {
@@ -120,13 +121,14 @@ function exportDropDown(type, machine) {
     };
 
     if (machine.status() == "Invalid") {
-        if (!confirm("WARNING: Your machine is invalid. Click 'OK' to continue exporting or 'cancel' to cancel."))
-            return;
+        // if (!confirm("WARNING: Your machine is invalid. Click 'OK' to continue exporting or 'cancel' to cancel."))
+        //     return;
     }
 
     switch (type) {
         // Styles below ensure Viewport is at root when exporting.
         case "PNG":
+
             htmlToImage
                 .toPng(document.getElementById('Viewport'), { style: { transform: "translate(-0.7%, -1%)" } })
                 .then((dataUrl) => downloadExport(dataUrl, "png"));

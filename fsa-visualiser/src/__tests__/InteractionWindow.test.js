@@ -19,8 +19,6 @@ let testMachine = new FSA({
     total: 2
 });
 
-
-
 describe('InteractionWindow', () => {
 
     beforeEach(() => {
@@ -94,6 +92,12 @@ describe('InteractionWindow', () => {
             expect(screen.getByText("[b => State1]")).toBeInTheDocument();
         })
 
+        test('Play/Stop Button Toggles Them', async () => {
+            render(<InteractionWindow machine={defaultMachine} />)
+            await user.click(screen.getByTestId('PlayButton'));
+            expect(screen.getByTestId('PlayButton')).toBeInTheDocument();
+        })
+
         test.each([
             ['PNG'],
             ['SVG'],
@@ -101,6 +105,7 @@ describe('InteractionWindow', () => {
             // ['LaTeX'],
             // ['Video'],
         ])('Export Type: %s', async (type) => {
+
             // Mock click link function
 
             render(<InteractionWindow machine={defaultMachine} />)
@@ -114,19 +119,15 @@ describe('InteractionWindow', () => {
             //     click: jest.fn()
             // };
 
-            // const fileSpy = jest.spyOn(htmlToImage, "toPng");
-            // const spy = jest.spyOn(document, "getElementById");
+            const fileSpy = jest.spyOn(htmlToImage, "toPng");
+            const spy = jest.spyOn(document, "createElement");
 
-            // await user.click(screen.getByTestId("ExportButton"));
+            await user.click(screen.getByTestId("ExportButton"));
 
-            // expect(spy).toHaveBeenCalledWith('Viewport');
+            //expect(spy).toHaveBeenCalledWith('a');
+            expect(fileSpy).toHaveBeenCalledTimes(1);
+
             //expect(link.download).toEqual("MyFSA." + type.toLowerCase());
-        })
-
-        test('Play/Stop Button Toggles Them', async () => {
-            render(<InteractionWindow machine={defaultMachine} />)
-            await user.click(screen.getByTestId('PlayButton'));
-            expect(screen.getByTestId('PlayButton')).toBeInTheDocument();
         })
     })
 })
