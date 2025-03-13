@@ -121,8 +121,8 @@ function exportDropDown(type, machine) {
     };
 
     if (machine.status() == "Invalid") {
-        // if (!confirm("WARNING: Your machine is invalid. Click 'OK' to continue exporting or 'cancel' to cancel."))
-        //     return;
+        if (!confirm("WARNING: Your machine is invalid. Click 'OK' to continue exporting or 'cancel' to cancel."))
+            return;
     }
 
     switch (type) {

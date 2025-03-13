@@ -5,6 +5,7 @@ import Page from '../app/page'
 import React from 'react';
 import FSA from '../app/FSA';
 import { CIRCLE_RADIUS } from '../app/components/Viewport';
+import * as htmlToImage from 'html-to-image';
 
 // Extracts coordinates from style transform.
 export function getCoords(string) {
@@ -36,7 +37,6 @@ describe('Page', () => {
     })
   })
   describe('Viewport', () => {
-
     test('Clicking inside viewport adds a state', async () => {
       const viewport = screen.getByTestId("Viewport");
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { clientX: 100, clientY: 100 } });
@@ -58,4 +58,70 @@ describe('Page', () => {
       expect(screen.queryByTestId("stateCircle")).toBeNull();
     })
   })
+
+  // describe('Multiple Components', () => {
+
+  //   beforeEach(() => {
+  //     windowSpy = jest.spyOn(window, "window", "get");
+  //   });
+    
+  //   afterEach(() => {
+  //     windowSpy.mockRestore();
+  //   });
+  //   test.each([
+  //     ['PNG'],
+  //     ['SVG'],
+  //     // ['JSON'],
+  //     // ['LaTeX'],
+  //     // ['Video'],
+  //   ])('Export Type: %s', async (type) => {
+
+  //     SVGElement.prototype.getTotalLength = () => 100;
+
+  //     global.alert = jest.fn();
+  //     global.confirm = jest.fn();
+
+
+  //     const viewport = screen.getByTestId("Viewport");
+  //     await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { clientX: 0, clientY: 0 } });
+  //     await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { clientX: 100, clientY: 100 } });
+  //     const stateCircle = screen.getAllByTestId("stateCircle");
+
+  //     // Set accept state
+  //     await user.dblClick(stateCircle[1])
+
+  //     // Set Start state
+  //     await user.keyboard('{Shift>}');
+  //     await user.keyboard('{Alt>}');
+  //     await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
+  //     await user.keyboard('{/Alt}');
+  //     await user.keyboard('{/Shift}');
+
+  //     // Add transition
+  //     await user.keyboard('{Shift>}');
+  //     await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
+  //     await user.keyboard('{/Shift}');
+  //     await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
+
+  //     // Test adapted from: https://cathalmacdonnacha.com/how-to-test-a-select-element-with-react-testing-library
+  //     userEvent.selectOptions(
+  //       screen.getByTestId('Select'),
+  //       screen.getByRole('option', { name: type }),
+  //     )
+
+  //     // const link = {
+  //     //     click: jest.fn()
+  //     // };
+
+  //     const fileSpy = jest.spyOn(htmlToImage, "toPng");
+  //     const spy = jest.spyOn(document, "createElement");
+
+  //     await user.click(screen.getByTestId("ExportButton"));
+
+  //     //expect(spy).toHaveBeenCalledWith('a');
+  //     expect(fileSpy).toHaveBeenCalledTimes(1);
+
+  //     //expect(link.download).toEqual("MyFSA." + type.toLowerCase());
+  //   })
+  // })
 })

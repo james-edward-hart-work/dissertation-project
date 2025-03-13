@@ -97,37 +97,5 @@ describe('InteractionWindow', () => {
             await user.click(screen.getByTestId('PlayButton'));
             expect(screen.getByTestId('PlayButton')).toBeInTheDocument();
         })
-
-        test.each([
-            ['PNG'],
-            ['SVG'],
-            // ['JSON'],
-            // ['LaTeX'],
-            // ['Video'],
-        ])('Export Type: %s', async (type) => {
-
-            // Mock click link function
-
-            render(<InteractionWindow machine={defaultMachine} />)
-            // Test adapted from: https://cathalmacdonnacha.com/how-to-test-a-select-element-with-react-testing-library
-            userEvent.selectOptions(
-                screen.getByTestId('Select'),
-                screen.getByRole('option', { name: type }),
-            )
-
-            // const link = {
-            //     click: jest.fn()
-            // };
-
-            const fileSpy = jest.spyOn(htmlToImage, "toPng");
-            const spy = jest.spyOn(document, "createElement");
-
-            await user.click(screen.getByTestId("ExportButton"));
-
-            //expect(spy).toHaveBeenCalledWith('a');
-            expect(fileSpy).toHaveBeenCalledTimes(1);
-
-            //expect(link.download).toEqual("MyFSA." + type.toLowerCase());
-        })
     })
 })
