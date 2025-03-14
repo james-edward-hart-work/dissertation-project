@@ -32,7 +32,7 @@ describe('InteractionWindow', () => {
             ['WordInput'],
             ['PlayButton'],
             ['ValidLight'],
-            ['OrganiseButton'],
+            //['OrganiseButton'],
             ['Dropdown'],
             ['ExportButton'],
             ['StatesButton'],
@@ -62,30 +62,29 @@ describe('InteractionWindow', () => {
         })
         test('Toggling Controls', async () => {
             render(<InteractionWindow machine={defaultMachine} />)
-            await user.click(screen.getByRole('button', { name: /View Controls/i }));
-            expect(screen.getByTestId("Controls")).toBeInTheDocument();
             await user.click(screen.getByRole('button', { name: /Hide Controls/i }));
             expect(screen.queryByTestId("Controls")).toBeNull();
+            await user.click(screen.getByRole('button', { name: /View Controls/i }));
+            expect(screen.getByTestId("Controls")).toBeInTheDocument();
         })
 
         test('Toggling List of States - No States', async () => {
             render(<InteractionWindow machine={defaultMachine} />)
-            await user.click(screen.getByRole('button', { name: /View States/i }));
-            expect(screen.getByText("No States Added.")).toBeInTheDocument();
-            await user.click(screen.getByRole('button', { name: /Hide States/i }));
+            await user.click(screen.getByRole('button', { name: /Hide Machine Description/i }));
             expect(screen.queryByText("No States Added.")).toBeNull();
+            await user.click(screen.getByRole('button', { name: /View Machine Description/i }));
+            expect(screen.getByText("No States Added.")).toBeInTheDocument();
         })
 
         test('Toggling List of States - States Added', async () => {
             render(<InteractionWindow machine={testMachine} />)
-            await user.click(screen.getByRole('button', { name: /View States/i }));
-            expect(screen.getByTestId("StatesList")).toBeInTheDocument();
-            await user.click(screen.getByRole('button', { name: /Hide States/i }));
+            await user.click(screen.getByRole('button', { name: /Hide Machine Description/i }));
             expect(screen.queryByTestId("StatesList")).toBeNull();
+            await user.click(screen.getByRole('button', { name: /View Machine Description/i }));
+            expect(screen.getByTestId("StatesList")).toBeInTheDocument();
         })
         test('Toggling List of States - States Added', async () => {
             render(<InteractionWindow machine={testMachine} />)
-            await user.click(screen.getByRole('button', { name: /View States/i }));
             expect(screen.getByText("[a => State1]")).toBeInTheDocument();
             expect(screen.getByText("[b => Start_State]")).toBeInTheDocument();
             expect(screen.getByText("[a => Start_State]")).toBeInTheDocument();

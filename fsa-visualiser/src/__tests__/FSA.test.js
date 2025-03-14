@@ -200,6 +200,7 @@ describe('FSA', () => {
     empty.addState("State0")
     empty.setStartState("0")
     expect(empty.status()).toEqual("Invalid");
+    
   })
 
   describe('InteractionWindow', () => {
@@ -239,7 +240,7 @@ describe('FSA', () => {
     test('Run Input - Invalid', () => {
       let newMachine = new FSA(0)
       newMachine.runInput("a")
-      expect(global.alert).toHaveBeenCalledWith("ERROR: Machine is not valid, please ensure it has:\n - A start state, selected using Alt + Shift + Click\n At least one accept state, toggled using double click.")
+      expect(global.alert).toHaveBeenCalledWith("ERROR: Machine is not valid, please ensure it has:\n - A start state (selected using Alt + Shift + Click)\n - At least one accept state (toggled using double click)")
 
       validMachine.runInput("c")
       expect(global.alert).toHaveBeenCalledWith("ERROR: Invalid word, the input word must only consist of characters within the machine's input alphabet:\na,b")

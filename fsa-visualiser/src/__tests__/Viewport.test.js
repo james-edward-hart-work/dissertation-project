@@ -352,8 +352,8 @@ describe('Viewport', () => {
 
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
+      await user.keyboard('{/Shift}');
 
       expect(screen.getAllByTestId("transitionArrow").length).toEqual(1);
       expect(ref.current.states[0].transitions[0]).toEqual(["A", "1"]);
@@ -377,9 +377,8 @@ describe('Viewport', () => {
 
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle });
-      await user.keyboard('{/Shift}');
-
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle });
+      await user.keyboard('{/Shift}');
 
       expect(screen.getAllByTestId("transitionArrow").length).toEqual(1);
       expect(ref.current.states[0].transitions[0]).toEqual(["A", "0"]);
@@ -403,8 +402,8 @@ describe('Viewport', () => {
       // Two different states
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
+      await user.keyboard('{/Shift}');
 
       const transition = screen.getByTestId("transitionInput");
       expect(transition.value).toEqual("A");
@@ -415,8 +414,8 @@ describe('Viewport', () => {
       // To same state
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
+      await user.keyboard('{/Shift}');
 
       const transition2 = screen.getAllByTestId("transitionInput")[1];
       expect(transition2.value).toEqual("A");
@@ -442,9 +441,8 @@ describe('Viewport', () => {
 
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle });
-      await user.keyboard('{/Shift}');
-
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle });
+      await user.keyboard('{/Shift}');
 
       expect(screen.getAllByTestId("transitionArrow").length).toEqual(1);
       const transition = screen.getByTestId("transitionArrow");
@@ -474,8 +472,8 @@ describe('Viewport', () => {
 
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
+      await user.keyboard('{/Shift}');
 
       const transition = screen.getByTestId("transitionArrow");
 
@@ -506,21 +504,21 @@ describe('Viewport', () => {
       // Create transitions
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
+      await user.keyboard('{/Shift}');
 
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[2] });
+      await user.keyboard('{/Shift}');
 
       expect(screen.queryAllByTestId("transitionInput").length).toEqual(2);
 
       // Between states that will not be deleted.
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[2] });
+      await user.keyboard('{/Shift}');
 
       // Delete state
       await user.keyboard('{Alt>}');
@@ -550,19 +548,19 @@ describe('Viewport', () => {
       // Create transitions
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[2] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
+      await user.keyboard('{/Shift}');
 
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
+      await user.keyboard('{/Shift}');
 
       // Between states that will not be deleted.
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[2] });
+      await user.keyboard('{/Shift}');
 
       expect(screen.queryAllByTestId("transitionInput").length).toEqual(3);
 
@@ -597,8 +595,8 @@ describe('Viewport', () => {
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: screen.getByTestId('stateCircle') });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 500, y: 500 }, });
+      await user.keyboard('{/Shift}');
 
       expect(ref.current.states[0].transitions.length).toEqual(0);
     })
@@ -621,8 +619,8 @@ describe('Viewport', () => {
 
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.keyboard('{/Shift}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
+      await user.keyboard('{/Shift}');
 
       expect(screen.getAllByTestId("transitionInput").length).toEqual(1);
 
