@@ -223,7 +223,7 @@ class FSA {
 
     // Checks if word is valid against input alphabet.
     if (this.status() == "Invalid") {
-      alert("ERROR: Machine is not valid, please ensure it has:\n - A start state, selected using Alt + Shift + Click\n At least one accept state, toggled using double click.")
+      alert("ERROR: Machine is not valid, please ensure it has:\n - A start state (selected using Alt + Shift + Click)\n - At least one accept state (toggled using double click)")
       return;
     }
 

@@ -28,23 +28,15 @@ function printControls() {
         <tbody>
             <tr>
                 <td>Click (Blank Space)</td>
-                <td>Creates a new state</td>
+                <td>Creates a new state <br></br>(drag to move)</td>
             </tr>
             <tr>
-                <td>Click (Transition)</td>
-                <td>Toggles straightness of arrow</td>
+                <td>Shift + Click (Two States)</td>
+                <td>Creates transition</td>
             </tr>
             <tr>
-                <td>Drag (State)</td>
-                <td>Drags state to new posititon</td>
-            </tr>
-            <tr>
-                <td>Shift + Click (State)</td>
-                <td>Creates transition from selected state, then click on the destination state</td>
-            </tr>
-            <tr>
-                <td>Alt + Click (State/Transition)</td>
-                <td>Deletes state or transition</td>
+                <td>Alt + Click</td>
+                <td>Deletes object</td>
             </tr>
             <tr>
                 <td>Double Click (State)</td>
@@ -52,7 +44,11 @@ function printControls() {
             </tr>
             <tr>
                 <td>Shift + Alt + Click (State)</td>
-                <td>Makes selected state the start state</td>
+                <td>Makes state the start state</td>
+            </tr>
+            <tr>
+                <td>Click (Transition)</td>
+                <td>Toggles straightness of arrow</td>
             </tr>
         </tbody>
     </table>
@@ -96,7 +92,6 @@ function printMachine(machine) {
         );
     });
     return <div className={styles.States} data-testid="StatesList">
-        <h3>Machine Description:</h3>
         {(machine.startStateId != -1)
             ? <b style={{ marginLeft: "2%" }}>Start State: {machine.states.find(state => state.id === machine.startStateId).name}</b>
             : <b style={{ marginLeft: "2%" }}>No start state selected.</b>
@@ -153,55 +148,59 @@ function exportDropDown(type, machine) {
  */
 export const InteractionWindow = ({ machine }) => {
 
-    const [hidePrint, setHidePrint] = useState(true); // Tracks if table of states is hidden or not
-    const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
+    const [hidePrint, setHidePrint] = useState(false); // Tracks if table of states is hidden or not
+    const [hideControls, setControlsPrint] = useState(false); // Tracks if table of controls is hidden or not
     const [exportType, setExportType] = useState('PNG'); // Stores the type of desired export
 
     return <div className={styles.InteractionWindow} data-testid="InteractionWindow">
         <InputBar machine={machine} />
         <br></br>
 
-        <button className={styles.OrganiseButton} data-testid="OrganiseButton" > Organise FSA Layout</button>
+        {/* Organise Layout */}
+        {/* <button className={styles.OrganiseButton} data-testid="OrganiseButton" > Organise FSA Layout</button>
         <br></br>
-        <br></br>
+        <br></br> */}
 
         {/* Export Drop Down */}
         {/* Following code adapted from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu */}
         <div data-testid="Dropdown">
             <Dropdown
-                label="Select method of exporting your FSA: "
+                label="Export your FSA: "
                 options={[
                     { label: 'PNG', value: 'PNG' },
                     { label: 'SVG', value: 'SVG' },
-                    { label: 'JSON', value: 'JSON' },
-                    { label: 'LaTeX', value: 'LaTeX' },
-                    { label: 'Video', value: 'Video' }
+                    // { label: 'JSON', value: 'JSON' },
+                    // { label: 'LaTeX', value: 'LaTeX' },
+                    // { label: 'Video', value: 'Video' }
                 ]}
                 value={exportType}
                 onChange={(e) => setExportType(e.target.value)}
             />
-        </div>
+        
         {/* End of adapted code */}
-        <button onClick={() => exportDropDown(exportType, machine)} data-testid="ExportButton">Export</button>
+        <button style={{marginLeft: "2%"}} onClick={() => exportDropDown(exportType, machine)} data-testid="ExportButton">Export</button>
+        </div>
         <br></br>
         <br></br>
 
         {/* Controls */}
         {hideControls
-            ? <button onClick={() => setControlsPrint(false)} data-testid="ControlsButton" >View Controls</button>
+            ? <div><button className={styles.ControlsButton} onClick={() => setControlsPrint(false)} data-testid="ControlsButton" >View Controls</button><br></br></div>
             : <div>
-                <button onClick={() => setControlsPrint(true)} data-testid="ControlsButton" >Hide Controls</button>
+                <button className={styles.ControlsButton} onClick={() => setControlsPrint(true)} data-testid="ControlsButton" >Hide Controls</button>
                 {printControls()}
+                <b style={{ marginTop: "1%", marginLeft: "2%" }}>Note: Alt key = 'option' (on Macbooks)</b>
                 <p style={{ marginTop: "1%", marginLeft: "2%" }}>Empty Word Symbol: ε</p>
+                <p style={{ marginTop: "1%", marginLeft: "2%" }}>Any state names or transition inputs can be changed.</p>
             </div>
         }
         <br></br>
 
         {/* List of States */}
         {hidePrint
-            ? <button className={styles.StatesButton} onClick={() => setHidePrint(false)} data-testid="StatesButton" >View States</button>
+            ? <button className={styles.StatesButton} onClick={() => setHidePrint(false)} data-testid="StatesButton" >View Machine Description</button>
             : <div>
-                <button className={styles.StatesButton} onClick={() => setHidePrint(true)} data-testid="StatesButton" >Hide States</button>
+                <button className={styles.StatesButton} onClick={() => setHidePrint(true)} data-testid="StatesButton" >Hide Machine Description</button>
                 {printMachine(machine)}
             </div>
         }

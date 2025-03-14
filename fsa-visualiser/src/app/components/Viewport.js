@@ -141,11 +141,10 @@ export const Viewport = ({ machine, setMachine }) => {
         if (event.altKey && !event.shiftKey) { // Delete
           deleteCircle(circleId);
         } else if (event.shiftKey && !event.altKey) { // Create Transition
-          setOriginStateId(circleId);
-        } else {
-          if (originStateId != null) { // Select Destination State
+          if (originStateId == null) {
+            setOriginStateId(circleId);
+          } else  // Select Destination State
             connectTransition(circleId);
-          }
         }
       }
     } else { // Click on Viewport
@@ -161,11 +160,11 @@ export const Viewport = ({ machine, setMachine }) => {
 
   // Renders Viewport - styles set here as WIDTH and HEIGHT are set constants.
   return <div data-testid={"Viewport"} id={"Viewport"}
-    style={{ 
+    style={{
       width: WIDTH + "svw",
       height: HEIGHT + "svh",
-      border: "solid 1.5px black", 
-      position: "fixed", 
+      border: "solid 1.5px black",
+      position: "fixed",
       backgroundColor: "white",
     }}
     ref={ref} onClick={(event) => handleClick(event)} >

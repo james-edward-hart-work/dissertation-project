@@ -2,6 +2,7 @@
 .InputDiv {
     min-height: 5%;
     overflow: visible;
+    margin-top: 1%;
 }
 
 .WordInput {
