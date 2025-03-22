@@ -7,7 +7,6 @@ const createJestConfig = nextJest({
 const customJestConfig = {
   coverageProvider: 'v8',
   testEnvironment: 'jsdom',
-  transformIgnorePatterns: ['node_modules/(?!(@react-hook/mouse-position|@react-hook/event)/)'],
   preset: 'ts-jest/presets/js-with-ts',
   transform: {
     "^.+\\.jsx?$": "babel-jest",
