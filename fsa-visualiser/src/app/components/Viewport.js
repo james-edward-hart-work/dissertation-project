@@ -1,5 +1,5 @@
 import FSA from "../FSA";
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
 
@@ -17,12 +17,21 @@ const HEIGHT = 95;
  * @param setMachine Setter for the FSA
  * @returns JSX for the Viewport
  */
-export const Viewport = ({ machine, setMachine }) => {
+export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayout }) => {
   const [circleArray, setCircleArray] = useState([]); // State array containing the JSX of every circle
   const [transitionArray, setTransitionArray] = useState([]); // Array containing all transition arrows
   const [startArrow, setStartArrow] = useState(); // Contains the arrow of the start state
   const [originStateId, setOriginStateId] = useState(null); // Holds the id of the origin state upon making a new transition
+  const [positions, setPositions] = useState([]);
   const ref = useRef(null);
+
+
+  useEffect(() => {
+    if (organiseLayout) {
+      organiseCircles();
+    }
+  }, [organiseLayout]);
+
 
   /**
    * Adds a state circle to the viewport and state to the FSA.
@@ -42,17 +51,41 @@ export const Viewport = ({ machine, setMachine }) => {
     let circleX = x - CIRCLE_RADIUS / 2;
     let circleY = y - CIRCLE_RADIUS / 2;
 
+    const newPositions = [...positions, {id: id, position: null}];
+    setPositions(newPositions);
+
+    // // Adds circle to array of all circles.
+    // setCircleArray(array => [...array,
+    // <StateCircle
+    //   key={id}
+    //   machine={machine}
+    //   setMachine={setMachine}
+    //   id={id}
+    //   circleX={circleX}
+    //   circleY={circleY}
+    //   CIRCLE_RADIUS={CIRCLE_RADIUS}
+    //   positions={positions}
+    // />])
+
     // Adds circle to array of all circles.
-    setCircleArray(array => [...array,
-    <StateCircle
-      key={id}
-      machine={machine}
-      setMachine={setMachine}
-      id={id}
-      circleX={circleX}
-      circleY={circleY}
-      CIRCLE_RADIUS={CIRCLE_RADIUS}
-    />])
+    setCircleArray(array => [...array, { id: id, circleX: circleX, circleY: circleY }])
+  }
+
+  function organiseCircles() {
+    // Apply ordering by updating position for each node
+
+    // Calculate and change positions - circles will already use null or that
+
+    if (machine.startStateId != "-1") {
+      const newPositions = positions;
+
+      const index = positions.findIndex(element => element.id === machine.startStateId);
+      newPositions[index] = { id: machine.startStateId, position: {x: WIDTH - 30, y: HEIGHT - 40 }}
+
+      setPositions(newPositions);
+    }
+
+    setOrganiseLayout(false);
   }
 
   /**
@@ -169,7 +202,19 @@ export const Viewport = ({ machine, setMachine }) => {
     }}
     ref={ref} onClick={(event) => handleClick(event)} >
     <Xwrapper>
-      {circleArray}
+      {/* {circleArray} */}
+      {circleArray.map(circle => (
+        <StateCircle
+          key={circle.id}
+          machine={machine}
+          setMachine={setMachine}
+          id={circle.id}
+          circleX={circle.circleX}
+          circleY={circle.circleY}
+          CIRCLE_RADIUS={CIRCLE_RADIUS}
+          positions={positions}
+        />
+      ))}
       {transitionArray}
       {startArrow}
     </Xwrapper>

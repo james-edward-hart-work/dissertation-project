@@ -146,7 +146,7 @@ function exportDropDown(type, machine) {
  * @param machine Application's FSA
  * @returns JSX for Interaction Window
  */
-export const InteractionWindow = ({ machine }) => {
+export const InteractionWindow = ({ machine, setOrganiseLayout }) => {
 
     const [hidePrint, setHidePrint] = useState(false); // Tracks if table of states is hidden or not
     const [hideControls, setControlsPrint] = useState(false); // Tracks if table of controls is hidden or not
@@ -157,9 +157,9 @@ export const InteractionWindow = ({ machine }) => {
         <br></br>
 
         {/* Organise Layout */}
-        {/* <button className={styles.OrganiseButton} data-testid="OrganiseButton" > Organise FSA Layout</button>
+        <button className={styles.OrganiseButton} data-testid="OrganiseButton" onClick={() => setOrganiseLayout(true)}> Organise FSA Layout</button>
         <br></br>
-        <br></br> */}
+        <br></br>
 
         {/* Export Drop Down */}
         {/* Following code adapted from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu */}
