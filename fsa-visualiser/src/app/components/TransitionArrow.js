@@ -14,8 +14,6 @@ import styles from "../../styles/TransitionArrow.module.css"
  */
 export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTransitionArray }) => {
 
-    const [isStraight, setIsStraight] = useState(false); // Tracks whether the arrow is straight or curved
-
     function handleClick(event) {
         if (event.altKey) { // Deletes transition
             setMachine((machine) => {
@@ -25,8 +23,6 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
             });
 
             setTransitionArray(array => array.filter(arrow => (arrow.key != (originStateId + "=>" + destStateId))))
-        } else {
-            setIsStraight(!isStraight) // Toggle straightness of arrow
         }
     }
 
@@ -72,7 +68,7 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                 id={originStateId + "=>" + destStateId}
                 start={originStateId}
                 end={destStateId}
-                path={isStraight ? "straight" : "smooth"} // Allows user to toggle straight or smooth arrow
+                path={"smooth"} // Allows user to toggle straight or smooth arrow
                 curveness={0.2}
                 strokeWidth={2.5}
                 _extendSVGcanvas={30}

@@ -29,7 +29,14 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   useEffect(() => {
     if (organiseLayout) {
       organiseCircles();
+    } else {
+      // Set all back to null
+      setPositions(positions.map(element => {
+        return {id: element.id, position: null};
+      }));
     }
+    console.log(organiseLayout);
+    
   }, [organiseLayout]);
 
 
@@ -54,19 +61,6 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     const newPositions = [...positions, {id: id, position: null}];
     setPositions(newPositions);
 
-    // // Adds circle to array of all circles.
-    // setCircleArray(array => [...array,
-    // <StateCircle
-    //   key={id}
-    //   machine={machine}
-    //   setMachine={setMachine}
-    //   id={id}
-    //   circleX={circleX}
-    //   circleY={circleY}
-    //   CIRCLE_RADIUS={CIRCLE_RADIUS}
-    //   positions={positions}
-    // />])
-
     // Adds circle to array of all circles.
     setCircleArray(array => [...array, { id: id, circleX: circleX, circleY: circleY }])
   }
@@ -84,8 +78,6 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
 
       setPositions(newPositions);
     }
-
-    setOrganiseLayout(false);
   }
 
   /**
@@ -105,7 +97,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       if (newMachine.startStateId == circleId) { newMachine.setStartState("-1"); setStartArrow() }
       return newMachine;
     });
-    setCircleArray(array => array.filter(circle => circle.key != circleId))
+    setCircleArray(array => array.filter(circle => circle.id != circleId))
     setTransitionArray(array => array.filter(arrow => (!arrow.key.startsWith(circleId) && !arrow.key.endsWith(circleId))))
   }
 
@@ -213,6 +205,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           circleY={circle.circleY}
           CIRCLE_RADIUS={CIRCLE_RADIUS}
           positions={positions}
+          setOrganiseLayout={setOrganiseLayout}
         />
       ))}
       {transitionArray}
