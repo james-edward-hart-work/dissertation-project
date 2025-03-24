@@ -15,7 +15,7 @@ import { useXarrow } from "react-xarrows"; // https://www.npmjs.com/package/reac
  * @param CIRCLE_RADIUS in pixels
  * @returns JSX for a state circle
  */
-export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, positions, setOrganiseLayout }) => {
+export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, position }) => {
     const [isAccept, setIsAccept] = useState(false);
 
     const ref = useRef(id);
@@ -31,22 +31,14 @@ export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS,
         });
     }
 
-    let currentPosition = positions.find(element => element.id == id).position;
-
-    // console.log(currentPosition);
-    // console.log(defaultX, defaultY);
-
     // Places circular text input inside a draggable div.
     return <Draggable
         nodeRef={ref}
         bounds="parent"
         key={id}
         defaultPosition={{ x: defaultX, y: defaultY }}
-        position={currentPosition}
-        onDrag={() => {
-            updateXarrow();
-            setOrganiseLayout(false);
-        }}
+        position={position}
+        onDrag={updateXarrow}
         onStop={updateXarrow}
     >
         <input data-testid={"stateCircle"}

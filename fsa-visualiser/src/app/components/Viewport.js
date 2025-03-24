@@ -11,6 +11,58 @@ export const CIRCLE_RADIUS = 85;
 const WIDTH = 72;
 const HEIGHT = 95;
 
+// Returns an array of child nodes
+function findChildren(nodeId, allParents, machine) {
+
+  console.log(machine);
+
+  allParents.push(nodeId);
+  
+  const transitions = machine.states.find(state => state.id == nodeId).transitions;
+
+  console.log(transitions);
+  
+  let currentChildren = []; // Array of node's children
+
+  if (transitions.length == 0) {
+    return null; // Base case
+  }
+
+  // Add all children to array.
+  transitions.forEach(transition => {
+    const child = transition[1];
+    if (!(allParents.includes(child))) { // Don't explore transitions pointing to parents or self
+      currentChildren.push(child);
+    }
+  });
+
+  if (currentChildren.length == 0) {
+    return null; // Base case
+  }
+
+  let diagram = [];
+  // For each child, return a node of their id and array of children
+  currentChildren.forEach(child => {
+      diagram.push([child,findChildren(child, allParents, machine)]);
+  });
+
+  return diagram;
+}
+
+function myAlgorithm(machine) {
+
+  if (machine.startStateId == "-1") {
+    return [];
+  }
+
+  let diagram = [];
+  let currentNode = machine.startStateId;
+
+  diagram = [[currentNode, findChildren(currentNode, [machine.startStateId], machine)]];
+
+  return diagram;
+}
+
 /**
  * Function component for the Viewport containing the FSA diagram
  * @param machine Application's FSA
@@ -26,15 +78,16 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   const ref = useRef(null);
 
   useEffect(() => {
-    console.log(circleArray);
-    console.log(positions);
-    
+    // console.log(circleArray);
+    // console.log(positions);
+
     if (organiseLayout) {
       organiseCircles();
+      setOrganiseLayout(false);
     } else {
       if (circleArray.length > 0) {
+        console.log("reset");
 
-    
         // Set all positions to null
         setPositions((current) => {
           const nullPositions = current.map(element => {
@@ -44,7 +97,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         });
       }
     }
-    console.log(organiseLayout);
+    //console.log(organiseLayout);
 
   }, [organiseLayout]);
 
@@ -77,6 +130,54 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   function organiseCircles() {
     // Apply ordering by updating position for each node
 
+    // Add children, for each child, add children
+
+
+
+    let topologicalOrder = myAlgorithm(machine);
+
+    console.log(topologicalOrder);
+
+    // const startIndex = topologicalOrder.findIndex(state => state == machine.startStateId);
+    // if (startIndex != 0) {
+
+    // }
+
+    // Just need to find level of each node.
+
+    // Draw start state here.
+
+    let currentNodes = topologicalOrder;
+    let minHeight = 0;
+    let maxHeight = 100;
+    while (currentNodes.length > 0) {
+      // Draw at centre of height / length of nodes
+      // Break into n slices
+
+      // (max - min) / n = length
+      // Add and minus
+
+      // Make all positions array as percentages and then apply them in state circle
+
+      // This is for a single split, for this draw children, add if not null.
+      const length = (maxHeight - minHeight) / currentNodes.length; // Length of splice
+
+      currentNodes.forEach(node => {
+        
+        if (node[1] != null) { // Leaf node
+          // Draw current node in the cent
+        }
+      });
+
+      
+
+      // Draw all children, if any are not null, add them.
+      if (condition) {
+        
+      }      
+    }
+    
+
     // Calculate and change positions - circles will already use null or that
     const newPositions = [...positions];
 
@@ -84,11 +185,11 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       newPositions[index] = { id: machine.states[index].id, position: { x: 100 * index, y: 100 * index } }
     }
 
-    // if (machine.startStateId != "-1") {
+    console.log();
 
-    //   const index = positions.findIndex(element => element.id === machine.startStateId);
-    //   newPositions[index] = { id: machine.startStateId, position: { x: WIDTH - 30, y: HEIGHT - 40 } }
-    // }
+    
+
+    console.log("sret");
 
     setPositions(newPositions);
   }
@@ -207,8 +308,9 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     }}
     ref={ref} onClick={(event) => handleClick(event)} >
     <Xwrapper>
-      {circleArray.map(circle => (
-        <StateCircle
+      {circleArray.map(circle => {
+        const position = positions.find((pos) => pos.id === circle.id).position;
+        return <StateCircle
           key={circle.id}
           machine={machine}
           setMachine={setMachine}
@@ -216,10 +318,9 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           defaultX={circle.defaultX}
           defaultY={circle.defaultY}
           CIRCLE_RADIUS={CIRCLE_RADIUS}
-          positions={positions}
-          setOrganiseLayout={setOrganiseLayout}
+          position={position}
         />
-      ))}
+      })}
       {transitionArray}
       {startArrow}
     </Xwrapper>
