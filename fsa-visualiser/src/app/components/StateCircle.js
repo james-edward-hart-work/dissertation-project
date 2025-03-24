@@ -10,13 +10,14 @@ import { useXarrow } from "react-xarrows"; // https://www.npmjs.com/package/reac
  * @param machine Application's FSA
  * @param setMachine Setter for FSA
  * @param id of state
- * @param circleX coordinate
- * @param circleY coordinate
+ * @param defaultX coordinate
+ * @param defaultY coordinate
  * @param CIRCLE_RADIUS in pixels
  * @returns JSX for a state circle
  */
-export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS, positions, setOrganiseLayout }) => {
+export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, positions, setOrganiseLayout }) => {
     const [isAccept, setIsAccept] = useState(false);
+
     const ref = useRef(id);
     const updateXarrow = useXarrow(); // Function to update connected transition arrows.
 
@@ -30,18 +31,17 @@ export const StateCircle = ({ setMachine, id, circleX, circleY, CIRCLE_RADIUS, p
         });
     }
 
-    console.log(positions);
-
     let currentPosition = positions.find(element => element.id == id).position;
 
-    console.log(currentPosition);
+    // console.log(currentPosition);
+    // console.log(defaultX, defaultY);
 
     // Places circular text input inside a draggable div.
     return <Draggable
         nodeRef={ref}
         bounds="parent"
         key={id}
-        defaultPosition={{ x: circleX, y: circleY }}
+        defaultPosition={{ x: defaultX, y: defaultY }}
         position={currentPosition}
         onDrag={() => {
             updateXarrow();

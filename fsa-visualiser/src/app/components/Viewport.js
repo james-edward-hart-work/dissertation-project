@@ -25,18 +25,27 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   const [positions, setPositions] = useState([]);
   const ref = useRef(null);
 
-
   useEffect(() => {
+    console.log(circleArray);
+    console.log(positions);
+    
     if (organiseLayout) {
       organiseCircles();
     } else {
-      // Set all back to null
-      setPositions(positions.map(element => {
-        return {id: element.id, position: null};
-      }));
+      if (circleArray.length > 0) {
+
+    
+        // Set all positions to null
+        setPositions((current) => {
+          const nullPositions = current.map(element => {
+            return { id: element.id, position: null };
+          })
+          return nullPositions;
+        });
+      }
     }
     console.log(organiseLayout);
-    
+
   }, [organiseLayout]);
 
 
@@ -55,29 +64,33 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     setMachine(newMachine);
 
     // Realigns state circle's coordinates so mouse is in the centre.
-    let circleX = x - CIRCLE_RADIUS / 2;
-    let circleY = y - CIRCLE_RADIUS / 2;
+    let defaultX = x - CIRCLE_RADIUS / 2;
+    let defaultY = y - CIRCLE_RADIUS / 2;
 
-    const newPositions = [...positions, {id: id, position: null}];
+    const newPositions = [...positions, { id: id, position: null }];
     setPositions(newPositions);
 
     // Adds circle to array of all circles.
-    setCircleArray(array => [...array, { id: id, circleX: circleX, circleY: circleY }])
+    setCircleArray(array => [...array, { id: id, defaultX: defaultX, defaultY: defaultY }])
   }
 
   function organiseCircles() {
     // Apply ordering by updating position for each node
 
     // Calculate and change positions - circles will already use null or that
+    const newPositions = [...positions];
 
-    if (machine.startStateId != "-1") {
-      const newPositions = positions;
-
-      const index = positions.findIndex(element => element.id === machine.startStateId);
-      newPositions[index] = { id: machine.startStateId, position: {x: WIDTH - 30, y: HEIGHT - 40 }}
-
-      setPositions(newPositions);
+    for (let index = 0; index < machine.states.length; index++) {
+      newPositions[index] = { id: machine.states[index].id, position: { x: 100 * index, y: 100 * index } }
     }
+
+    // if (machine.startStateId != "-1") {
+
+    //   const index = positions.findIndex(element => element.id === machine.startStateId);
+    //   newPositions[index] = { id: machine.startStateId, position: { x: WIDTH - 30, y: HEIGHT - 40 } }
+    // }
+
+    setPositions(newPositions);
   }
 
   /**
@@ -194,15 +207,14 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     }}
     ref={ref} onClick={(event) => handleClick(event)} >
     <Xwrapper>
-      {/* {circleArray} */}
       {circleArray.map(circle => (
         <StateCircle
           key={circle.id}
           machine={machine}
           setMachine={setMachine}
           id={circle.id}
-          circleX={circle.circleX}
-          circleY={circle.circleY}
+          defaultX={circle.defaultX}
+          defaultY={circle.defaultY}
           CIRCLE_RADIUS={CIRCLE_RADIUS}
           positions={positions}
           setOrganiseLayout={setOrganiseLayout}
