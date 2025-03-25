@@ -14,14 +14,14 @@ const HEIGHT = 95;
 // Returns an array of child nodes
 function findChildren(nodeId, allParents, machine) {
 
-  console.log(machine);
+  // console.log(machine);
 
   allParents.push(nodeId);
-  
+
   const transitions = machine.states.find(state => state.id == nodeId).transitions;
 
-  console.log(transitions);
-  
+  // console.log(transitions);
+
   let currentChildren = []; // Array of node's children
 
   if (transitions.length == 0) {
@@ -43,7 +43,7 @@ function findChildren(nodeId, allParents, machine) {
   let diagram = [];
   // For each child, return a node of their id and array of children
   currentChildren.forEach(child => {
-      diagram.push([child,findChildren(child, allParents, machine)]);
+      diagram.push(child,findChildren(child, allParents, machine));
   });
 
   return diagram;
@@ -58,9 +58,66 @@ function myAlgorithm(machine) {
   let diagram = [];
   let currentNode = machine.startStateId;
 
-  diagram = [[currentNode, findChildren(currentNode, [machine.startStateId], machine)]];
+  diagram = [currentNode, findChildren(currentNode, [machine.startStateId], machine)];
 
   return diagram;
+}
+
+// Returns an array of child nodes
+function moveChildren(nodeId, allParents, minHeight, maxHeight, machine) {
+
+  // Draw nodeId = make {id, x, y}
+
+  //const length = (maxHeight - minHeight) / currentNodes.length; // Length of splice
+
+  const x = allParents.length; // Store current level for future width multiplying
+  const y = (maxHeight + minHeight) / 2; // Centre of height slice for parent node
+  const positionNode = { id: nodeId, position: { x: x, y: y } };
+
+  const transitions = machine.states.find(state => state.id == nodeId).transitions;
+  let currentChildren = []; // Array of node's children
+
+  if (transitions.length == 0) {
+    return [positionNode]; // Base case - no children.
+  }
+
+  // Get all child nodes.
+  transitions.forEach(transition => {
+    const child = transition[1];
+    if (!(allParents.includes(child))) { // Don't explore transitions pointing to parents or self
+      currentChildren.push(child);
+    }
+  });
+
+  if (currentChildren.length == 0) { // If this is a leaf node.
+    return [positionNode]; // Base case - no valid children.
+  }
+
+  const length = (maxHeight - minHeight) / currentChildren.length; // Length of slice for each child
+
+  // For each child, return a node of their id and array of children
+  // For each child = push them
+
+  // easier to push all children and then explore all of their children
+
+  let childrenNodes = [];
+
+  for (let index = 0; index < currentChildren.length; index++) {
+    const child = currentChildren[index];
+
+    // console.log(nodeId + "=>" + child);
+
+    const childMinHeight = minHeight + (length * index); // Add lenght to min height every node
+    const childMaxHeight = maxHeight - (length * (currentChildren.length - 1 - index));
+
+    // console.log(childMinHeight);
+    // console.log(childMaxHeight);
+    // console.log(index);
+
+    childrenNodes.push(...moveChildren(child, [...allParents, nodeId], childMinHeight, childMaxHeight, machine))
+  }
+
+  return [positionNode, ...childrenNodes]
 }
 
 /**
@@ -78,15 +135,13 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   const ref = useRef(null);
 
   useEffect(() => {
-    // console.log(circleArray);
-    // console.log(positions);
 
     if (organiseLayout) {
       organiseCircles();
-      setOrganiseLayout(false);
+      //setOrganiseLayout(false);
     } else {
       if (circleArray.length > 0) {
-        console.log("reset");
+        // console.log("reset");
 
         // Set all positions to null
         setPositions((current) => {
@@ -97,7 +152,6 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         });
       }
     }
-    //console.log(organiseLayout);
 
   }, [organiseLayout]);
 
@@ -128,68 +182,11 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   }
 
   function organiseCircles() {
-    // Apply ordering by updating position for each node
 
-    // Add children, for each child, add children
-
-
-
-    let topologicalOrder = myAlgorithm(machine);
-
-    console.log(topologicalOrder);
-
-    // const startIndex = topologicalOrder.findIndex(state => state == machine.startStateId);
-    // if (startIndex != 0) {
-
-    // }
-
-    // Just need to find level of each node.
-
-    // Draw start state here.
-
-    let currentNodes = topologicalOrder;
-    let minHeight = 0;
-    let maxHeight = 100;
-    while (currentNodes.length > 0) {
-      // Draw at centre of height / length of nodes
-      // Break into n slices
-
-      // (max - min) / n = length
-      // Add and minus
-
-      // Make all positions array as percentages and then apply them in state circle
-
-      // This is for a single split, for this draw children, add if not null.
-      const length = (maxHeight - minHeight) / currentNodes.length; // Length of splice
-
-      currentNodes.forEach(node => {
-        
-        if (node[1] != null) { // Leaf node
-          // Draw current node in the cent
-        }
-      });
-
-      
-
-      // Draw all children, if any are not null, add them.
-      if (condition) {
-        
-      }      
-    }
+    const newPositions = moveChildren(machine.startStateId, [], 0, 100, machine);
     
+    // Multiply each x by width splice
 
-    // Calculate and change positions - circles will already use null or that
-    const newPositions = [...positions];
-
-    for (let index = 0; index < machine.states.length; index++) {
-      newPositions[index] = { id: machine.states[index].id, position: { x: 100 * index, y: 100 * index } }
-    }
-
-    console.log();
-
-    
-
-    console.log("sret");
 
     setPositions(newPositions);
   }
@@ -297,6 +294,25 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     }
   }
 
+
+  const retrieveDepth = (arr, depth = 1) => {
+    console.log("Current depth:", depth);
+    
+    // If the array contains no nested arrays, return depth
+    if (!arr.some(value => Array.isArray(value))) {
+      return depth;
+    }
+  
+    // If nested arrays exist, flatten one level and recurse with depth incremented
+    return retrieveDepth(arr.flat(), depth + 1);
+  }
+  
+
+  const depthWidth = myAlgorithm(machine); // Example input
+  const depth = retrieveDepth(depthWidth);
+  console.log("Depth:", depth);
+  console.log(depthWidth);
+
   // Renders Viewport - styles set here as WIDTH and HEIGHT are set constants.
   return <div data-testid={"Viewport"} id={"Viewport"}
     style={{
@@ -309,7 +325,12 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     ref={ref} onClick={(event) => handleClick(event)} >
     <Xwrapper>
       {circleArray.map(circle => {
-        const position = positions.find((pos) => pos.id === circle.id).position;
+        let position = positions.find((pos) => pos.id === circle.id).position;
+        if (position != null) {
+          const viewportDimensions = document.getElementById('Viewport').getBoundingClientRect();
+          position = { x: position.x * (viewportDimensions.width / depth), y: position.y * 0.01 * viewportDimensions.height}          
+        }
+
         return <StateCircle
           key={circle.id}
           machine={machine}
