@@ -1,5 +1,5 @@
 import styles from "../../styles/Viewport.module.css"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import FSA from "../FSA";
 import PropTypes from 'prop-types';
 import Draggable from 'react-draggable'; // https://www.npmjs.com/package/react-draggable
@@ -17,6 +17,12 @@ import { useXarrow } from "react-xarrows"; // https://www.npmjs.com/package/reac
  */
 export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, position }) => {
     const [isAccept, setIsAccept] = useState(false);
+    const [positionState, setPositionState] = useState({ x: defaultX, y: defaultY });
+
+    // Update position when state is dragged
+    const handleDrag = (e, data) => {
+        setPositionState({ x: data.x, y: data.y }); 
+    };
 
     const ref = useRef(id);
     const updateXarrow = useXarrow(); // Function to update connected transition arrows.
@@ -31,14 +37,21 @@ export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS,
         });
     }
 
+    // Set position state if incoming position is not null.
+    useEffect(() => {
+        setPositionState(position);
+    }, [position]);
+
     // Places circular text input inside a draggable div.
     return <Draggable
         nodeRef={ref}
         bounds="parent"
         key={id}
-        defaultPosition={{ x: defaultX, y: defaultY }}
-        position={position}
-        onDrag={updateXarrow}
+        position={positionState}
+        onDrag={(e, data) => {
+            updateXarrow();
+            handleDrag(e, data);
+        }}
         onStop={updateXarrow}
     >
         <input data-testid={"stateCircle"}

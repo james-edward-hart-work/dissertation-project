@@ -80,7 +80,7 @@ function moveChildren(nodeId, allParents, minHeight, maxHeight, machine) {
   // Get all child nodes.
   transitions.forEach(transition => {
     const child = transition[1];
-    if (!(allParents.includes(child))) { // Don't explore transitions pointing to parents or self
+    if (!(allParents.includes(child)) && child != nodeId) { // Don't explore transitions pointing to parents or self
       currentChildren.push(child);
     }
   });
@@ -128,7 +128,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
 
     if (organiseLayout) {
       organiseCircles();
-      setOrganiseLayout(false);
+      if (organiseLayout) setOrganiseLayout(false);
     } else {
       if (circleArray.length > 0) {
         // Set all positions to null
@@ -162,6 +162,8 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     let defaultY = y - CIRCLE_RADIUS / 2;
 
     const newPositions = [...positions, { id: id, position: null }];
+    console.log(newPositions);
+    
     setPositions(newPositions);
 
     // Adds circle to array of all circles.
