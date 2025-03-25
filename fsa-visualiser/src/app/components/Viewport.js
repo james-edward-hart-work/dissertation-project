@@ -14,13 +14,9 @@ const HEIGHT = 95;
 // Returns an array of child nodes
 function findChildren(nodeId, allParents, machine) {
 
-  // console.log(machine);
-
   allParents.push(nodeId);
 
   const transitions = machine.states.find(state => state.id == nodeId).transitions;
-
-  // console.log(transitions);
 
   let currentChildren = []; // Array of node's children
 
@@ -43,7 +39,7 @@ function findChildren(nodeId, allParents, machine) {
   let diagram = [];
   // For each child, return a node of their id and array of children
   currentChildren.forEach(child => {
-      diagram.push(child,findChildren(child, allParents, machine));
+    diagram.push(child, findChildren(child, allParents, machine));
   });
 
   return diagram;
@@ -105,14 +101,8 @@ function moveChildren(nodeId, allParents, minHeight, maxHeight, machine) {
   for (let index = 0; index < currentChildren.length; index++) {
     const child = currentChildren[index];
 
-    // console.log(nodeId + "=>" + child);
-
     const childMinHeight = minHeight + (length * index); // Add lenght to min height every node
     const childMaxHeight = maxHeight - (length * (currentChildren.length - 1 - index));
-
-    // console.log(childMinHeight);
-    // console.log(childMaxHeight);
-    // console.log(index);
 
     childrenNodes.push(...moveChildren(child, [...allParents, nodeId], childMinHeight, childMaxHeight, machine))
   }
@@ -138,11 +128,9 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
 
     if (organiseLayout) {
       organiseCircles();
-      //setOrganiseLayout(false);
+      setOrganiseLayout(false);
     } else {
       if (circleArray.length > 0) {
-        // console.log("reset");
-
         // Set all positions to null
         setPositions((current) => {
           const nullPositions = current.map(element => {
@@ -152,7 +140,6 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         });
       }
     }
-
   }, [organiseLayout]);
 
 
@@ -182,13 +169,18 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   }
 
   function organiseCircles() {
+    if (machine.status() != "Invalid") {
+      const newPositions = moveChildren(machine.startStateId, [], 0, 100, machine);
 
-    const newPositions = moveChildren(machine.startStateId, [], 0, 100, machine);
-    
-    // Multiply each x by width splice
-
-
-    setPositions(newPositions);
+      // Do not organise if machine contains hanging states. 
+      for (let index = 0; index < machine.states.length; index++) {
+        if (newPositions.filter(pos => pos.id == machine.states[index].id).length == 0) {
+          alert("Machine contains states with no parents.");
+          return; 
+        }
+      }
+      setPositions(newPositions);
+    }
   }
 
   /**
@@ -295,23 +287,20 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   }
 
 
+  // Adapted from: https://dev.to/esaldivar/algorithm-approach-retrieve-depth-48fk [38]
   const retrieveDepth = (arr, depth = 1) => {
-    console.log("Current depth:", depth);
-    
+
     // If the array contains no nested arrays, return depth
     if (!arr.some(value => Array.isArray(value))) {
       return depth;
     }
-  
+
     // If nested arrays exist, flatten one level and recurse with depth incremented
     return retrieveDepth(arr.flat(), depth + 1);
   }
-  
 
-  const depthWidth = myAlgorithm(machine); // Example input
+  const depthWidth = myAlgorithm(machine);
   const depth = retrieveDepth(depthWidth);
-  console.log("Depth:", depth);
-  console.log(depthWidth);
 
   // Renders Viewport - styles set here as WIDTH and HEIGHT are set constants.
   return <div data-testid={"Viewport"} id={"Viewport"}
@@ -328,7 +317,15 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         let position = positions.find((pos) => pos.id === circle.id).position;
         if (position != null) {
           const viewportDimensions = document.getElementById('Viewport').getBoundingClientRect();
-          position = { x: position.x * (viewportDimensions.width / depth), y: position.y * 0.01 * viewportDimensions.height}          
+          position = {
+            x: (position.x * (viewportDimensions.width / depth)) + CIRCLE_RADIUS / 2, // X = Proportion of viewport based on current level in tree
+            y: (position.y * 0.01 * viewportDimensions.height) - CIRCLE_RADIUS        // Y = Calulcated Y slice as a percentage of Viewport height
+          }
+          // Resolving out of bounds for state 
+          if (position.x < 0) position.x = 0;
+          if (position.x > viewportDimensions.width) position.x = viewportDimensions.width;
+          if (position.y < 0) position.y = 0;
+          if (position.y > viewportDimensions.height) position.y = viewportDimensions.height;          
         }
 
         return <StateCircle
