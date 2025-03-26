@@ -20,9 +20,7 @@ export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS,
     const [positionState, setPositionState] = useState({ x: defaultX, y: defaultY });
 
     // Update position when state is dragged
-    const handleDrag = (e, data) => {
-        setPositionState({ x: data.x, y: data.y }); 
-    };
+    const handleDrag = (e, data) => { setPositionState({ x: data.x, y: data.y }) };
 
     const ref = useRef(id);
     const updateXarrow = useXarrow(); // Function to update connected transition arrows.

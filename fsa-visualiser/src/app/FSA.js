@@ -347,6 +347,53 @@ class FSA {
     return inputs;
   }
 
+  // Returns an array of node's child nodes
+  findChildren(nodeId, allParents) {
+
+    allParents.push(nodeId);
+    
+    const transitions = this.states.find(state => state.id == nodeId).transitions;
+    if (transitions.length == 0) { return null } // Base case = leaf node
+
+    let currentChildren = []; // Array of node's children
+
+    // Add all children to array.
+    transitions.forEach(transition => {
+      const child = transition[1];
+
+      // Don't explore transitions pointing to parents or self
+      if (!(allParents.includes(child))) { currentChildren.push(child) }
+    });
+
+    if (currentChildren.length == 0) { return null } // Base case = No valid children
+
+    let diagram = [];
+    // For each child, return a node of their id and array of children
+    currentChildren.forEach(child => { diagram.push(child, this.findChildren(child, allParents)) });
+
+    return diagram;
+  }
+
+  // Recursive algorithm to find depth of nested array: [parent, [array of children]]
+  // Adapted from: https://dev.to/esaldivar/algorithm-approach-retrieve-depth-48fk [38]
+  retrieveDepthFromArray (arr, depth = 1) {
+
+    // If the array contains no nested arrays, return depth
+    if (!arr.some(value => Array.isArray(value))) { return depth }
+
+    // If nested arrays exist, flatten one level and recurse with depth incremented
+    return this.retrieveDepthFromArray(arr.flat(), depth + 1);
+  }
+
+  // Calculate depth of machine.
+  retrieveDepth() {
+    if (this.startStateId == "-1") { return 0 }
+    return this.retrieveDepthFromArray(
+      // Build nested array representing topology of machine for depth check
+      [this.startStateId, this.findChildren(this.startStateId, [this.startStateId])]
+    );
+  }
+
   /**
    * Resets FSA to default values.
    */

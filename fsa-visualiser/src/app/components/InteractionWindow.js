@@ -144,6 +144,7 @@ function exportDropDown(type, machine) {
  * Function component for the Interaction Window on the right of the application.
  * Designed to aid FSA development and allow for exporting the FSA.
  * @param machine Application's FSA
+ * @param setOrganiseLayout Setter for organiseLayout
  * @returns JSX for Interaction Window
  */
 export const InteractionWindow = ({ machine, setOrganiseLayout }) => {

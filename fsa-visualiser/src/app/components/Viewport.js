@@ -11,127 +11,32 @@ export const CIRCLE_RADIUS = 85;
 const WIDTH = 72;
 const HEIGHT = 95;
 
-// Returns an array of child nodes
-function findChildren(nodeId, allParents, machine) {
-
-  allParents.push(nodeId);
-
-  const transitions = machine.states.find(state => state.id == nodeId).transitions;
-
-  let currentChildren = []; // Array of node's children
-
-  if (transitions.length == 0) {
-    return null; // Base case
-  }
-
-  // Add all children to array.
-  transitions.forEach(transition => {
-    const child = transition[1];
-    if (!(allParents.includes(child))) { // Don't explore transitions pointing to parents or self
-      currentChildren.push(child);
-    }
-  });
-
-  if (currentChildren.length == 0) {
-    return null; // Base case
-  }
-
-  let diagram = [];
-  // For each child, return a node of their id and array of children
-  currentChildren.forEach(child => {
-    diagram.push(child, findChildren(child, allParents, machine));
-  });
-
-  return diagram;
-}
-
-function myAlgorithm(machine) {
-
-  if (machine.startStateId == "-1") {
-    return [];
-  }
-
-  let diagram = [];
-  let currentNode = machine.startStateId;
-
-  diagram = [currentNode, findChildren(currentNode, [machine.startStateId], machine)];
-
-  return diagram;
-}
-
-// Returns an array of child nodes
-function moveChildren(nodeId, allParents, minHeight, maxHeight, machine) {
-
-  // Draw nodeId = make {id, x, y}
-
-  //const length = (maxHeight - minHeight) / currentNodes.length; // Length of splice
-
-  const x = allParents.length; // Store current level for future width multiplying
-  const y = (maxHeight + minHeight) / 2; // Centre of height slice for parent node
-  const positionNode = { id: nodeId, position: { x: x, y: y } };
-
-  const transitions = machine.states.find(state => state.id == nodeId).transitions;
-  let currentChildren = []; // Array of node's children
-
-  if (transitions.length == 0) {
-    return [positionNode]; // Base case - no children.
-  }
-
-  // Get all child nodes.
-  transitions.forEach(transition => {
-    const child = transition[1];
-    if (!(allParents.includes(child)) && child != nodeId) { // Don't explore transitions pointing to parents or self
-      currentChildren.push(child);
-    }
-  });
-
-  if (currentChildren.length == 0) { // If this is a leaf node.
-    return [positionNode]; // Base case - no valid children.
-  }
-
-  const length = (maxHeight - minHeight) / currentChildren.length; // Length of slice for each child
-
-  // For each child, return a node of their id and array of children
-  // For each child = push them
-
-  // easier to push all children and then explore all of their children
-
-  let childrenNodes = [];
-
-  for (let index = 0; index < currentChildren.length; index++) {
-    const child = currentChildren[index];
-
-    const childMinHeight = minHeight + (length * index); // Add lenght to min height every node
-    const childMaxHeight = maxHeight - (length * (currentChildren.length - 1 - index));
-
-    childrenNodes.push(...moveChildren(child, [...allParents, nodeId], childMinHeight, childMaxHeight, machine))
-  }
-
-  return [positionNode, ...childrenNodes]
-}
-
 /**
  * Function component for the Viewport containing the FSA diagram
  * @param machine Application's FSA
  * @param setMachine Setter for the FSA
+ * @param setOrganiseLayout Tracks whether layout is to be organised or loose
+ * @param setOrganiseLayout Setter for organiseLayout
  * @returns JSX for the Viewport
  */
 export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayout }) => {
-  const [circleArray, setCircleArray] = useState([]); // State array containing the JSX of every circle
-  const [transitionArray, setTransitionArray] = useState([]); // Array containing all transition arrows
-  const [startArrow, setStartArrow] = useState(); // Contains the arrow of the start state
-  const [originStateId, setOriginStateId] = useState(null); // Holds the id of the origin state upon making a new transition
-  const [positions, setPositions] = useState([]);
-  const ref = useRef(null);
+  const [circleArray, setCircleArray] = useState([]);           // State array containing the JSX of every circle
+  const [transitionArray, setTransitionArray] = useState([]);   // Array containing all transition arrows
+  const [startArrow, setStartArrow] = useState();               // Contains the arrow of the start state
+  const [originStateId, setOriginStateId] = useState(null);     // Holds the id of the origin state upon making a new transition
+  const [positions, setPositions] = useState([]);               // Holds all fixed positions of circles when organised, null if draggable 
+  const ref = useRef(null);                                     // Reference to Viewport to contain circles
 
+  // Every frame, check if circles are to be organised or not.
   useEffect(() => {
-
-    if (organiseLayout) {
+    if (organiseLayout) { // If button in InteractionWindow clicked, organise circles
       organiseCircles();
-      if (organiseLayout) setOrganiseLayout(false);
+      if (organiseLayout) setOrganiseLayout(false); // Allow circles to be draggable again after organisation
+
     } else {
+
       if (circleArray.length > 0) {
-        // Set all positions to null
+        // Set all positions to null to be draggable after reorganising.
         setPositions((current) => {
           const nullPositions = current.map(element => {
             return { id: element.id, position: null };
@@ -143,9 +48,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   }, [organiseLayout]);
 
 
-  /**
-   * Adds a state circle to the viewport and state to the FSA.
-   */
+  // Adds a state circle to the viewport and state to the FSA.
   function addCircle(x, y) {
 
     const id = machine.total + ""; // Id is unique as total only ever increments.
@@ -161,28 +64,12 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     let defaultX = x - CIRCLE_RADIUS / 2;
     let defaultY = y - CIRCLE_RADIUS / 2;
 
+    // Sets all fixed positions to null so circles are draggable.
     const newPositions = [...positions, { id: id, position: null }];
-    console.log(newPositions);
-    
     setPositions(newPositions);
 
     // Adds circle to array of all circles.
     setCircleArray(array => [...array, { id: id, defaultX: defaultX, defaultY: defaultY }])
-  }
-
-  function organiseCircles() {
-    if (machine.status() != "Invalid") {
-      const newPositions = moveChildren(machine.startStateId, [], 0, 100, machine);
-
-      // Do not organise if machine contains hanging states. 
-      for (let index = 0; index < machine.states.length; index++) {
-        if (newPositions.filter(pos => pos.id == machine.states[index].id).length == 0) {
-          alert("Machine contains states with no parents.");
-          return; 
-        }
-      }
-      setPositions(newPositions);
-    }
   }
 
   /**
@@ -236,8 +123,79 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     setOriginStateId(null); // Reset state so no new transitions are made
   }
 
+  // Repositions circles to fixed positions based on FSA layout
+  function organiseCircles() {
+    if (machine.status() != "Invalid") {
+
+      // Calculate organised positions.
+      const newPositions = organiseChildren(machine.startStateId, [], 0, 100, machine);
+
+      // Do not organise if machine contains hanging states. 
+      for (let index = 0; index < machine.states.length; index++) {
+        if (newPositions.filter(pos => pos.id == machine.states[index].id).length == 0) {
+          alert("Machine contains states with no parents.");
+          return;
+        }
+      }
+      setPositions(newPositions);
+    }
+  }
+
   /**
-   * Handles all click events in Viewport.
+   * Sets position of parent node, finds children and recursively calls function for each of them as parent.
+   * @param {*} nodeId      Id of state
+   * @param {*} allParents  Array of ids of all parents of this node
+   * @param {*} minHeight   The Y value of the top of this node's height slide
+   * @param {*} maxHeight   The Y value of the bottom of this node's height slide
+   * @returns An array of nodes, each node represents the organised position of a state = {id, x (height in machine), y}
+   */
+  function organiseChildren(nodeId, allParents, minHeight, maxHeight) {
+
+    const x = allParents.length;                                    // Store current level of node in machine for width multiplying
+    const y = (maxHeight + minHeight) / 2;                          // Y = Centre of node's given y-axis slice
+    const positionNode = { id: nodeId, position: { x: x, y: y } };  // Position node indicate node id and its fixed position
+
+    const transitions = machine.states.find(state => state.id == nodeId).transitions;
+    if (transitions.length == 0) { return [positionNode] } // Base case - no children.
+
+    let currentChildren = []; // Array of node's children
+
+    // For each child node, add to array if not self-pointing or pointing to parent
+    transitions.forEach(transition => {
+      const child = transition[1];
+
+      // Don't explore transitions pointing to parents or self
+      if (!(allParents.includes(child)) && child != nodeId) { currentChildren.push(child) }
+    });
+
+    // Base case - no valid children.
+    if (currentChildren.length == 0) { return [positionNode] } // If this is a leaf node.
+
+    // Length of child's y-axis slice (represented by min and max height) = parents / number of children
+    const length = (maxHeight - minHeight) / currentChildren.length;
+
+    let childrenNodes = []; // Children's position nodes
+
+    // For each child, calculate the heights of their slice and push the nodes of their children.
+    for (let index = 0; index < currentChildren.length; index++) {
+      const child = currentChildren[index];
+
+      // Parent's min height + slice per index of child (they are below each other)
+      const childMinHeight = minHeight + (length * index);      
+      
+      // Parent's max height - slice per reverse index (bottom of slice matches top)
+      const childMaxHeight = maxHeight - (length * (currentChildren.length - 1 - index));
+
+      // Push the position nodes of each child and its children with new calculated slice heights
+      childrenNodes.push(...organiseChildren(child, [...allParents, nodeId], childMinHeight, childMaxHeight))
+    }
+
+    return [positionNode, ...childrenNodes] // Concatonate parent and children's position nodes into one array
+  }
+
+  /**
+   * Handles all click events for Viewport
+   * @param event of interaction
    */
   function handleClick(event) {
 
@@ -288,21 +246,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     }
   }
 
-
-  // Adapted from: https://dev.to/esaldivar/algorithm-approach-retrieve-depth-48fk [38]
-  const retrieveDepth = (arr, depth = 1) => {
-
-    // If the array contains no nested arrays, return depth
-    if (!arr.some(value => Array.isArray(value))) {
-      return depth;
-    }
-
-    // If nested arrays exist, flatten one level and recurse with depth incremented
-    return retrieveDepth(arr.flat(), depth + 1);
-  }
-
-  const depthWidth = myAlgorithm(machine);
-  const depth = retrieveDepth(depthWidth);
+  const depth = machine.retrieveDepth(); // Depth of machine
 
   // Renders Viewport - styles set here as WIDTH and HEIGHT are set constants.
   return <div data-testid={"Viewport"} id={"Viewport"}
@@ -313,23 +257,28 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       position: "fixed",
       backgroundColor: "white",
     }}
-    ref={ref} onClick={(event) => handleClick(event)} >
+    ref={ref}
+    onClick={(event) => handleClick(event)} >
     <Xwrapper>
+
+      {/* Draw State Circles */}
       {circleArray.map(circle => {
-        let position = positions.find((pos) => pos.id === circle.id).position;
+        let position = positions.find((pos) => pos.id === circle.id).position; // If null, do not calculate fixed position.
         if (position != null) {
-          const viewportDimensions = document.getElementById('Viewport').getBoundingClientRect();
+          const viewportDimensions = document.getElementById('Viewport').getBoundingClientRect(); // Get dimensions of Viewport.
           position = {
             x: (position.x * (viewportDimensions.width / depth)) + CIRCLE_RADIUS / 2, // X = Proportion of viewport based on current level in tree
             y: (position.y * 0.01 * viewportDimensions.height) - CIRCLE_RADIUS        // Y = Calulcated Y slice as a percentage of Viewport height
           }
-          // Resolving out of bounds for state 
+
+          // Resolving out of bounds of Viewport for state circle positions
           if (position.x < 0) position.x = 0;
           if (position.x > viewportDimensions.width) position.x = viewportDimensions.width;
           if (position.y < 0) position.y = 0;
-          if (position.y > viewportDimensions.height) position.y = viewportDimensions.height;          
+          if (position.y > viewportDimensions.height) position.y = viewportDimensions.height;
         }
 
+        // Draw Circle
         return <StateCircle
           key={circle.id}
           machine={machine}
@@ -341,6 +290,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           position={position}
         />
       })}
+
       {transitionArray}
       {startArrow}
     </Xwrapper>
