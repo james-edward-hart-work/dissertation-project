@@ -22,7 +22,6 @@ const HEIGHT = 95;
 export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayout }) => {
   const [circleArray, setCircleArray] = useState([]);           // State array containing the JSX of every circle
   const [transitionArray, setTransitionArray] = useState([]);   // Array containing all transition arrows
-  const [startStateX, setStartStateX] = useState();             // States whether the start arrow is shown or not
   const [originStateId, setOriginStateId] = useState(null);     // Holds the id of the origin state upon making a new transition
   const [positions, setPositions] = useState([]);               // Holds all fixed positions of circles when organised, null if draggable 
   const ref = useRef(null);                                     // Reference to Viewport to contain circles
@@ -45,13 +44,6 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       }
     }
   }, [organiseLayout]);
-
-  // Every frame, position the start state arrow to the x value of the start state.
-  useEffect(() => {
-    if (startStateX != null && machine.startStateId != "-1") {
-      setStartStateX(document.getElementById(machine.startStateId).getBoundingClientRect().x);
-    }
-  });
 
   // Adds a state circle to the viewport and state to the FSA.
   function addCircle(x, y) {
@@ -91,7 +83,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         newMachine.deleteTransition(ids[0], ids[1]);
       });
       newMachine.deleteState(circleId); // Delete state after all transitions deleted.
-      if (newMachine.startStateId == circleId) { newMachine.setStartState("-1"); setStartStateX(null) }
+      if (newMachine.startStateId == circleId) { newMachine.setStartState("-1"); }
       return newMachine;
     });
     setCircleArray(array => array.filter(circle => circle.id != circleId))
@@ -216,7 +208,6 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
             newMachine.setStartState(circleId);
             return newMachine;
           })
-          setStartStateX(machine.startStateId);
         }
 
         if (event.altKey && !event.shiftKey) { // Delete
@@ -283,14 +274,13 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           defaultY={circle.defaultY}
           CIRCLE_RADIUS={CIRCLE_RADIUS}
           position={position}
-          setStartStateX={setStartStateX}
         />
       })}
 
       {transitionArray}
 
       {/* Start State Arrow */}
-      {startStateX != null ?
+      {machine.startStateId != '-1' ?
         <Xarrow
           data-testid={"start"}
           color="black"
@@ -298,10 +288,9 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           id={"start"}
           start={machine.startStateId}
           end={machine.startStateId}
-          SVGcanvasStyle={{ left: startStateX - (CIRCLE_RADIUS * 1.3)}} // Formats start state arrow
           strokeWidth={2.5}
-          startAnchor="left"
-          endAnchor='right'
+          startAnchor={{ position: "left", offset: { x: -80, y: 0 } }}
+          endAnchor={{ position: "right", offset: { x: -CIRCLE_RADIUS - 7, y: 0 } }}
         /> : null}
     </Xwrapper>
   </div>

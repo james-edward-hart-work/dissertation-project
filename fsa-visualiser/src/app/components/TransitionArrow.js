@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FSA from "../FSA";
 import PropTypes from 'prop-types';
 import Xarrow from "react-xarrows"; // Imported from: https://www.npmjs.com/package/react-xarrows/v/1.7.0
 import styles from "../../styles/TransitionArrow.module.css"
+import { CIRCLE_RADIUS } from "./Viewport";
 
 /**
  * Function component for a transition arrow
@@ -13,6 +14,8 @@ import styles from "../../styles/TransitionArrow.module.css"
  * @returns JSX for transition arrow
  */
 export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTransitionArray }) => {
+
+    const [yPosition, setYPosition] = useState(document.getElementById(originStateId).getBoundingClientRect().y);
 
     function handleClick(event) {
         if (event.altKey) { // Deletes transition
@@ -26,6 +29,10 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
         }
     }
 
+    useEffect(() => {
+        setYPosition(document.getElementById(originStateId).getBoundingClientRect().y)
+    })
+
     return <div data-testid={"transitionArrow"} onClick={(e) => handleClick(e)}>
         {(originStateId == destStateId) ?
             <Xarrow // Transitions to and from the same state
@@ -37,13 +44,13 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                 path={"smooth"}
 
                 // Extra Styling for Self-Pointing Arrows
-                _cpx1Offset={-50}
-                _cpy1Offset={-100}
-                _cpx2Offset={-100}
-                _cpy2Offset={-30}
+                _cpx1Offset={-30}   // CP 1 X
+                _cpy1Offset={-85}  // CP 1 Y
+                _cpx2Offset={15}  // CP 2 X
+                _cpy2Offset={-85} // CP 2 Y
                 strokeWidth={2.5}
-                startAnchor="top"
-                endAnchor={{ position: "left", offset: { x: -10, y: 0 } }}
+                startAnchor={{ position: "top", offset: { x: -30, y: 12 } }}
+                endAnchor={{ position: "bottom", offset: { x: 30, y: -78.9 } }}
 
                 // Input word for transition (may be changed)
                 labels={{
@@ -59,7 +66,6 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                             })
                         }} />
                 }}
-                arrowHead={{ style: { transform: "rotateY(180deg)" } }}
             />
             :
             <Xarrow // Transitions between two different states

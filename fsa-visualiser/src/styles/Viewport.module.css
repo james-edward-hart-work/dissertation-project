@@ -5,5 +5,14 @@
     border-style: solid; 
     border-color: black;
     background-color: white;
+    z-index: 0;
 
+}
+.transitionInput {
+    z-index: 0;
+    background: 0;
+    text-align: center;
+    border: none;
+    margin-bottom: 30%;
+    width: fit-content;
 }
