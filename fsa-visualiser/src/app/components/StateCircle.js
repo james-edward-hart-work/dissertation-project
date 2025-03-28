@@ -13,9 +13,11 @@ import { useXarrow } from "react-xarrows"; // https://www.npmjs.com/package/reac
  * @param defaultX coordinate
  * @param defaultY coordinate
  * @param CIRCLE_RADIUS in pixels
+ * @param position fixed position when organised
+ * @param setStartStateX Function to update start state arrow's position
  * @returns JSX for a state circle
  */
-export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, position }) => {
+export const StateCircle = ({ machine, setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, position, setStartStateX }) => {
     const [isAccept, setIsAccept] = useState(false);
     const [positionState, setPositionState] = useState({ x: defaultX, y: defaultY });
 
@@ -49,6 +51,8 @@ export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS,
         onDrag={(e, data) => {
             updateXarrow();
             handleDrag(e, data);
+            if (id == machine.startStateId) 
+                setStartStateX(document.getElementById(machine.startStateId).getBoundingClientRect().x);
         }}
         onStop={updateXarrow}
     >

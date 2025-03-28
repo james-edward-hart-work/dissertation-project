@@ -22,17 +22,16 @@ const HEIGHT = 95;
 export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayout }) => {
   const [circleArray, setCircleArray] = useState([]);           // State array containing the JSX of every circle
   const [transitionArray, setTransitionArray] = useState([]);   // Array containing all transition arrows
-  const [startArrow, setStartArrow] = useState();               // Contains the arrow of the start state
+  const [startStateX, setStartStateX] = useState();             // States whether the start arrow is shown or not
   const [originStateId, setOriginStateId] = useState(null);     // Holds the id of the origin state upon making a new transition
   const [positions, setPositions] = useState([]);               // Holds all fixed positions of circles when organised, null if draggable 
   const ref = useRef(null);                                     // Reference to Viewport to contain circles
 
-  // Every frame, check if circles are to be organised or not.
+  // Every time organiseLayout is set, make state positions fixed or draggable.
   useEffect(() => {
     if (organiseLayout) { // If button in InteractionWindow clicked, organise circles
       organiseCircles();
       if (organiseLayout) setOrganiseLayout(false); // Allow circles to be draggable again after organisation
-
     } else {
 
       if (circleArray.length > 0) {
@@ -47,6 +46,12 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     }
   }, [organiseLayout]);
 
+  // Every frame, position the start state arrow to the x value of the start state.
+  useEffect(() => {
+    if (startStateX != null && machine.startStateId != "-1") {
+      setStartStateX(document.getElementById(machine.startStateId).getBoundingClientRect().x);
+    }
+  });
 
   // Adds a state circle to the viewport and state to the FSA.
   function addCircle(x, y) {
@@ -86,7 +91,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         newMachine.deleteTransition(ids[0], ids[1]);
       });
       newMachine.deleteState(circleId); // Delete state after all transitions deleted.
-      if (newMachine.startStateId == circleId) { newMachine.setStartState("-1"); setStartArrow() }
+      if (newMachine.startStateId == circleId) { newMachine.setStartState("-1"); setStartStateX(null) }
       return newMachine;
     });
     setCircleArray(array => array.filter(circle => circle.id != circleId))
@@ -181,8 +186,8 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       const child = currentChildren[index];
 
       // Parent's min height + slice per index of child (they are below each other)
-      const childMinHeight = minHeight + (length * index);      
-      
+      const childMinHeight = minHeight + (length * index);
+
       // Parent's max height - slice per reverse index (bottom of slice matches top)
       const childMaxHeight = maxHeight - (length * (currentChildren.length - 1 - index));
 
@@ -211,19 +216,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
             newMachine.setStartState(circleId);
             return newMachine;
           })
-          setStartArrow(<div data-testid={"start"}>
-            <Xarrow
-              color="black"
-              key={"start"}
-              id={"start"}
-              start={circleId}
-              end={circleId}
-              path={"smooth"}
-              _cpx2Offset={-100}
-              strokeWidth={2.5}
-              startAnchor="left"
-              endAnchor={{ position: "left", offset: { rightness: 100 } }}
-            /></div>);
+          setStartStateX(machine.startStateId);
         }
 
         if (event.altKey && !event.shiftKey) { // Delete
@@ -267,8 +260,10 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         if (position != null) {
           const viewportDimensions = document.getElementById('Viewport').getBoundingClientRect(); // Get dimensions of Viewport.
           position = {
-            x: (position.x * (viewportDimensions.width / depth)) + CIRCLE_RADIUS / 2, // X = Proportion of viewport based on current level in tree
-            y: (position.y * 0.01 * viewportDimensions.height) - CIRCLE_RADIUS        // Y = Calulcated Y slice as a percentage of Viewport height
+            // X = Proportion of viewport based on current level in tree + offset
+            x: (position.x * (viewportDimensions.width / depth)) + (CIRCLE_RADIUS + 10),  
+            // Y = Calulcated Y slice as a percentage of Viewport height + offset for centering
+            y: (position.y * 0.01 * viewportDimensions.height) - (CIRCLE_RADIUS / 2 + 10)     
           }
 
           // Resolving out of bounds of Viewport for state circle positions
@@ -288,11 +283,26 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           defaultY={circle.defaultY}
           CIRCLE_RADIUS={CIRCLE_RADIUS}
           position={position}
+          setStartStateX={setStartStateX}
         />
       })}
 
       {transitionArray}
-      {startArrow}
+
+      {/* Start State Arrow */}
+      {startStateX != null ?
+        <Xarrow
+          data-testid={"start"}
+          color="black"
+          key={"start"}
+          id={"start"}
+          start={machine.startStateId}
+          end={machine.startStateId}
+          SVGcanvasStyle={{ left: startStateX - (CIRCLE_RADIUS * 1.3)}} // Formats start state arrow
+          strokeWidth={2.5}
+          startAnchor="left"
+          endAnchor='right'
+        /> : null}
     </Xwrapper>
   </div>
 }
