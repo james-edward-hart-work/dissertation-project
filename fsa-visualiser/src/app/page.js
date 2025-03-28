@@ -11,9 +11,10 @@ function App() {
   // Creates a state for the machine, which may be updated during runtime 
 
   return ( // The JSX for the application
-    <div data-testid="App" style={{ height: "100%", width: "100%" }}>
-        <Viewport machine={machine} setMachine={setMachine} organiseLayout={organiseLayout} setOrganiseLayout={setOrganiseLayout}/>
-        <InteractionWindow machine={machine} setOrganiseLayout={setOrganiseLayout} />
+    <div data-testid="App" style={{ height: "100%", width: "100%" }}
+      onContextMenu={(event) => event.preventDefault()}> {/*  Disables default right-click behaviour (browser drop downs) */}
+      <Viewport machine={machine} setMachine={setMachine} organiseLayout={organiseLayout} setOrganiseLayout={setOrganiseLayout} />
+      <InteractionWindow machine={machine} setOrganiseLayout={setOrganiseLayout} />
     </div>
   );
 };

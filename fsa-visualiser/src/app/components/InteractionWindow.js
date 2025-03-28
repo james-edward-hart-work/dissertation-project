@@ -2,7 +2,6 @@ import { useState } from "react";
 import styles from "../../styles/InteractionWindow.module.css"
 import { InputBar } from "./InputBar";
 import * as htmlToImage from 'html-to-image';
-import Popup from 'reactjs-popup';
 
 // Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu
 const Dropdown = ({ label, value, options, onChange }) => {

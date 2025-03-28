@@ -6,7 +6,6 @@
     border-color: black;
     background-color: white;
     z-index: 0;
-
 }
 .transitionInput {
     z-index: 0;
@@ -15,4 +14,11 @@
     border: none;
     margin-bottom: 30%;
     width: fit-content;
+}
+
+.ContextMenu {
+    list-style: none;
+    border: 1px black;
+    box-sizing: border-box;
+    position: absolute;
 }

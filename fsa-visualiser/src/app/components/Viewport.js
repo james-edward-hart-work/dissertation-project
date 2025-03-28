@@ -2,6 +2,7 @@ import FSA from "../FSA";
 import { useRef, useState, useEffect } from "react"
 import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
+import styles from "../../styles/Viewport.module.css"
 
 // Both imports taken from: https://www.npmjs.com/package/react-xarrows/v/1.7.0#anchors
 import { Xwrapper } from "react-xarrows";
@@ -23,8 +24,13 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   const [circleArray, setCircleArray] = useState([]);           // State array containing the JSX of every circle
   const [transitionArray, setTransitionArray] = useState([]);   // Array containing all transition arrows
   const [originStateId, setOriginStateId] = useState(null);     // Holds the id of the origin state upon making a new transition
-  const [positions, setPositions] = useState([]);               // Holds all fixed positions of circles when organised, null if draggable 
   const ref = useRef(null);                                     // Reference to Viewport to contain circles
+  const [startUpMessage, setStartUpMessage] = useState(true);
+  const [contextMenu, setContextMenu] = useState(null);         // JSX for content menu, null when hidden
+  const [acceptStates, setAcceptStates] = useState([]);         // Array of ids of the machine's accept states
+
+  // Holds all fixed positions of circles when organised, null draggable 
+  const [positions, setPositions] = useState([]);
 
   // Every time organiseLayout is set, make state positions fixed or draggable.
   useEffect(() => {
@@ -53,9 +59,11 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
 
     // Must create a new FSA object for 'machine' as object reference will be different,
     // Triggering a re-render for all components with 'machine'
-    const newMachine = new FSA(machine);
-    newMachine.addState("State " + id);
-    setMachine(newMachine);
+    setMachine((machine) => {
+      const newMachine = new FSA(machine);
+      newMachine.addState("State " + id);
+      return newMachine
+    });
 
     // Realigns state circle's coordinates so mouse is in the centre.
     let defaultX = x - CIRCLE_RADIUS / 2;
@@ -200,21 +208,27 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     return [positionNode, ...childrenNodes] // Concatonate parent and children's position nodes into one array
   }
 
+  // Resets FSA and Viewport
+  function reset() {
+    machine.reset();
+    setCircleArray([]);
+    setTransitionArray([]);
+    setOriginStateId(null);
+  }
+
   /**
    * Handles all click events for Viewport
    * @param event of interaction
    */
   function handleClick(event) {
 
+    setStartUpMessage(false); // Hide startup message
+
     if (event.target.id != "Viewport") {
 
       // If the target is a state
       if (machine.states.find(state => state.id == event.target.id) != undefined) {
         const circleId = event.target.id;
-
-        if (event.ctrlKey) {
-          console.log("control");
-        }
 
         if (event.ctrlKey && !event.altKey && !event.shiftKey) { // Set Start State
           setMachine((machine) => {
@@ -236,18 +250,47 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     } else { // Click on Viewport
       if (originStateId != null) {
         setOriginStateId(null); // Cancel transition setting
-      } else {
-        if (!event.altKey && !event.shiftKey) {
-          // addCircle(event.clientX, event.clientY); // Add State
-        }
       }
     }
   }
 
-  // Disables default right-click behaviour (browser drop downs)
-  document.addEventListener("contextmenu", (event) => {
-    event.preventDefault();
-  });
+  function handleRightClick(event) {
+    if (event.target.id == "Viewport") { // Viewport
+      setContextMenu(
+        <ul className={styles.ContextMenu}>
+          <button onClick={() => { addCircle(event.clientX, event.clientY); setContextMenu(null); }}>Create State</button>
+          <button onClick={() => { reset(); setContextMenu(null); }}>Clear Viewport</button>
+        </ul>)
+    } else if (event.target.id.includes("=>")) { // Transition Arrow
+      setContextMenu(
+        <ul className={styles.ContextMenu}>
+          <button onClick={() => {
+            const originId = event.target.id.split("=>")[0].substring(6);
+            const destId = event.target.id.split("=>")[1];
+            machine.deleteTransition(originId, destId);
+            setTransitionArray(array => array.filter(arrow => (!arrow.key.startsWith(originId) && !arrow.key.endsWith(destId))))
+            setContextMenu(null);
+          }}>Delete</button>
+        </ul>)
+    } else { // State Circle
+      setContextMenu(
+        <ul className={styles.ContextMenu}>
+          {(originStateId == null)
+            ? <button onClick={() => { setOriginStateId(event.target.id); setContextMenu(null); }}>Create Transition (Origin)</button>
+            : <button onClick={() => { connectTransition(event.target.id); setContextMenu(null); }}>Create Transition (Destination)</button>}
+          <button onClick={() => { ; setContextMenu(null); }}>Toggle Accept Status</button>
+          <button onClick={() => {
+            setMachine((machine) => {
+              const newMachine = new FSA(machine);
+              newMachine.setStartState(event.target.id);
+              return newMachine;
+            });
+            setContextMenu(null);
+          }}>Make Start State</button>
+        </ul>)
+    }
+
+  }
 
   const depth = machine.retrieveDepth(); // Depth of machine
 
@@ -259,17 +302,32 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       border: "solid 1.5px black",
       position: "fixed",
       backgroundColor: "white",
+      minWidth: "none"
     }}
     ref={ref}
     onMouseDown={(event) => handleClick(event)}
     onDoubleClick={(event) => {
       (!event.altKey && !event.shiftKey && !event.ctrlKey && event.target.id == "Viewport")
-      ? addCircle(event.clientX, event.clientY) // Add State
-      : null
+        ? addCircle(event.clientX, event.clientY) // Add State
+        : (!event.altKey && !event.shiftKey && !event.ctrlKey && !event.target.id.includes("=>"))
+          ? setAcceptStates((array) => {
+            if (array.includes(event.target.id)) {
+              return array.filter(id => id != event.target.id)
+            } else {
+              return [...array, event.target.id]
+            }
+          })
+          : null
     }}
-  >
-    <Xwrapper>
+    onContextMenu={(event) => handleRightClick(event)}>
 
+    {/* Context Menu */}
+    {contextMenu}
+
+    {/* Startup Message */}
+    {startUpMessage ? <p style={{ position: "absolute", textAlign: "center", left: "25%", top: "40%", width: "50%", zIndex: 1, fontSize: "x-large" }}>Use right clicks to create your finite state automata or view hotkey controls on the right.</p> : null}
+
+    <Xwrapper>
       {/* Draw State Circles */}
       {circleArray.map(circle => {
         let position = positions.find((pos) => pos.id === circle.id).position; // If null, do not calculate fixed position.
@@ -299,6 +357,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           defaultY={circle.defaultY}
           CIRCLE_RADIUS={CIRCLE_RADIUS}
           position={position}
+          acceptStates={acceptStates}
         />
       })}
 
