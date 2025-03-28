@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FSA from "../FSA";
 import PropTypes from 'prop-types';
 import Xarrow from "react-xarrows"; // Imported from: https://www.npmjs.com/package/react-xarrows/v/1.7.0
@@ -15,7 +15,15 @@ import { CIRCLE_RADIUS } from "./Viewport";
  */
 export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTransitionArray }) => {
 
-    const [yPosition, setYPosition] = useState(document.getElementById(originStateId).getBoundingClientRect().y);
+    // Highlight the transition input label upon creation
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        setTimeout(() => { // Timeout to allow component to render
+            inputRef.current?.focus();
+        }, 0);
+    }, []);
+
 
     function handleClick(event) {
         if (event.altKey) { // Deletes transition
@@ -24,14 +32,9 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                 newMachine.deleteTransition(originStateId, destStateId);
                 return newMachine;
             });
-
             setTransitionArray(array => array.filter(arrow => (arrow.key != (originStateId + "=>" + destStateId))))
         }
     }
-
-    useEffect(() => {
-        setYPosition(document.getElementById(originStateId).getBoundingClientRect().y)
-    })
 
     return <div data-testid={"transitionArrow"} onClick={(e) => handleClick(e)}>
         {(originStateId == destStateId) ?
@@ -45,9 +48,9 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
 
                 // Extra Styling for Self-Pointing Arrows
                 _cpx1Offset={-30}   // CP 1 X
-                _cpy1Offset={-85}  // CP 1 Y
-                _cpx2Offset={15}  // CP 2 X
-                _cpy2Offset={-85} // CP 2 Y
+                _cpy1Offset={-85}   // CP 1 Y
+                _cpx2Offset={15}    // CP 2 X
+                _cpy2Offset={-85}   // CP 2 Y
                 strokeWidth={2.5}
                 startAnchor={{ position: "top", offset: { x: -30, y: 12 } }}
                 endAnchor={{ position: "bottom", offset: { x: 30, y: -78.9 } }}
@@ -58,6 +61,8 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                         type="text"
                         className={styles.transitionInput}
                         defaultValue={"A"}
+                        id={"input:" + originStateId + "=>" + destStateId}
+                        ref={inputRef}
                         onChange={(e) => {
                             setMachine((machine) => {
                                 const newMachine = new FSA(machine);
@@ -85,6 +90,8 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                         type="text"
                         className={styles.transitionInput}
                         defaultValue={"A"}
+                        ref={inputRef}
+                        id={"input:" + originStateId + "=>" + destStateId}
                         onChange={(e) => {
                             setMachine((machine) => {
                                 const newMachine = new FSA(machine);

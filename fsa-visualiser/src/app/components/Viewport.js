@@ -105,17 +105,26 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         return newMachine;
       });
 
-      setTransitionArray(array => [...array,
-      <TransitionArrow
-        id={originStateId + "=>" + destStateId}
-        key={originStateId + "=>" + destStateId}
-        originStateId={originStateId}
-        destStateId={destStateId}
-        machine={machine}
-        setMachine={setMachine}
-        setTransitionArray={setTransitionArray}
-        data-testid={"transitionArrow"}
-      />]);
+      setTransitionArray(array => {
+        const arrow = [...array,
+        <TransitionArrow
+          id={originStateId + "=>" + destStateId}
+          key={originStateId + "=>" + destStateId}
+          originStateId={originStateId}
+          destStateId={destStateId}
+          machine={machine}
+          setMachine={setMachine}
+          setTransitionArray={setTransitionArray}
+          data-testid={"transitionArrow"}
+        />]
+        return arrow;
+      }
+      );
+    } else { // Transition has been added
+      // Add comma to arrow and highlight
+      let transition = document.getElementById("input:" + originStateId + "=>" + destStateId);      
+      transition.value = transition.value + ",";
+      transition.focus();
     }
     setOriginStateId(null); // Reset state so no new transitions are made
   }
@@ -252,9 +261,9 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           const viewportDimensions = document.getElementById('Viewport').getBoundingClientRect(); // Get dimensions of Viewport.
           position = {
             // X = Proportion of viewport based on current level in tree + offset
-            x: (position.x * (viewportDimensions.width / depth)) + (CIRCLE_RADIUS + 10),  
+            x: (position.x * (viewportDimensions.width / depth)) + (CIRCLE_RADIUS + 10),
             // Y = Calulcated Y slice as a percentage of Viewport height + offset for centering
-            y: (position.y * 0.01 * viewportDimensions.height) - (CIRCLE_RADIUS / 2 + 10)     
+            y: (position.y * 0.01 * viewportDimensions.height) - (CIRCLE_RADIUS / 2 + 10)
           }
 
           // Resolving out of bounds of Viewport for state circle positions
@@ -277,6 +286,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         />
       })}
 
+      {/* Array of JSX for each transition arrow */}
       {transitionArray}
 
       {/* Start State Arrow */}

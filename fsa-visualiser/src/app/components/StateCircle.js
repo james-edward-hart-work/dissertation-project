@@ -7,17 +7,15 @@ import { useXarrow } from "react-xarrows"; // https://www.npmjs.com/package/reac
 
 /**
  * Function component for a state circle in the viewport.
- * @param machine Application's FSA
- * @param setMachine Setter for FSA
+ * @param setMachine Setter for application's FSA
  * @param id of state
  * @param defaultX coordinate
  * @param defaultY coordinate
  * @param CIRCLE_RADIUS in pixels
  * @param position fixed position when organised
- * @param setUpdateArrows Function to update start state arrow's position
  * @returns JSX for a state circle
  */
-export const StateCircle = ({ machine, setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, position }) => {
+export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, position }) => {
     const [isAccept, setIsAccept] = useState(false);
     const [positionState, setPositionState] = useState({ x: defaultX, y: defaultY });
 
@@ -68,6 +66,7 @@ export const StateCircle = ({ machine, setMachine, id, defaultX, defaultY, CIRCL
                     return newMachine;
                 });
             }}
+            
             // Adds an internal ring if the state is an accept state
             style={isAccept
                 ? { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "1.5px solid black", outlineOffset: "-10px" }
