@@ -121,8 +121,9 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       }
       );
     } else { // Transition has been added
-      // Add comma to arrow and highlight
-      let transition = document.getElementById("input:" + originStateId + "=>" + destStateId);      
+
+      // Add comma to input label and highlight for user.
+      let transition = document.getElementById("input:" + originStateId + "=>" + destStateId);
       transition.value = transition.value + ",";
       transition.focus();
     }
@@ -211,7 +212,11 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       if (machine.states.find(state => state.id == event.target.id) != undefined) {
         const circleId = event.target.id;
 
-        if (event.altKey && event.shiftKey) { // Set Start State
+        if (event.ctrlKey) {
+          console.log("control");
+        }
+
+        if (event.ctrlKey && !event.altKey && !event.shiftKey) { // Set Start State
           setMachine((machine) => {
             const newMachine = new FSA(machine);
             newMachine.setStartState(circleId);
@@ -219,9 +224,9 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           })
         }
 
-        if (event.altKey && !event.shiftKey) { // Delete
+        if (event.altKey && !event.shiftKey && !event.ctrlKey) { // Delete
           deleteCircle(circleId);
-        } else if (event.shiftKey && !event.altKey) { // Create Transition
+        } else if (event.shiftKey && !event.altKey && !event.ctrlKey) { // Create Transition
           if (originStateId == null) {
             setOriginStateId(circleId);
           } else  // Select Destination State
@@ -233,11 +238,16 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         setOriginStateId(null); // Cancel transition setting
       } else {
         if (!event.altKey && !event.shiftKey) {
-          addCircle(event.clientX, event.clientY); // Add State
+          // addCircle(event.clientX, event.clientY); // Add State
         }
       }
     }
   }
+
+  // Disables default right-click behaviour (browser drop downs)
+  document.addEventListener("contextmenu", (event) => {
+    event.preventDefault();
+  });
 
   const depth = machine.retrieveDepth(); // Depth of machine
 
@@ -251,7 +261,13 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       backgroundColor: "white",
     }}
     ref={ref}
-    onClick={(event) => handleClick(event)} >
+    onMouseDown={(event) => handleClick(event)}
+    onDoubleClick={(event) => {
+      (!event.altKey && !event.shiftKey && !event.ctrlKey && event.target.id == "Viewport")
+      ? addCircle(event.clientX, event.clientY) // Add State
+      : null
+    }}
+  >
     <Xwrapper>
 
       {/* Draw State Circles */}

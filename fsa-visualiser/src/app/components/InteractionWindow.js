@@ -24,34 +24,25 @@ const Dropdown = ({ label, value, options, onChange }) => {
  * @returns JSX for Controls Table
  */
 function printControls() {
-    return <table className={styles.Controls} data-testid="Controls" >
-        <tbody>
-            <tr>
-                <td>Click (Blank Space)</td>
-                <td>Creates a new state <br></br>(drag to move)</td>
-            </tr>
-            <tr>
-                <td>Shift + Click (Two States)</td>
-                <td>Creates transition</td>
-            </tr>
-            <tr>
-                <td>Alt + Click</td>
-                <td>Deletes object</td>
-            </tr>
-            <tr>
-                <td>Double Click (State)</td>
-                <td>Toggles accept state</td>
-            </tr>
-            <tr>
-                <td>Shift + Alt + Click (State)</td>
-                <td>Makes state the start state</td>
-            </tr>
-            <tr>
-                <td>Click (Transition)</td>
-                <td>Toggles straightness of arrow</td>
-            </tr>
-        </tbody>
-    </table>
+    return <div className={styles.Controls} data-testid="Controls" >
+        <br></br>
+
+        <b>Double Click (Blank Space)</b>
+        <p>Creates a new state.<br></br>(drag to move)</p>
+
+        <b>Shift + Click (State)</b>
+        <p>Creates a transition arrow between two states:<br></br>First - Selects origin state<br></br>Second - Selects desintation state</p>
+
+        <b>Alt + Click (State or Transition)</b>
+        <p>Deletes the selected state or transition.</p>
+
+        <b>Double Click (State)</b>
+        <p>Toggles the accept status of the selected state.</p>
+
+        <b>Control + Click (State)</b>
+        <p>Makes the selected state the start state.</p>
+
+    </div>
 }
 
 /**
@@ -149,18 +140,12 @@ function exportDropDown(type, machine) {
  */
 export const InteractionWindow = ({ machine, setOrganiseLayout }) => {
 
-    const [hidePrint, setHidePrint] = useState(false); // Tracks if table of states is hidden or not
-    const [hideControls, setControlsPrint] = useState(false); // Tracks if table of controls is hidden or not
+    const [hidePrint, setHidePrint] = useState(true); // Tracks if table of states is hidden or not
+    const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
     const [exportType, setExportType] = useState('PNG'); // Stores the type of desired export
 
     return <div className={styles.InteractionWindow} data-testid="InteractionWindow">
         <InputBar machine={machine} />
-        <br></br>
-
-        {/* Organise Layout */}
-        <button className={styles.OrganiseButton} data-testid="OrganiseButton" onClick={() => setOrganiseLayout(true)}> Organise FSA Layout</button>
-        <br></br>
-        <br></br>
 
         {/* Export Drop Down */}
         {/* Following code adapted from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu */}
@@ -177,21 +162,26 @@ export const InteractionWindow = ({ machine, setOrganiseLayout }) => {
                 value={exportType}
                 onChange={(e) => setExportType(e.target.value)}
             />
-        
-        {/* End of adapted code */}
-        <button style={{marginLeft: "2%"}} onClick={() => exportDropDown(exportType, machine)} data-testid="ExportButton">Export</button>
+
+            {/* End of adapted code */}
+            <button style={{ marginLeft: "2%" }} onClick={() => exportDropDown(exportType, machine)} data-testid="ExportButton">Export</button>
         </div>
+        <br></br>
+
+        {/* Organise Layout */}
+        <button className={styles.Button} data-testid="OrganiseButton" onClick={() => setOrganiseLayout(true)}> Organise FSA Layout</button>
         <br></br>
         <br></br>
 
         {/* Controls */}
         {hideControls
-            ? <div><button className={styles.ControlsButton} onClick={() => setControlsPrint(false)} data-testid="ControlsButton" >View Controls</button><br></br></div>
+            ? <div><button className={styles.Button} onClick={() => setControlsPrint(false)} data-testid="ControlsButton" >View Hotkey Controls</button><br></br></div>
             : <div>
-                <button className={styles.ControlsButton} onClick={() => setControlsPrint(true)} data-testid="ControlsButton" >Hide Controls</button>
+                <button className={styles.Button} onClick={() => setControlsPrint(true)} data-testid="ControlsButton" >Hide Hotkey Controls</button>
+                <br></br>
+
                 {printControls()}
                 <b style={{ marginTop: "1%", marginLeft: "2%" }}>Note: Alt key = 'option' (on Macbooks)</b>
-                <p style={{ marginTop: "1%", marginLeft: "2%" }}>Empty Word Symbol: ε</p>
                 <p style={{ marginTop: "1%", marginLeft: "2%" }}>Any state names or transition inputs can be changed.</p>
             </div>
         }
@@ -199,9 +189,9 @@ export const InteractionWindow = ({ machine, setOrganiseLayout }) => {
 
         {/* List of States */}
         {hidePrint
-            ? <button className={styles.StatesButton} onClick={() => setHidePrint(false)} data-testid="StatesButton" >View Machine Description</button>
+            ? <button className={styles.Button} onClick={() => setHidePrint(false)} data-testid="StatesButton" >View Machine Description</button>
             : <div>
-                <button className={styles.StatesButton} onClick={() => setHidePrint(true)} data-testid="StatesButton" >Hide Machine Description</button>
+                <button className={styles.Button} onClick={() => setHidePrint(true)} data-testid="StatesButton" >Hide Machine Description</button>
                 {printMachine(machine)}
             </div>
         }

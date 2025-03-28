@@ -47,7 +47,8 @@ export const InputBar = ({ machine }) => {
                 : <span className={styles.ValidLight} data-testid="ValidLight" style={{ backgroundColor: "red" }}></span>
             }
         </div>
-        <b>{"Machine Type: " + machine.status()}</b>
-        <p>Input Alphabet: {showAlphabet(machine.inputAlphabet())}</p>
+        <b>{"Machine Type: " + machine.status()}</b> <br></br> <br></br>
+        <b>Machine's Input Alphabet: {showAlphabet(machine.inputAlphabet())}</b>
+        <p>Empty Word Symbol: ε</p>
     </div>
 }

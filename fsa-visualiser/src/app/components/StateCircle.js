@@ -50,8 +50,8 @@ export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS,
             updateXarrow();
             handleDrag(e, data);
         }}
-        onStop={updateXarrow}
-    >
+        onStop={updateXarrow}>
+
         <input data-testid={"stateCircle"}
             ref={ref}
             id={id}
@@ -66,7 +66,14 @@ export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS,
                     return newMachine;
                 });
             }}
-            
+
+            // Unhighlight upon hitting Enter key
+            onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                    event.target.blur();
+                }
+            }}
+
             // Adds an internal ring if the state is an accept state
             style={isAccept
                 ? { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "1.5px solid black", outlineOffset: "-10px" }

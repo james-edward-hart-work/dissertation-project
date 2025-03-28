@@ -19,18 +19,11 @@
     overflow: visible;
 }
 
-.StatesButton {
+.Button {
     overflow: visible;
     min-width: 50%;
     font-size: large;
 }
-
-.ControlsButton {
-    overflow: visible;
-    min-width: 50%;
-    font-size: large;
-}
-
 
 .States table {
     margin-left: 2%;
@@ -55,7 +48,8 @@
 }
 
 .Controls {
-    border: 1px solid black;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
     width: 97%;
     margin: 2%;
     border-collapse: collapse;
@@ -67,3 +61,5 @@
     width: 50%;
     padding-left: 1%;
 }
+
+#p #b {font-size: large;}

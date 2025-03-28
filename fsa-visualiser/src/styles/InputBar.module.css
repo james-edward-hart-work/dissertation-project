@@ -3,6 +3,7 @@
     min-height: 5%;
     overflow: visible;
     margin-top: 1%;
+    font-size: large;
 }
 
 .WordInput {
@@ -11,6 +12,8 @@
     height: 30px;
     width: 70%;
     translate: 0px -6px;
+    font-size: medium;
+
 }
 
 .PlayButton {

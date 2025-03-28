@@ -1,9 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import FSA from "../FSA";
 import PropTypes from 'prop-types';
 import Xarrow from "react-xarrows"; // Imported from: https://www.npmjs.com/package/react-xarrows/v/1.7.0
 import styles from "../../styles/TransitionArrow.module.css"
-import { CIRCLE_RADIUS } from "./Viewport";
 
 /**
  * Function component for a transition arrow
@@ -69,7 +68,15 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                                 newMachine.changeTransitionInput(originStateId, destStateId, e.target.value);
                                 return newMachine;
                             })
-                        }} />
+                        }}
+
+                        // Unhighlight upon hitting Enter key
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                                event.target.blur();
+                            }
+                        }}
+                    />
                 }}
             />
             :
@@ -98,7 +105,15 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                                 newMachine.changeTransitionInput(originStateId, destStateId, e.target.value);
                                 return newMachine;
                             })
-                        }} />
+                        }}
+
+                        // Unhighlight upon hitting Enter key
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter") {
+                                event.target.blur(); // Remove focus from input
+                            }
+                        }}
+                    />
                 }}
             />
         }
