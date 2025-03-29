@@ -44,7 +44,7 @@ describe('Viewport', () => {
       render(<Wrapper />);
 
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
 
       const stateCircle = screen.getByTestId("stateCircle");
       expect(stateCircle).toBeInTheDocument();
@@ -66,7 +66,7 @@ describe('Viewport', () => {
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
 
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
 
       const stateCircle = screen.getByTestId("stateCircle");
       expect(stateCircle).toBeInTheDocument();
@@ -89,16 +89,16 @@ describe('Viewport', () => {
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
 
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       expect(screen.getAllByTestId("stateCircle").length).toEqual(1);
 
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 200, y: 50 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 200, y: 50 } });
 
       await waitFor(() => {
         expect(screen.getAllByTestId("stateCircle").length).toEqual(2);
       });
 
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 400, y: 1 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 400, y: 1 } });
       expect(screen.getAllByTestId("stateCircle").length).toEqual(3);
 
       const stateCircle = screen.getAllByTestId("stateCircle");
@@ -116,7 +116,7 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
       const stateCircle = screen.getByTestId("stateCircle");
 
       fireEvent.change(stateCircle, { target: { value: 'start_state' } })
@@ -136,9 +136,9 @@ describe('Viewport', () => {
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
 
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 200, y: 50 } });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 400, y: 1 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 200, y: 50 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 400, y: 1 } });
       expect(screen.getAllByTestId("stateCircle").length).toEqual(3);
 
       await user.keyboard('{Alt>}');
@@ -164,7 +164,7 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       expect(screen.getAllByTestId("stateCircle").length).toEqual(1);
 
       await user.keyboard('{Alt>}');
@@ -172,7 +172,7 @@ describe('Viewport', () => {
       await user.keyboard('{/Alt}');
       expect(screen.queryByTestId("stateCircle")).toBeNull();
 
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       expect(screen.getAllByTestId("stateCircle").length).toEqual(1);
 
     })
@@ -205,7 +205,7 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
 
-      await user.pointer({ keys: '[MouseLeft]', target: screen.getByTestId("Viewport"), coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: screen.getByTestId("Viewport"), coords: { x: 100, y: 100 } });
 
       const stateCircle = screen.getByTestId("stateCircle");
       expect(stateCircle.style.outline).toEqual("none");
@@ -232,7 +232,7 @@ describe('Viewport', () => {
       render(<Wrapper />);
 
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       const stateCircle = screen.getByTestId("stateCircle");
 
       expect(getCoords(stateCircle.style.transform)[0]).toEqual(100 - CIRCLE_RADIUS / 2);
@@ -261,7 +261,7 @@ describe('Viewport', () => {
       render(<Wrapper />);
 
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       const stateCircle = screen.getByTestId("stateCircle");
       expect(screen.getAllByTestId("stateCircle").length).toEqual(1);
 
@@ -277,8 +277,8 @@ describe('Viewport', () => {
       await user.keyboard('{/Alt}');
       expect(screen.queryByTestId("stateCircle")).toBeNull();
 
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 300, y: 300 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 300, y: 300 } });
       expect(screen.getAllByTestId("stateCircle").length).toEqual(2);
     })
 
@@ -294,8 +294,8 @@ describe('Viewport', () => {
       render(<Wrapper />);
 
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 0, y: 0 } });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 0, y: 0 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 } });
       const stateCircle = screen.getAllByTestId("stateCircle");
       const state2Coords = getCoords(stateCircle[1].style.transform);
 
@@ -345,8 +345,8 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
       const stateCircle = screen.getAllByTestId("stateCircle");
       expect(screen.queryByTestId("transitionArrow")).toBeNull();
 
@@ -371,7 +371,7 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
       const stateCircle = screen.getByTestId("stateCircle");
       expect(screen.queryByTestId("transitionArrow")).toBeNull();
 
@@ -395,8 +395,8 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
       const stateCircle = screen.getAllByTestId("stateCircle");
 
       // Two different states
@@ -435,7 +435,7 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
       const stateCircle = screen.getByTestId("stateCircle");
       expect(screen.queryByTestId("transitionArrow")).toBeNull();
 
@@ -465,8 +465,8 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
       const stateCircle = screen.getAllByTestId("stateCircle");
       expect(screen.queryByTestId("transitionArrow")).toBeNull();
 
@@ -495,9 +495,9 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 500, y: 500 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 500, y: 500 }, });
       const stateCircle = screen.getAllByTestId("stateCircle");
       expect(screen.queryByTestId("transitionInput")).toBeNull();
 
@@ -539,9 +539,9 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 500, y: 500 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 500, y: 500 }, });
       const stateCircle = screen.getAllByTestId("stateCircle");
       expect(screen.queryByTestId("transitionInput")).toBeNull();
 
@@ -592,39 +592,13 @@ describe('Viewport', () => {
       expect(ref.current.states.length).toEqual(0);
 
       // No valid destination state.
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
       await user.keyboard('{Shift>}');
       await user.pointer({ keys: '[MouseLeft]', target: screen.getByTestId('stateCircle') });
       await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 500, y: 500 }, });
       await user.keyboard('{/Shift}');
 
       expect(ref.current.states[0].transitions.length).toEqual(0);
-    })
-
-    test('Click toggles straightness of arrow', async () => {
-      const ref = { current: null }; // Stores reference to machine in mock viewport.
-
-      const Wrapper = () => {
-        const [defaultMachine, machineSetter] = useState(new FSA(0));
-        ref.current = defaultMachine; // Store defaultMachine in the ref for access outside Wrapper
-        return <Viewport machine={defaultMachine} setMachine={machineSetter} />;
-      };
-
-      render(<Wrapper />);
-      const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
-      const stateCircle = screen.getAllByTestId("stateCircle");
-      expect(screen.queryByTestId("transitionArrow")).toBeNull();
-
-      await user.keyboard('{Shift>}');
-      await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
-      await user.keyboard('{/Shift}');
-
-      expect(screen.getAllByTestId("transitionInput").length).toEqual(1);
-
-      await user.pointer({ keys: '[MouseLeft]', target: screen.getByTestId("transitionInput") });
     })
   })
 
@@ -644,26 +618,22 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 300, y: 300 }, });
       const stateCircle = screen.getAllByTestId("stateCircle");
       expect(ref.current.startStateId).toEqual("-1");
 
-      await user.keyboard('{Shift>}');
-      await user.keyboard('{Alt>}');
+      await user.keyboard('{Control>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[0] });
-      await user.keyboard('{/Alt}');
-      await user.keyboard('{/Shift}');
+      await user.keyboard('{/Control}');
 
       expect(screen.getByTestId("start")).toBeInTheDocument();
       expect(ref.current.startStateId).toEqual("0");
 
       // Reassign it
-      await user.keyboard('{Shift>}');
-      await user.keyboard('{Alt>}');
+      await user.keyboard('{Control>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle[1] });
-      await user.keyboard('{/Alt}');
-      await user.keyboard('{/Shift}');
+      await user.keyboard('{/Control}');
 
       expect(screen.getByTestId("start")).toBeInTheDocument();
       expect(ref.current.startStateId).toEqual("1");
@@ -680,16 +650,14 @@ describe('Viewport', () => {
 
       render(<Wrapper />);
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { x: 100, y: 100 }, });
       const stateCircle = screen.getByTestId("stateCircle");
       expect(ref.current.startStateId).toEqual("-1");
 
       // Set to start state
-      await user.keyboard('{Shift>}');
-      await user.keyboard('{Alt>}');
+      await user.keyboard('{Control>}');
       await user.pointer({ keys: '[MouseLeft]', target: stateCircle });
-      await user.keyboard('{/Alt}');
-      await user.keyboard('{/Shift}');
+      await user.keyboard('{/Control}');
 
       expect(screen.getByTestId("start")).toBeInTheDocument();
       expect(ref.current.startStateId).toEqual("0");

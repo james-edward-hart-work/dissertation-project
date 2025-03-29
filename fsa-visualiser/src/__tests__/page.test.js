@@ -39,7 +39,7 @@ describe('Page', () => {
   describe('Viewport', () => {
     test('Clicking inside viewport adds a state', async () => {
       const viewport = screen.getByTestId("Viewport");
-      await user.pointer({ keys: '[MouseLeft]', target: viewport, coords: { clientX: 100, clientY: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: viewport, coords: { clientX: 100, clientY: 100 } });
 
       const stateCircle = screen.getByTestId("stateCircle");
       expect(stateCircle).toBeInTheDocument();
@@ -52,9 +52,9 @@ describe('Page', () => {
 
     test('Clicking outside viewport does not add a state', async () => {
       const app = screen.getByTestId("App");
-      await user.pointer({ keys: '[MouseLeft]', target: app, coords: { clientX: 0, clientY: 0 } });
-      await user.pointer({ keys: '[MouseLeft]', target: app, coords: { clientX: 100, clientY: 100 } });
-      await user.pointer({ keys: '[MouseLeft]', target: app, coords: { clientX: 1000, clientY: 1000 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: app, coords: { clientX: 0, clientY: 0 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: app, coords: { clientX: 100, clientY: 100 } });
+      await user.pointer({ keys: '[MouseLeft][MouseLeft]', target: app, coords: { clientX: 1000, clientY: 1000 } });
       expect(screen.queryByTestId("stateCircle")).toBeNull();
     })
   })

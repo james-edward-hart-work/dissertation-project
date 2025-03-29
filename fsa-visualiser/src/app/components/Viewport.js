@@ -379,17 +379,18 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
 
       {/* Start State Arrow */}
       {machine.startStateId != '-1' ?
-        <Xarrow
-          data-testid={"start"}
-          color="black"
-          key={"start"}
-          id={"start"}
-          start={machine.startStateId}
-          end={machine.startStateId}
-          strokeWidth={2.5}
-          startAnchor={{ position: "left", offset: { x: -80, y: 0 } }}
-          endAnchor={{ position: "right", offset: { x: -CIRCLE_RADIUS - 7, y: 0 } }}
-        /> : null}
+        <div data-testid={"start"}>
+          <Xarrow
+            data-testid={"start"}
+            color="black"
+            key={"start"}
+            id={"start"}
+            start={machine.startStateId}
+            end={machine.startStateId}
+            strokeWidth={2.5}
+            startAnchor={{ position: "left", offset: { x: -80, y: 0 } }}
+            endAnchor={{ position: "right", offset: { x: -CIRCLE_RADIUS - 7, y: 0 } }}
+          /></div> : null}
     </Xwrapper>
   </div>
 }
