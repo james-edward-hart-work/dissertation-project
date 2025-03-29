@@ -138,6 +138,21 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     setOriginStateId(null); // Reset state so no new transitions are made
   }
 
+  function toggleAccept(stateId) {
+    setAcceptStates((array) => {
+      if (array.includes(stateId)) {
+        return array.filter(id => id != stateId)
+      } else {
+        return [...array, stateId]
+      }
+    })
+    setMachine((machine) => {
+      const newMachine = new FSA(machine);
+      newMachine.toggleAccept(stateId);
+      return newMachine;
+    });
+  }
+
   // Repositions circles to fixed positions based on FSA layout
   function organiseCircles() {
     if (machine.status() != "Invalid") {
@@ -214,6 +229,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     setCircleArray([]);
     setTransitionArray([]);
     setOriginStateId(null);
+    setAcceptStates([]);
   }
 
   /**
@@ -255,6 +271,9 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   }
 
   function handleRightClick(event) {
+    if (event.ctrlKey) {
+      return;
+    }
     if (event.target.id == "Viewport") { // Viewport
       setContextMenu(
         <ul className={styles.ContextMenu}>
@@ -278,7 +297,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           {(originStateId == null)
             ? <button onClick={() => { setOriginStateId(event.target.id); setContextMenu(null); }}>Create Transition (Origin)</button>
             : <button onClick={() => { connectTransition(event.target.id); setContextMenu(null); }}>Create Transition (Destination)</button>}
-          <button onClick={() => { ; setContextMenu(null); }}>Toggle Accept Status</button>
+          <button onClick={() => { toggleAccept(event.target.id); setContextMenu(null); }}>Toggle Accept Status</button>
           <button onClick={() => {
             setMachine((machine) => {
               const newMachine = new FSA(machine);
@@ -310,13 +329,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       (!event.altKey && !event.shiftKey && !event.ctrlKey && event.target.id == "Viewport")
         ? addCircle(event.clientX, event.clientY) // Add State
         : (!event.altKey && !event.shiftKey && !event.ctrlKey && !event.target.id.includes("=>"))
-          ? setAcceptStates((array) => {
-            if (array.includes(event.target.id)) {
-              return array.filter(id => id != event.target.id)
-            } else {
-              return [...array, event.target.id]
-            }
-          })
+          ? toggleAccept(event.target.id)
           : null
     }}
     onContextMenu={(event) => handleRightClick(event)}>
@@ -357,7 +370,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           defaultY={circle.defaultY}
           CIRCLE_RADIUS={CIRCLE_RADIUS}
           position={position}
-          acceptStates={acceptStates}
+          isAccept={(acceptStates.includes(circle.id))}
         />
       })}
 

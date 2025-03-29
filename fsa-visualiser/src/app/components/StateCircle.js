@@ -15,8 +15,7 @@ import { useXarrow } from "react-xarrows"; // https://www.npmjs.com/package/reac
  * @param position fixed position when organised
  * @returns JSX for a state circle
  */
-export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, position }) => {
-    const [isAccept, setIsAccept] = useState(false);
+export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, position, isAccept }) => {
     const [positionState, setPositionState] = useState({ x: defaultX, y: defaultY });
 
     // Update position when state is dragged
@@ -24,16 +23,6 @@ export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS,
 
     const ref = useRef(id);
     const updateXarrow = useXarrow(); // Function to update connected transition arrows.
-
-    // Toggles a state's accept status.
-    function handleDoubleClick() {
-        setIsAccept(!isAccept);
-        setMachine((machine) => {
-            const newMachine = new FSA(machine);
-            newMachine.toggleAccept(id);
-            return newMachine;
-        });
-    }
 
     // Set position state if incoming position is not null.
     useEffect(() => {
@@ -78,7 +67,8 @@ export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS,
             style={isAccept
                 ? { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "1.5px solid black", outlineOffset: "-10px" }
                 : { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "none" }}
-            onDoubleClick={() => handleDoubleClick()} />
+            //onDoubleClick={() => handleDoubleClick()} 
+            />
 
     </Draggable >
 }
