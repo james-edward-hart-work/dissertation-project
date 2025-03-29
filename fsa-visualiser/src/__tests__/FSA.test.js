@@ -211,12 +211,12 @@ describe('FSA', () => {
 
     test('Run Input - Accept', () => {
       validMachine.runInput("a")
-      expect(global.alert).toHaveBeenCalledWith("The machine accepts: a")
+      expect(global.alert).toHaveBeenCalledWith("The machine accepts: a.\nPath: Start_State => State1.")
 
       validMachine.addTransition("1", "0", "b")
       validMachine.addTransition("1", "1", "a")
       validMachine.runInput("a")
-      expect(global.alert).toHaveBeenCalledWith("The machine accepts: a")
+      expect(global.alert).toHaveBeenCalledWith("The machine accepts: a.\nPath: Start_State => State1.")
     })
 
     test('Run Input - Reject Normal Nondeterministic', () => {
@@ -227,14 +227,14 @@ describe('FSA', () => {
     test('Run Input - Nondeterministic with Empty Word', () => {
       validMachine.addTransition("0", "1", "ε")
       validMachine.runInput("b")
-      expect(global.alert).toHaveBeenCalledWith("The machine accepts: b")
+      expect(global.alert).toHaveBeenCalledWith("The machine accepts: b.\nPath: Start_State => Start_State => State1.")
     })
 
     test('Run Input - Reject Deterministic', () => {
       validMachine.addTransition("1", "0", "b")
       validMachine.addTransition("1", "1", "a")
       validMachine.runInput("ab")
-      expect(global.alert).toHaveBeenCalledWith("The machine rejects: ab. Path: Start_State => State1 => Start_State")
+      expect(global.alert).toHaveBeenCalledWith("The machine rejects: ab.\nPath: Start_State => State1 => Start_State")
     })
 
     test('Run Input - Invalid', () => {

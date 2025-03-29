@@ -58,6 +58,6 @@ describe('InputBar', () => {
         await userEvent.type(screen.getByTestId('WordInput'), 'a')
         expect(screen.getByTestId('WordInput')).toHaveValue('a')
         await user.click(screen.getByTestId("PlayButton"));
-        expect(global.alert).toHaveBeenCalledWith('The machine accepts: a')
+        expect(global.alert).toHaveBeenCalledWith('The machine accepts: a.\nPath: Start_State => State1.')
     })
 })

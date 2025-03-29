@@ -1,5 +1,5 @@
 import FSA from "../FSA";
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState, useEffect, use } from "react"
 import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
 import styles from "../../styles/Viewport.module.css"
@@ -50,6 +50,26 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
       }
     }
   }, [organiseLayout]);
+
+  // Begining of Text Input - UseEffect to update viewport every type machine is updated.
+  // useEffect(() => {
+  //   // Change accept
+  //   // change transitions
+  //   // change name
+  //   // change start state
+  //   machine.states.forEach(element => {
+  //     if (element.accept && acceptStates.find(state => state.id == element.id) == undefined) {
+  //       setAcceptStates((array) => [...array, element.id])
+  //     }
+  //   });
+
+  //   // Any viewport states need to be removed
+  //   acceptStates.forEach(element => {
+  //     if (!machine.states.find(state => state.id == element).accept) {
+  //       setAcceptStates((array) => array.splice(element.id))
+  //     }
+  //   });
+  // }, [machine])
 
   // Adds a state circle to the viewport and state to the FSA.
   function addCircle(x, y) {

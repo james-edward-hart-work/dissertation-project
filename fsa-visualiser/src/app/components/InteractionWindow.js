@@ -2,6 +2,7 @@ import { useState } from "react";
 import styles from "../../styles/InteractionWindow.module.css"
 import { InputBar } from "./InputBar";
 import * as htmlToImage from 'html-to-image';
+import FSA from "../FSA";
 
 // Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu
 const Dropdown = ({ label, value, options, onChange }) => {
@@ -49,7 +50,7 @@ function printControls() {
  * @param {*} machine to be printed
  * @returns JSX for states table
  */
-function printMachine(machine) {
+function printMachine(machine, setMachine) {
     // Empty Machine
     if (machine.states.length == 0) {
         return <h3 className={styles.States}>No States Added.</h3>;
@@ -60,11 +61,12 @@ function printMachine(machine) {
         <tr key={'header'}>
             <th>State</th>
             <th>Transitions</th>
-            <th style={{ width: "20%" }}>Accept?</th>
+            <th style={{ width: "30%" }}>Accept?</th>
         </tr>
     ];
 
     // Fills table for each state
+    const newMachine = new FSA(machine);
     machine.states.forEach((element, index) => {
 
         let transitions = [];
@@ -77,6 +79,7 @@ function printMachine(machine) {
             <tr key={index}>
                 <td>{(element.id == machine.startStateId) ? <b>{element.name}</b> : <p>{element.name}</p>}</td>
                 <td>{transitions}</td>
+                {/* <td><input type="checkbox" value={element.accept} onChange={() => setMachine(newMachine.toggleAccept(element.id))}></input></td> */}
                 <td>{"" + element.accept}</td>
             </tr>
         );
@@ -111,9 +114,8 @@ function exportDropDown(type, machine) {
     }
 
     switch (type) {
-        // Styles below ensure Viewport is at root when exporting.
+        // PNG and SVG styles below ensure Viewport is at root when exporting.
         case "PNG":
-
             htmlToImage
                 .toPng(document.getElementById('Viewport'), { style: { transform: "translate(-0.7%, -1%)" } })
                 .then((dataUrl) => downloadExport(dataUrl, "png"));
@@ -123,6 +125,14 @@ function exportDropDown(type, machine) {
             htmlToImage
                 .toSvg(document.getElementById('Viewport'), { style: { transform: "translate(-0.7%, -1%)" } })
                 .then((dataUrl) => downloadExport(dataUrl, "svg"));
+            break;
+
+        case "JSON":
+            const jsonData = JSON.stringify(machine, null, 2); // Converts JSON data into JSON string, 2 is for intendation spaces
+            const blob = new Blob([jsonData], { type: "application/json" }); // Creates data blob to be attached to URL
+            const url = URL.createObjectURL(blob);
+            downloadExport(url, "json");
+            URL.revokeObjectURL(url); // Removes object URL for cleanup
             break;
 
         default:
@@ -137,7 +147,7 @@ function exportDropDown(type, machine) {
  * @param setOrganiseLayout Setter for organiseLayout
  * @returns JSX for Interaction Window
  */
-export const InteractionWindow = ({ machine, setOrganiseLayout }) => {
+export const InteractionWindow = ({ machine, setMachine, setOrganiseLayout }) => {
 
     const [hidePrint, setHidePrint] = useState(true); // Tracks if table of states is hidden or not
     const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
@@ -154,7 +164,7 @@ export const InteractionWindow = ({ machine, setOrganiseLayout }) => {
                 options={[
                     { label: 'PNG', value: 'PNG' },
                     { label: 'SVG', value: 'SVG' },
-                    // { label: 'JSON', value: 'JSON' },
+                    { label: 'JSON', value: 'JSON' },
                     // { label: 'LaTeX', value: 'LaTeX' },
                     // { label: 'Video', value: 'Video' }
                 ]}
@@ -191,7 +201,7 @@ export const InteractionWindow = ({ machine, setOrganiseLayout }) => {
             ? <button className={styles.Button} onClick={() => setHidePrint(false)} data-testid="StatesButton" >View Machine Description</button>
             : <div>
                 <button className={styles.Button} onClick={() => setHidePrint(true)} data-testid="StatesButton" >Hide Machine Description</button>
-                {printMachine(machine)}
+                {printMachine(machine, setMachine)}
             </div>
         }
         <br></br>

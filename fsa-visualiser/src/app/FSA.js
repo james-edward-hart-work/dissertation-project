@@ -1,3 +1,5 @@
+import { machine } from "os";
+
 /**
  * Class for creating Finite State Automata Objects
  * Contains all logical manipulation of the application's FSA (Finite State Automaton)
@@ -243,7 +245,7 @@ class FSA {
 
     // Checks if word is accepted by the machine.
     let currentState = this.states.find(state => state.id === this.startStateId);
-    let outputPath = inputWord + ". Path: " + currentState.name;
+    let outputPath = inputWord + ".\nPath: " + currentState.name;
     let isAccepted = false;
 
     if (this.status() == "Deterministic") { // Follows input word's letters to trace path
@@ -273,16 +275,19 @@ class FSA {
     } else { // Nondeterministic - Breathe-first Search of branching state transitions
 
       const startState = this.states.find(state => state.id === this.startStateId);
-      let nodeStore = [[0, startState]]; // Array of nodes to visit (added upon indetifying a branch)
-      // Nodes = [Index of letter, state]
+      let nodeStore = [[0, startState, [this.startStateId]]]; // Array of nodes to visit (added upon indetifying a branch)
+      // Nodes = [Index of letter, state, array of parent nodes]
+      let outputPath = [];
 
       do {
         let node = nodeStore.shift();
         let letterIndex = node[0];
         let currentState = node[1];
+        let allParents = node[2];
         if (letterIndex == letters.length) { // Index will be the length of the word after final letter is ticked
           if (currentState.accept) {
             isAccepted = true;
+            outputPath = allParents;
             break; // Stop if found.
           } else {
             // If word is finished, check for transitions using empty word and navigate
@@ -290,7 +295,7 @@ class FSA {
             emptyWordStates.forEach(transition => {
               if (transition[1] != currentState.id) {
                 let state = this.states.find(state => state.id === transition[1])
-                nodeStore.push([letterIndex, state]) // Same letter      
+                nodeStore.push([letterIndex, state, [...allParents, transition[1]]]) // Same letter      
               }
             });
           }
@@ -305,22 +310,33 @@ class FSA {
           if (childStates != undefined) {
             childStates.forEach(transition => {
               let state = this.states.find(state => state.id === transition[1])
-              nodeStore.push([letterIndex + 1, state]) // Increment letter index
+              nodeStore.push([letterIndex + 1, state, [...allParents, transition[1]]]) // Increment letter index
             });
           }
           if (emptyWordStates != undefined) {
             emptyWordStates.forEach(transition => {
               if (transition[1] != currentState.id) {
                 let state = this.states.find(state => state.id === transition[1])
-                nodeStore.push([letterIndex, state]) // Same letter     
+                nodeStore.push([letterIndex, state, [...allParents, transition[1]]]) // Same letter     
               }
             });
           }
         }
       } while (nodeStore.length > 0) // Keep traversing if there are nodes left
 
-      if (isAccepted) {
-        alert("The machine accepts: " + inputWord);
+      if (isAccepted) {      
+        // Contructs valid output path
+        let outputString = "Path: "
+        for (let index = 0; index < outputPath.length; index++) {
+          outputString += this.states.find(state => state.id == outputPath[index]).name;
+          if (index == outputPath.length -1) {
+            outputString += ".";
+          } else {
+            outputString += " => ";
+          }
+        }
+        
+        alert("The machine accepts: " + inputWord + ".\n" + outputString);
       } else {
         alert("The machine rejects: " + inputWord);
       }
