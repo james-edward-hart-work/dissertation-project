@@ -96,6 +96,7 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
                     middle: <input data-testid={"transitionInput"}
                         type="text"
                         className={styles.transitionInput}
+                        style={{marginLeft: 20}} // Margin left to avoid overlapping for vertical transitions
                         defaultValue={"A"}
                         ref={inputRef}
                         id={"input:" + originStateId + "=>" + destStateId}
