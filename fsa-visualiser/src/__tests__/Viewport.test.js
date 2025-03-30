@@ -1,9 +1,9 @@
 import '@testing-library/jest-dom'
+import React from 'react';
+import FSA from '../app/FSA';
 import { Viewport, CIRCLE_RADIUS } from '../app/components/Viewport';
 import { render, screen, fireEvent } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
-import React from 'react';
-import FSA from '../app/FSA';
 import { getCoords } from './page.test';
 import { waitFor } from '@testing-library/react';
 import { useState } from 'react';

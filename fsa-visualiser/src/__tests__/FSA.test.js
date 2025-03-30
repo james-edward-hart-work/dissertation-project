@@ -90,7 +90,7 @@ describe('FSA', () => {
       { id: "2", name: "State2", transitions: [], accept: false }
     ]);
 
-    machine.reset();
+    machine = new FSA(0);
     expect(machine.total).toEqual(0);
     expect(machine.states).toEqual([]);
   })

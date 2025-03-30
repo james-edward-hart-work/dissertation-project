@@ -1,7 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import FSA from "../app/FSA";
-import { InputBar } from "../app/components/InputBar";
 import '@testing-library/jest-dom';
+import FSA from "../app/FSA";
+import { render, screen } from "@testing-library/react";
+import { InputBar } from "../app/components/InputBar";
 import { userEvent } from '@testing-library/user-event'
 
 let validMachine = new FSA({

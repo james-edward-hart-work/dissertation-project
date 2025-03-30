@@ -1,5 +1,3 @@
-import { machine } from "os";
-
 /**
  * Class for creating Finite State Automata Objects
  * Contains all logical manipulation of the application's FSA (Finite State Automaton)
@@ -335,7 +333,7 @@ class FSA {
             outputString += " => ";
           }
         }
-        
+
         alert("The machine accepts: " + inputWord + ".\n" + outputString);
       } else {
         alert("The machine rejects: " + inputWord);
@@ -408,15 +406,6 @@ class FSA {
       // Build nested array representing topology of machine for depth check
       [this.startStateId, this.findChildren(this.startStateId, [this.startStateId])]
     );
-  }
-
-  /**
-   * Resets FSA to default values.
-   */
-  reset() {
-    this.total = 0;
-    this.states = [];
-    this.startStateId = "-1";
   }
 }
 

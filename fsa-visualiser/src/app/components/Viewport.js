@@ -245,7 +245,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
 
   // Resets FSA and Viewport
   function reset() {
-    machine.reset();
+    setMachine(new FSA(0));
     setCircleArray([]);
     setTransitionArray([]);
     setOriginStateId(null);
