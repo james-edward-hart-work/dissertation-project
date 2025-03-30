@@ -1,6 +1,6 @@
 {
   "name": "fsa-visualiser",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -20,7 +20,6 @@
     "react-dom": "18",
     "react-draggable": "4.4.6",
     "react-xarrows": "2.0.2",
-    "reactjs-popup": "2.0.6",
     "testing-library": "0.0.2",
     "ts-jest": "29.2.5"
   },
