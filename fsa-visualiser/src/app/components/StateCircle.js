@@ -13,6 +13,7 @@ import { useXarrow } from "react-xarrows"; // https://www.npmjs.com/package/reac
  * @param defaultY coordinate
  * @param CIRCLE_RADIUS in pixels
  * @param position fixed position when organised
+ * @param isAccept Boolean for whether the state is an accept state or not
  * @returns JSX for a state circle
  */
 export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS, position, isAccept }) => {
@@ -67,7 +68,6 @@ export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS,
             style={isAccept
                 ? { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "1.5px solid black", outlineOffset: "-10px" }
                 : { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "none" }}
-            //onDoubleClick={() => handleDoubleClick()} 
             />
 
     </Draggable >

@@ -14,9 +14,8 @@ import styles from "../../styles/TransitionArrow.module.css"
  */
 export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTransitionArray }) => {
 
-    // Highlight the transition input label upon creation
+    // Highlight transition input label upon initial render
     const inputRef = useRef(null);
-
     useEffect(() => {
         setTimeout(() => { // Timeout to allow component to render
             inputRef.current?.focus();

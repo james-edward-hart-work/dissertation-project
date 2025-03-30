@@ -50,7 +50,7 @@ function printControls() {
  * @param {*} machine to be printed
  * @returns JSX for states table
  */
-function printMachine(machine, setMachine) {
+function printMachine(machine) {
     // Empty Machine
     if (machine.states.length == 0) {
         return <h3 className={styles.States}>No States Added.</h3>;
@@ -79,7 +79,6 @@ function printMachine(machine, setMachine) {
             <tr key={index}>
                 <td>{(element.id == machine.startStateId) ? <b>{element.name}</b> : <p>{element.name}</p>}</td>
                 <td>{transitions}</td>
-                {/* <td><input type="checkbox" value={element.accept} onChange={() => setMachine(newMachine.toggleAccept(element.id))}></input></td> */}
                 <td>{"" + element.accept}</td>
             </tr>
         );

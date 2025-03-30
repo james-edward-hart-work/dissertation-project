@@ -11,7 +11,7 @@ function showAlphabet(inputs) {
     inputs.forEach(element => {
         string += element + ", "
     });
-    return string.substring(0,string.length-2);
+    return string.substring(0, string.length - 2); // Remove final comma.
 }
 
 /**
@@ -32,20 +32,23 @@ export const InputBar = ({ machine }) => {
                 placeholder="Enter an input word..."
                 onChange={(e) => setInputWord(e.target.value)}>
             </input>
-            {//showPlay
-                <span className={styles.PlayButton} data-testid="PlayButton"
-                    onClick={() => {
-                        //setShowPlay(false)
-                        machine.runInput(inputWord)
-                    }}>&#9655;</span>
-                // : <span className={styles.StopButton} data-testid="StopButton" onClick={() => setShowPlay(true)}>&#9723;</span>
-            }
+
+            {/* Play/Stop Buttons for Running Input */}
+            <span className={styles.PlayButton} data-testid="PlayButton"
+                onClick={() => {
+                    //setShowPlay(false)
+                    machine.runInput(inputWord)
+                }}>&#9655;</span>
+
+            {/* JSX for Stop Button (For Animations) */}
+            {/* : <span className={styles.StopButton} data-testid="StopButton" onClick={() => setShowPlay(true)}>&#9723;</span> */}
 
             {/* Display for FSA Type */}
-            {machine.status() != "Invalid"
-                ? <span className={styles.ValidLight} data-testid="ValidLight" style={{ backgroundColor: "green" }}></span>
-                : <span className={styles.ValidLight} data-testid="ValidLight" style={{ backgroundColor: "red" }}></span>
-            }
+            <span className={styles.ValidLight} data-testid="ValidLight"
+                style={machine.status() != "Invalid"
+                    ? { backgroundColor: "green" }
+                    : { backgroundColor: "red" }}
+            />
         </div>
         <b>{"Machine Type: " + machine.status()}</b> <br></br> <br></br>
         <b>Machine's Input Alphabet: {showAlphabet(machine.inputAlphabet())}</b>

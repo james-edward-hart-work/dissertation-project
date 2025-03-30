@@ -1,5 +1,5 @@
 import FSA from "../FSA";
-import { useRef, useState, useEffect, use } from "react"
+import { useRef, useState, useEffect } from "react"
 import { StateCircle } from "./StateCircle";
 import { TransitionArrow } from "./TransitionArrow";
 import styles from "../../styles/Viewport.module.css"
@@ -24,10 +24,10 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   const [circleArray, setCircleArray] = useState([]);           // State array containing the JSX of every circle
   const [transitionArray, setTransitionArray] = useState([]);   // Array containing all transition arrows
   const [originStateId, setOriginStateId] = useState(null);     // Holds the id of the origin state upon making a new transition
-  const ref = useRef(null);                                     // Reference to Viewport to contain circles
   const [startUpMessage, setStartUpMessage] = useState(true);
   const [contextMenu, setContextMenu] = useState(null);         // JSX for content menu, null when hidden
   const [acceptStates, setAcceptStates] = useState([]);         // Array of ids of the machine's accept states
+  const ref = useRef(null);                                     // Reference to Viewport to contain circles
 
   // Holds all fixed positions of circles when organised, null draggable 
   const [positions, setPositions] = useState([]);
