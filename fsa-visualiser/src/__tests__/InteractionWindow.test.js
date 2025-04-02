@@ -18,6 +18,7 @@ let testMachine = new FSA({
     total: 2
 });
 
+// Test Suite for InteractionWindow.js
 describe('InteractionWindow', () => {
 
     beforeEach(() => {

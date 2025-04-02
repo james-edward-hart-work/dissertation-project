@@ -9,8 +9,6 @@ import { Xwrapper } from "react-xarrows";
 import Xarrow from "react-xarrows";
 
 export const CIRCLE_RADIUS = 85;
-const WIDTH = 72;
-const HEIGHT = 95;
 
 /**
  * Function component for the Viewport containing the FSA diagram
@@ -24,7 +22,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   const [circleArray, setCircleArray] = useState([]);           // State array containing the JSX of every circle
   const [transitionArray, setTransitionArray] = useState([]);   // Array containing all transition arrows
   const [originStateId, setOriginStateId] = useState(null);     // Holds the id of the origin state upon making a new transition
-  const [startUpMessage, setStartUpMessage] = useState(true);
+  const [startUpMessage, setStartUpMessage] = useState(true);   // Determines whether start up message is shown
   const [contextMenu, setContextMenu] = useState(null);         // JSX for content menu, null when hidden
   const [acceptStates, setAcceptStates] = useState([]);         // Array of ids of the machine's accept states
   const ref = useRef(null);                                     // Reference to Viewport to contain circles
@@ -71,7 +69,11 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   //   });
   // }, [machine])
 
-  // Adds a state circle to the viewport and state to the FSA.
+  /**
+   * Adds a state circle to the viewport and state to the FSA.
+   * @param x coordinate of mouse
+   * @param y coordinate of mouse
+   */
   function addCircle(x, y) {
 
     const id = machine.total + ""; // Id is unique as total only ever increments.
@@ -98,7 +100,8 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   }
 
   /**
-   * Deletes a state circle and state from the FSA
+   * Deletes a state circle and state from the FSA.
+   * @param circleId of state to be deleted
    */
   function deleteCircle(circleId) {
     const transitionsToDelete = transitionArray.filter(arrow => (arrow.key.startsWith(circleId) || arrow.key.endsWith(circleId)));
@@ -158,6 +161,10 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     setOriginStateId(null); // Reset state so no new transitions are made
   }
 
+  /**
+   * Toggles the accept status of a state.
+   * @param stateId of state to be toggled
+   */
   function toggleAccept(stateId) {
     setAcceptStates((array) => {
       if (array.includes(stateId)) {
@@ -173,7 +180,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     });
   }
 
-  // Repositions circles to fixed positions based on FSA layout
+  // Repositions circles to fixed positions based on FSA layout.
   function organiseCircles() {
     if (machine.status() != "Invalid") {
 
@@ -193,10 +200,10 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
 
   /**
    * Sets position of parent node, finds children and recursively calls function for each of them as parent.
-   * @param {*} nodeId      Id of state
-   * @param {*} allParents  Array of ids of all parents of this node
-   * @param {*} minHeight   The Y value of the top of this node's height slide
-   * @param {*} maxHeight   The Y value of the bottom of this node's height slide
+   * @param nodeId      Id of state
+   * @param allParents  Array of ids of all parents of this node
+   * @param minHeight   The Y value of the top of this node's height slide
+   * @param maxHeight   The Y value of the bottom of this node's height slide
    * @returns An array of nodes, each node represents the organised position of a state = {id, x (height in machine), y}
    */
   function organiseChildren(nodeId, allParents, minHeight, maxHeight) {
@@ -290,6 +297,10 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     }
   }
 
+  /**
+   * Handles actions when a user double clicks.
+   * @param event prop
+   */
   function handleDoubleClick(event) {
     (!event.altKey && !event.shiftKey && !event.ctrlKey && event.target.id == "Viewport")
       ? addCircle(event.clientX, event.clientY) // Add State
@@ -298,6 +309,10 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
         : null
   }
 
+  /**
+   * Sets and displays the appropriate context menu based on which entity was right clicked.
+   * @param event prop
+   */
   function handleRightClick(event) {
     if (event.ctrlKey) {
       return;
@@ -334,13 +349,14 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
             });
             setContextMenu(null);
           }}>Make Start State</button>
+          <button onClick={() => { deleteCircle(event.target.id); setContextMenu(null); }}>Delete State</button>
         </ul>)
     }
   }
 
   const depth = machine.retrieveDepth(); // Depth of machine
 
-  // Renders Viewport - styles set here as WIDTH and HEIGHT are set constants.
+  // VIEWPORT RETURN STATEMENT BLOCK
   return <div data-testid={"Viewport"} id={"Viewport"} className={styles.Viewport}
     ref={ref}
     onMouseDown={(event) => handleClick(event)}

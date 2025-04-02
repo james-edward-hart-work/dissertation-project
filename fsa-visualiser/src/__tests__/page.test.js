@@ -16,6 +16,7 @@ export function getCoords(string) {
 let defaultMachine = new FSA(0);
 let user;
 
+// Test Suite for page.js
 describe('Page', () => {
 
   beforeEach(() => {
@@ -59,6 +60,9 @@ describe('Page', () => {
     })
   })
 
+  // Test Suite to test multiple components interacting from the root of the application.
+  // Not functional.
+  
   // describe('Multiple Components', () => {
 
   //   beforeEach(() => {

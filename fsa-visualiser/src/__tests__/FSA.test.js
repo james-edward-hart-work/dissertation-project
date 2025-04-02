@@ -10,6 +10,7 @@ let validMachine = new FSA({
   total: 2
 });
 
+// Test Suite for FSA.js
 describe('FSA', () => {
   afterEach(() => {
     machine = new FSA(0)

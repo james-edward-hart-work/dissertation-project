@@ -22,7 +22,10 @@ export const TransitionArrow = ({ originStateId, destStateId, setMachine, setTra
         }, 0);
     }, []);
 
-
+    /**
+     * Handles a click on an arrow, if alt is pressed to it deletes the transition.
+     * @param event prop
+     */
     function handleClick(event) {
         if (event.altKey) { // Deletes transition
             setMachine((machine) => {

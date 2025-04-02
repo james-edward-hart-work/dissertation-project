@@ -46,7 +46,7 @@ function printControls() {
 
 /**
  * Prints a table of the FSA's states including it's name, transitions and whether it is an accept state.
- * @param {*} machine to be printed
+ * @param machine to be printed
  * @returns JSX for states table
  */
 function printMachine(machine) {
@@ -93,6 +93,7 @@ function printMachine(machine) {
 /**
  * Handles exporting of the user's finite state diagram.
  * @param type of export
+ * @param machine to be exported
  */
 function exportDropDown(type, machine) {
 

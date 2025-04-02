@@ -4,7 +4,7 @@ import styles from "../../styles/InputBar.module.css"
 /**
  * Builds a string to display based on the given input alphabet
  * @param inputs 
- * @returns 
+ * @returns string containing machine's input alphabet
  */
 function showAlphabet(inputs) {
     let string = "";

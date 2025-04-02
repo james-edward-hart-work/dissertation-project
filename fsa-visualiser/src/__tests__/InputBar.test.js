@@ -24,6 +24,7 @@ let user;
 
 beforeEach(() => user = userEvent.setup());
 
+// Test Suite for InputBar.js
 describe('InputBar', () => {
     test('InputBar Renders Correctly - Nondeterministic', () => {
         render(<InputBar machine={validMachine} />)
