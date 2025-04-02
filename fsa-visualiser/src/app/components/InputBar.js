@@ -50,6 +50,7 @@ export const InputBar = ({ machine }) => {
                     : { backgroundColor: "red" }}
             />
         </div>
+        <br></br>
         <b>{"Machine Type: " + machine.status()}</b> <br></br> <br></br>
         <b>Machine's Input Alphabet: {showAlphabet(machine.inputAlphabet())}</b>
         <p>Empty Word Symbol: ε</p>

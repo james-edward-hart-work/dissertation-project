@@ -177,7 +177,11 @@ export const InteractionWindow = ({ machine, setMachine, setOrganiseLayout }) =>
         <br></br>
 
         {/* Organise Layout */}
-        <button className={styles.Button} data-testid="OrganiseButton" onClick={() => setOrganiseLayout(true)}> Organise FSA Layout</button>
+        <button className={styles.Button} data-testid="OrganiseButton" onClick={() => {
+            machine.status() != 'Invalid' // Alert to user if machine is invalid and cannot be organised.
+            ? setOrganiseLayout(true)
+            : alert('ERROR: Only valid machines may have their layout organised.')
+        }}> Organise FSA Layout</button>
         <br></br>
         <br></br>
 

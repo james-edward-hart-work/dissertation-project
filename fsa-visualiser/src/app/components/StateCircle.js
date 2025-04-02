@@ -67,7 +67,7 @@ export const StateCircle = ({ setMachine, id, defaultX, defaultY, CIRCLE_RADIUS,
                 : { height: CIRCLE_RADIUS, width: CIRCLE_RADIUS, textAlign: "center", outline: "none" }}
             />
 
-    </Draggable >
+    </Draggable>
 }
 
 StateCircle.propTypes = {

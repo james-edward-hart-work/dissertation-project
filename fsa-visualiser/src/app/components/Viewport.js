@@ -341,15 +341,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
   const depth = machine.retrieveDepth(); // Depth of machine
 
   // Renders Viewport - styles set here as WIDTH and HEIGHT are set constants.
-  return <div data-testid={"Viewport"} id={"Viewport"}
-    style={{
-      width: WIDTH + "svw",
-      height: HEIGHT + "svh",
-      border: "solid 1.5px black",
-      position: "fixed",
-      backgroundColor: "white",
-      minWidth: "none"
-    }}
+  return <div data-testid={"Viewport"} id={"Viewport"} className={styles.Viewport}
     ref={ref}
     onMouseDown={(event) => handleClick(event)}
     onDoubleClick={(event) => handleDoubleClick(event)}
