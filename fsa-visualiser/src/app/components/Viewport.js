@@ -178,7 +178,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     if (machine.status() != "Invalid") {
 
       // Calculate organised positions.
-      const newPositions = organiseChildren(machine.startStateId, [], 0, 100, machine);
+      const newPositions = organiseChildren(machine.startStateId, [], 0, 100);
 
       // Do not organise if machine contains hanging states. 
       for (let index = 0; index < machine.states.length; index++) {

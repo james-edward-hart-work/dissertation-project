@@ -1,10 +1,9 @@
 import { useState } from "react";
-import styles from "../../styles/InteractionWindow.module.css"
 import { InputBar } from "./InputBar";
+import styles from "../../styles/InteractionWindow.module.css"
 import * as htmlToImage from 'html-to-image';
-import FSA from "../FSA";
 
-// Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu
+// Following Dropdown component taken from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu [7]
 const Dropdown = ({ label, value, options, onChange }) => {
     return (
         <label>
@@ -66,7 +65,6 @@ function printMachine(machine) {
     ];
 
     // Fills table for each state
-    const newMachine = new FSA(machine);
     machine.states.forEach((element, index) => {
 
         let transitions = [];
@@ -98,13 +96,15 @@ function printMachine(machine) {
  */
 function exportDropDown(type, machine) {
 
+    // Turns file into a link that can be downloaded.
     const downloadExport = (dataUrl, type) => {
+        // 'a' tag in HTML is a hyperlink
         const downloadLink = document.createElement('a');
         const fileName = 'MyFSA.' + type;
 
         downloadLink.href = dataUrl;
         downloadLink.download = fileName;
-        downloadLink.click();
+        downloadLink.click(); 
     };
 
     if (machine.status() == "Invalid") {
@@ -146,7 +146,7 @@ function exportDropDown(type, machine) {
  * @param setOrganiseLayout Setter for organiseLayout
  * @returns JSX for Interaction Window
  */
-export const InteractionWindow = ({ machine, setMachine, setOrganiseLayout }) => {
+export const InteractionWindow = ({ machine, setOrganiseLayout }) => {
 
     const [hidePrint, setHidePrint] = useState(true); // Tracks if table of states is hidden or not
     const [hideControls, setControlsPrint] = useState(true); // Tracks if table of controls is hidden or not
@@ -156,7 +156,7 @@ export const InteractionWindow = ({ machine, setMachine, setOrganiseLayout }) =>
         <InputBar machine={machine} />
 
         {/* Export Drop Down */}
-        {/* Following code adapted from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu */}
+        {/* Following code adapted from: https://www.simplilearn.com/tutorials/reactjs-tutorial/how-to-create-functional-react-dropdown-menu [7] */}
         <div data-testid="Dropdown">
             <Dropdown
                 label="Export your FSA: "
@@ -204,7 +204,7 @@ export const InteractionWindow = ({ machine, setMachine, setOrganiseLayout }) =>
             ? <button className={styles.Button} onClick={() => setHidePrint(false)} data-testid="StatesButton" >View Machine Description</button>
             : <div>
                 <button className={styles.Button} onClick={() => setHidePrint(true)} data-testid="StatesButton" >Hide Machine Description</button>
-                {printMachine(machine, setMachine)}
+                {printMachine(machine)}
             </div>
         }
         <br></br>

@@ -2,9 +2,9 @@
     width: 72%;
     height: 97%;
     border: solid 1.5px black;
-    position: "fixed";
-    background-color: "white";
-    min-width: "none";
+    position: fixed;
+    background-color: white;
+    min-width: none;
     margin-left: 0.5%;
 }
 
