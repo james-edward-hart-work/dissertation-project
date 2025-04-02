@@ -147,6 +147,24 @@ class FSA {
   }
 
   /**
+   * Calculates the input alphabet of the machine
+   * @returns An array of all letters in the alphabet
+   */
+  inputAlphabet() {
+    let inputs = [];
+
+    // Add all unique transition letter for each state
+    this.states.forEach(state => {
+      state.transitions.forEach(element => {
+        if (!inputs.includes(element[0]) && element[0] != "ε" && element[0].trim() != "") {
+          inputs.push(element[0]);
+        }
+      });
+    });
+    return inputs;
+  }
+
+  /**
    * Calculates whether the machine is deterministic, nondeterministic or invalid
    * @returns a string stating the machine's type
    */
@@ -322,12 +340,12 @@ class FSA {
         }
       } while (nodeStore.length > 0) // Keep traversing if there are nodes left
 
-      if (isAccepted) {      
+      if (isAccepted) {
         // Contructs valid output path
         let outputString = "Path: "
         for (let index = 0; index < outputPath.length; index++) {
           outputString += this.states.find(state => state.id == outputPath[index]).name;
-          if (index == outputPath.length -1) {
+          if (index == outputPath.length - 1) {
             outputString += ".";
           } else {
             outputString += " => ";
@@ -343,29 +361,11 @@ class FSA {
     return isAccepted;
   }
 
-  /**
-   * Calcualtes the input alphabet of the machine
-   * @returns An array of all letters in the alphabet
-   */
-  inputAlphabet() {
-    let inputs = [];
-
-    // Add all unique transition letter for each state
-    this.states.forEach(state => {
-      state.transitions.forEach(element => {
-        if (!inputs.includes(element[0]) && element[0] != "ε" && element[0].trim() != "") {
-          inputs.push(element[0]);
-        }
-      });
-    });
-    return inputs;
-  }
-
   // Returns an array of node's child nodes
   findChildren(nodeId, allParents) {
 
     allParents.push(nodeId);
-    
+
     const transitions = this.states.find(state => state.id == nodeId).transitions;
     if (transitions.length == 0) { return null } // Base case = leaf node
 
@@ -390,7 +390,7 @@ class FSA {
 
   // Recursive algorithm to find depth of nested array: [parent, [array of children]]
   // Adapted from: https://dev.to/esaldivar/algorithm-approach-retrieve-depth-48fk [38]
-  retrieveDepthFromArray (arr, depth = 1) {
+  retrieveDepthFromArray(arr, depth = 1) {
 
     // If the array contains no nested arrays, return depth
     if (!arr.some(value => Array.isArray(value))) { return depth }

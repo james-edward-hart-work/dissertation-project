@@ -16,7 +16,7 @@ const HEIGHT = 95;
  * Function component for the Viewport containing the FSA diagram
  * @param machine Application's FSA
  * @param setMachine Setter for the FSA
- * @param setOrganiseLayout Tracks whether layout is to be organised or loose
+ * @param organiseLayout Tracks whether layout is to be organised
  * @param setOrganiseLayout Setter for organiseLayout
  * @returns JSX for the Viewport
  */
@@ -290,6 +290,14 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     }
   }
 
+  function handleDoubleClick(event) {
+    (!event.altKey && !event.shiftKey && !event.ctrlKey && event.target.id == "Viewport")
+      ? addCircle(event.clientX, event.clientY) // Add State
+      : (!event.altKey && !event.shiftKey && !event.ctrlKey && !event.target.id.includes("=>"))
+        ? toggleAccept(event.target.id)
+        : null
+  }
+
   function handleRightClick(event) {
     if (event.ctrlKey) {
       return;
@@ -328,7 +336,6 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           }}>Make Start State</button>
         </ul>)
     }
-
   }
 
   const depth = machine.retrieveDepth(); // Depth of machine
@@ -345,13 +352,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
     }}
     ref={ref}
     onMouseDown={(event) => handleClick(event)}
-    onDoubleClick={(event) => {
-      (!event.altKey && !event.shiftKey && !event.ctrlKey && event.target.id == "Viewport")
-        ? addCircle(event.clientX, event.clientY) // Add State
-        : (!event.altKey && !event.shiftKey && !event.ctrlKey && !event.target.id.includes("=>"))
-          ? toggleAccept(event.target.id)
-          : null
-    }}
+    onDoubleClick={(event) => handleDoubleClick(event)}
     onContextMenu={(event) => handleRightClick(event)}>
 
     {/* Context Menu */}
@@ -389,7 +390,7 @@ export const Viewport = ({ machine, setMachine, organiseLayout, setOrganiseLayou
           defaultX={circle.defaultX}
           defaultY={circle.defaultY}
           CIRCLE_RADIUS={CIRCLE_RADIUS}
-          position={position}
+          fixedPosition={position}
           isAccept={(acceptStates.includes(circle.id))}
         />
       })}
