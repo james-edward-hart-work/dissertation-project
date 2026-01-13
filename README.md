@@ -13,7 +13,7 @@ For further detail, please see **documentation/DissertationReport.pdf**, which c
 
 ## Technology Stack
 
-- **Language:** JavaScript (ES6+)
+- **Languages:** JavaScript (ES6+), JSX
 - **Frontend:** React, Next.js (App Router)
 - **Backend / Runtime:** Node.js
 - **Styling:** CSS Modules, Tailwind CSS
